@@ -39,22 +39,11 @@ class Character extends Equatable {
   int get initiative => getStatByType(StatType.DEX).modificator;
   int get bonusModificator => ((exp.level - 1) ~/ 4) + 2;
 
-  int getValueOfCompetenceByType(CompetenceType competenceType) {
-    for (Competence competence in competences) {
-      if (competence.competenceType == competenceType) {
-        for (Stat stat in stats) {
-          if (competence.statTypeScale == stat.statType) {
-            return competence.competenced
-                ? stat.modificator + 2 * bonusModificator
-                : competence.mastered
-                    ? stat.modificator + bonusModificator
-                    : stat.modificator;
-          }
-        }
-      }
-    }
-    return -1000;
-  }
+  int getValueOfCompetenceByType(CompetenceType competenceType) => getCompetenceByType(competenceType).competenced
+      ? getStatByType(getCompetenceByType(competenceType).statTypeScale).modificator + 2 * bonusModificator
+      : getCompetenceByType(competenceType).mastered
+          ? getStatByType(getCompetenceByType(competenceType).statTypeScale).modificator + bonusModificator
+          : getStatByType(getCompetenceByType(competenceType).statTypeScale).modificator;
 
   Stat getStatByType(StatType statType) => stats.firstWhere((stat) => stat.statType == statType);
   Competence getCompetenceByType(CompetenceType competenceType) => competences.firstWhere((competence) => competence.competenceType == competenceType);
