@@ -100,7 +100,7 @@ class WeaponEntities extends Equatable {
   });
 
   @override
-  List<Object?> get props => [name, master];
+  List<Object?> get props => [name, master, typeDamage, distance, weaponType, bonusAttackChance, bonusAttackDamage, description];
 }
 
 @Collection(ignore: {'props'})

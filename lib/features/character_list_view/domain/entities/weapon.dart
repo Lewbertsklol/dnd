@@ -27,7 +27,7 @@ class Weapon extends Equatable {
   });
 
   @override
-  List<Object?> get props => [name, master];
+  List<Object?> get props => [name, master, typeDamage, distance, weaponType, bonusAttackChance, bonusAttackDamage, description];
 
   @override
   bool? get stringify => true;

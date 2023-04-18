@@ -136,6 +136,7 @@ class CharacterListLocalDatasourceImpl implements CharacterListLocalDatasource {
           .toList(),
       weapons: weapons
           .map((weaponEntitie) => Weapon(
+              master: weaponEntitie.master,
               name: weaponEntitie.name,
               typeDamage: weaponEntitie.typeDamage,
               distance: weaponEntitie.distance,

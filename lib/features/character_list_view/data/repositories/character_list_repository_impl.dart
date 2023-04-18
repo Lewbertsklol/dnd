@@ -16,5 +16,4 @@ class CharacterListRepositoryImpl implements CharacterListRepository {
 
   @override
   Future<List<Character>> getCharacterList() async => await localDatasource.getCharacterList();
-  
 }
