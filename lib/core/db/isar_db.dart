@@ -1,4 +1,5 @@
 import 'package:dnd/features/character_list_view/domain/entities/weapon.dart';
+import 'package:equatable/equatable.dart';
 import 'package:isar/isar.dart';
 
 import '../../features/character_list_view/domain/entities/competence.dart';
@@ -6,8 +7,8 @@ import '../../features/character_list_view/domain/entities/stats.dart';
 
 part 'isar_db.g.dart';
 
-@collection
-class CharacterEntities {
+@Collection(ignore: {'props'})
+class CharacterEntities extends Equatable {
   final Id id = Isar.autoIncrement;
   final String name;
   final String race;
@@ -15,20 +16,26 @@ class CharacterEntities {
   final String backstory;
   final int cd;
 
-  CharacterEntities({required this.name, required this.race, required this.sex, required this.backstory, required this.cd});
+  const CharacterEntities({required this.name, required this.race, required this.sex, required this.backstory, required this.cd});
+
+  @override
+  List<Object?> get props => [name, race, sex, backstory, cd];
 }
 
-@collection
-class ExpEntities {
+@Collection(ignore: {'props'})
+class ExpEntities extends Equatable {
   final Id id = Isar.autoIncrement;
   final String characterName;
   final int value;
 
   const ExpEntities({required this.characterName, required this.value});
+
+  @override
+  List<Object?> get props => [value];
 }
 
-@collection
-class HpEntities {
+@Collection(ignore: {'props'})
+class HpEntities extends Equatable {
   final Id id = Isar.autoIncrement;
   final String characterName;
   final int maxHP;
@@ -37,10 +44,13 @@ class HpEntities {
   final int currBonusHP;
 
   const HpEntities({required this.characterName, required this.maxHP, required this.currHP, required this.maxBonusHP, required this.currBonusHP});
+
+  @override
+  List<Object?> get props => [currHP, maxHP, currBonusHP, maxBonusHP];
 }
 
-@collection
-class StatEntities {
+@Collection(ignore: {'props'})
+class StatEntities extends Equatable {
   final Id id = Isar.autoIncrement;
   final String characterName;
   @enumerated
@@ -54,10 +64,13 @@ class StatEntities {
     required this.value,
     required this.saveThrowMastered,
   });
+
+  @override
+  List<Object?> get props => [statType, value, saveThrowMastered];
 }
 
-@collection
-class WeaponEntities {
+@Collection(ignore: {'props'})
+class WeaponEntities extends Equatable {
   final Id id = Isar.autoIncrement;
   final String characterName;
   final String name;
@@ -71,7 +84,7 @@ class WeaponEntities {
   final int bonusAttackDamage;
   final String description;
 
-  WeaponEntities({
+  const WeaponEntities({
     required this.characterName,
     required this.name,
     required this.typeDamage,
@@ -83,10 +96,13 @@ class WeaponEntities {
     required this.bonusAttackDamage,
     required this.description,
   });
+
+  @override
+  List<Object?> get props => [name, mastered];
 }
 
-@collection
-class CompetenceEntities {
+@Collection(ignore: {'props'})
+class CompetenceEntities extends Equatable{
   final Id id = Isar.autoIncrement;
   final String characterName;
   @enumerated
@@ -96,11 +112,14 @@ class CompetenceEntities {
   final bool mastered;
   final bool competenced;
 
-  CompetenceEntities({
+  const CompetenceEntities({
     required this.characterName,
     required this.competenceType,
     required this.statTypeScale,
     required this.mastered,
     required this.competenced,
   });
+
+  @override
+  List<Object?> get props => [competenceType, statTypeScale, mastered, competenced];
 }

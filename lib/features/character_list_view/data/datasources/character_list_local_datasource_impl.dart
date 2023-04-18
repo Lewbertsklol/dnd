@@ -112,6 +112,11 @@ class CharacterListLocalDatasourceImpl implements CharacterListLocalDatasource {
     List<CompetenceEntities> competences = await isar.collection<CompetenceEntities>().filter().characterNameEqualTo(characterName).findAll();
     List<WeaponEntities> weapons = await isar.collection<WeaponEntities>().filter().characterNameEqualTo(characterName).findAll();
 
+    // print('Достал из БД навыки:');
+    // for (CompetenceEntities competence in competences) {
+    //   print(competence);
+    // }
+
     return CharacterModel(
       name: characterEntities?.name ?? 'null',
       race: characterEntities?.race ?? 'null',
@@ -163,6 +168,8 @@ class CharacterListLocalDatasourceImpl implements CharacterListLocalDatasource {
       weapons: params.weapons,
       competences: params.competences,
     );
+    // print('Обновленный персонаж');
+    // print(updatedCharacter);
 
     await _writeCharacter(updatedCharacter);
     return updatedCharacter;
@@ -192,7 +199,7 @@ class CharacterListLocalDatasourceImpl implements CharacterListLocalDatasource {
     );
     final List<WeaponEntities> weapons = [];
     for (Weapon weapon in character.weapons) {
-      weapons.add(WeaponEntities( 
+      weapons.add(WeaponEntities(
         characterName: character.name,
         name: weapon.name,
         typeDamage: weapon.typeDamage,
@@ -204,7 +211,6 @@ class CharacterListLocalDatasourceImpl implements CharacterListLocalDatasource {
         bonusAttackDamage: weapon.bonusAttackDamage,
         description: weapon.description,
       ));
-  
     }
     final List<StatEntities> stats = [];
     for (Stat stat in character.stats) {
@@ -225,7 +231,10 @@ class CharacterListLocalDatasourceImpl implements CharacterListLocalDatasource {
         competenced: competence.competenced,
       ));
     }
-
+    // print('Положил в бд навыки:');
+    // for (CompetenceEntities competence in competences) {
+    //   print(competence);
+    // }
     await isar.writeTxn(() async {
       await isar.collection<CharacterEntities>().put(characterEntities);
       await isar.collection<ExpEntities>().put(exp);

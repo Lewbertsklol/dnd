@@ -12,7 +12,8 @@ void changeCompetenceMastered(BuildContext context, CharacterLoaded state, Compe
     mastered: !competence.mastered,
     competenced: competence.competenced,
   );
-  print(newCompetence);
+  // print('Изменил $competence');
+  // print('на $newCompetence');
   final competences =
       (state.character.competences.map((oldCompetence) => oldCompetence.competenceType == newCompetence.competenceType ? newCompetence : oldCompetence)).toList();
   context.read<CharacterBloc>().add(

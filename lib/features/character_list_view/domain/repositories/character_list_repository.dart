@@ -12,5 +12,10 @@ class ParamsForNewCharacter {
   final String sex;
   final String backstory;
 
-  ParamsForNewCharacter({required this.name, required this.race, required this.sex, required this.backstory});
+  ParamsForNewCharacter({
+    required this.name,
+    required this.race,
+    required this.sex,
+    required this.backstory,
+  });
 }

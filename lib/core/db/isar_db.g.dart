@@ -27,20 +27,30 @@ const CharacterEntitiesSchema = CollectionSchema(
       name: r'cd',
       type: IsarType.long,
     ),
-    r'name': PropertySchema(
+    r'hashCode': PropertySchema(
       id: 2,
+      name: r'hashCode',
+      type: IsarType.long,
+    ),
+    r'name': PropertySchema(
+      id: 3,
       name: r'name',
       type: IsarType.string,
     ),
     r'race': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'race',
       type: IsarType.string,
     ),
     r'sex': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'sex',
       type: IsarType.string,
+    ),
+    r'stringify': PropertySchema(
+      id: 6,
+      name: r'stringify',
+      type: IsarType.bool,
     )
   },
   estimateSize: _characterEntitiesEstimateSize,
@@ -78,9 +88,11 @@ void _characterEntitiesSerialize(
 ) {
   writer.writeString(offsets[0], object.backstory);
   writer.writeLong(offsets[1], object.cd);
-  writer.writeString(offsets[2], object.name);
-  writer.writeString(offsets[3], object.race);
-  writer.writeString(offsets[4], object.sex);
+  writer.writeLong(offsets[2], object.hashCode);
+  writer.writeString(offsets[3], object.name);
+  writer.writeString(offsets[4], object.race);
+  writer.writeString(offsets[5], object.sex);
+  writer.writeBool(offsets[6], object.stringify);
 }
 
 CharacterEntities _characterEntitiesDeserialize(
@@ -92,9 +104,9 @@ CharacterEntities _characterEntitiesDeserialize(
   final object = CharacterEntities(
     backstory: reader.readString(offsets[0]),
     cd: reader.readLong(offsets[1]),
-    name: reader.readString(offsets[2]),
-    race: reader.readString(offsets[3]),
-    sex: reader.readString(offsets[4]),
+    name: reader.readString(offsets[3]),
+    race: reader.readString(offsets[4]),
+    sex: reader.readString(offsets[5]),
   );
   return object;
 }
@@ -111,11 +123,15 @@ P _characterEntitiesDeserializeProp<P>(
     case 1:
       return (reader.readLong(offset)) as P;
     case 2:
-      return (reader.readString(offset)) as P;
+      return (reader.readLong(offset)) as P;
     case 3:
       return (reader.readString(offset)) as P;
     case 4:
       return (reader.readString(offset)) as P;
+    case 5:
+      return (reader.readString(offset)) as P;
+    case 6:
+      return (reader.readBoolOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -399,6 +415,62 @@ extension CharacterEntitiesQueryFilter
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
         property: r'cd',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      hashCodeEqualTo(int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'hashCode',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      hashCodeGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'hashCode',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      hashCodeLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'hashCode',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      hashCodeBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'hashCode',
         lower: lower,
         includeLower: includeLower,
         upper: upper,
@@ -870,6 +942,34 @@ extension CharacterEntitiesQueryFilter
       ));
     });
   }
+
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      stringifyIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'stringify',
+      ));
+    });
+  }
+
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      stringifyIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'stringify',
+      ));
+    });
+  }
+
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      stringifyEqualTo(bool? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'stringify',
+        value: value,
+      ));
+    });
+  }
 }
 
 extension CharacterEntitiesQueryObject
@@ -904,6 +1004,20 @@ extension CharacterEntitiesQuerySortBy
       sortByCdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'cd', Sort.desc);
+    });
+  }
+
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterSortBy>
+      sortByHashCode() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'hashCode', Sort.asc);
+    });
+  }
+
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterSortBy>
+      sortByHashCodeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'hashCode', Sort.desc);
     });
   }
 
@@ -947,6 +1061,20 @@ extension CharacterEntitiesQuerySortBy
       return query.addSortBy(r'sex', Sort.desc);
     });
   }
+
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterSortBy>
+      sortByStringify() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'stringify', Sort.asc);
+    });
+  }
+
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterSortBy>
+      sortByStringifyDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'stringify', Sort.desc);
+    });
+  }
 }
 
 extension CharacterEntitiesQuerySortThenBy
@@ -975,6 +1103,20 @@ extension CharacterEntitiesQuerySortThenBy
       thenByCdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'cd', Sort.desc);
+    });
+  }
+
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterSortBy>
+      thenByHashCode() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'hashCode', Sort.asc);
+    });
+  }
+
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterSortBy>
+      thenByHashCodeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'hashCode', Sort.desc);
     });
   }
 
@@ -1031,6 +1173,20 @@ extension CharacterEntitiesQuerySortThenBy
       return query.addSortBy(r'sex', Sort.desc);
     });
   }
+
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterSortBy>
+      thenByStringify() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'stringify', Sort.asc);
+    });
+  }
+
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterSortBy>
+      thenByStringifyDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'stringify', Sort.desc);
+    });
+  }
 }
 
 extension CharacterEntitiesQueryWhereDistinct
@@ -1045,6 +1201,13 @@ extension CharacterEntitiesQueryWhereDistinct
   QueryBuilder<CharacterEntities, CharacterEntities, QDistinct> distinctByCd() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'cd');
+    });
+  }
+
+  QueryBuilder<CharacterEntities, CharacterEntities, QDistinct>
+      distinctByHashCode() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'hashCode');
     });
   }
 
@@ -1066,6 +1229,13 @@ extension CharacterEntitiesQueryWhereDistinct
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'sex', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<CharacterEntities, CharacterEntities, QDistinct>
+      distinctByStringify() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'stringify');
     });
   }
 }
@@ -1091,6 +1261,12 @@ extension CharacterEntitiesQueryProperty
     });
   }
 
+  QueryBuilder<CharacterEntities, int, QQueryOperations> hashCodeProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'hashCode');
+    });
+  }
+
   QueryBuilder<CharacterEntities, String, QQueryOperations> nameProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'name');
@@ -1106,6 +1282,12 @@ extension CharacterEntitiesQueryProperty
   QueryBuilder<CharacterEntities, String, QQueryOperations> sexProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'sex');
+    });
+  }
+
+  QueryBuilder<CharacterEntities, bool?, QQueryOperations> stringifyProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'stringify');
     });
   }
 }
@@ -1126,8 +1308,18 @@ const ExpEntitiesSchema = CollectionSchema(
       name: r'characterName',
       type: IsarType.string,
     ),
-    r'value': PropertySchema(
+    r'hashCode': PropertySchema(
       id: 1,
+      name: r'hashCode',
+      type: IsarType.long,
+    ),
+    r'stringify': PropertySchema(
+      id: 2,
+      name: r'stringify',
+      type: IsarType.bool,
+    ),
+    r'value': PropertySchema(
+      id: 3,
       name: r'value',
       type: IsarType.long,
     )
@@ -1163,7 +1355,9 @@ void _expEntitiesSerialize(
   Map<Type, List<int>> allOffsets,
 ) {
   writer.writeString(offsets[0], object.characterName);
-  writer.writeLong(offsets[1], object.value);
+  writer.writeLong(offsets[1], object.hashCode);
+  writer.writeBool(offsets[2], object.stringify);
+  writer.writeLong(offsets[3], object.value);
 }
 
 ExpEntities _expEntitiesDeserialize(
@@ -1174,7 +1368,7 @@ ExpEntities _expEntitiesDeserialize(
 ) {
   final object = ExpEntities(
     characterName: reader.readString(offsets[0]),
-    value: reader.readLong(offsets[1]),
+    value: reader.readLong(offsets[3]),
   );
   return object;
 }
@@ -1189,6 +1383,10 @@ P _expEntitiesDeserializeProp<P>(
     case 0:
       return (reader.readString(offset)) as P;
     case 1:
+      return (reader.readLong(offset)) as P;
+    case 2:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 3:
       return (reader.readLong(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -1422,6 +1620,61 @@ extension ExpEntitiesQueryFilter
     });
   }
 
+  QueryBuilder<ExpEntities, ExpEntities, QAfterFilterCondition> hashCodeEqualTo(
+      int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'hashCode',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<ExpEntities, ExpEntities, QAfterFilterCondition>
+      hashCodeGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'hashCode',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<ExpEntities, ExpEntities, QAfterFilterCondition>
+      hashCodeLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'hashCode',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<ExpEntities, ExpEntities, QAfterFilterCondition> hashCodeBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'hashCode',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
   QueryBuilder<ExpEntities, ExpEntities, QAfterFilterCondition> idEqualTo(
       Id value) {
     return QueryBuilder.apply(this, (query) {
@@ -1471,6 +1724,34 @@ extension ExpEntitiesQueryFilter
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<ExpEntities, ExpEntities, QAfterFilterCondition>
+      stringifyIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'stringify',
+      ));
+    });
+  }
+
+  QueryBuilder<ExpEntities, ExpEntities, QAfterFilterCondition>
+      stringifyIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'stringify',
+      ));
+    });
+  }
+
+  QueryBuilder<ExpEntities, ExpEntities, QAfterFilterCondition>
+      stringifyEqualTo(bool? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'stringify',
+        value: value,
       ));
     });
   }
@@ -1551,6 +1832,30 @@ extension ExpEntitiesQuerySortBy
     });
   }
 
+  QueryBuilder<ExpEntities, ExpEntities, QAfterSortBy> sortByHashCode() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'hashCode', Sort.asc);
+    });
+  }
+
+  QueryBuilder<ExpEntities, ExpEntities, QAfterSortBy> sortByHashCodeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'hashCode', Sort.desc);
+    });
+  }
+
+  QueryBuilder<ExpEntities, ExpEntities, QAfterSortBy> sortByStringify() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'stringify', Sort.asc);
+    });
+  }
+
+  QueryBuilder<ExpEntities, ExpEntities, QAfterSortBy> sortByStringifyDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'stringify', Sort.desc);
+    });
+  }
+
   QueryBuilder<ExpEntities, ExpEntities, QAfterSortBy> sortByValue() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'value', Sort.asc);
@@ -1579,6 +1884,18 @@ extension ExpEntitiesQuerySortThenBy
     });
   }
 
+  QueryBuilder<ExpEntities, ExpEntities, QAfterSortBy> thenByHashCode() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'hashCode', Sort.asc);
+    });
+  }
+
+  QueryBuilder<ExpEntities, ExpEntities, QAfterSortBy> thenByHashCodeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'hashCode', Sort.desc);
+    });
+  }
+
   QueryBuilder<ExpEntities, ExpEntities, QAfterSortBy> thenById() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.asc);
@@ -1588,6 +1905,18 @@ extension ExpEntitiesQuerySortThenBy
   QueryBuilder<ExpEntities, ExpEntities, QAfterSortBy> thenByIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.desc);
+    });
+  }
+
+  QueryBuilder<ExpEntities, ExpEntities, QAfterSortBy> thenByStringify() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'stringify', Sort.asc);
+    });
+  }
+
+  QueryBuilder<ExpEntities, ExpEntities, QAfterSortBy> thenByStringifyDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'stringify', Sort.desc);
     });
   }
 
@@ -1614,6 +1943,18 @@ extension ExpEntitiesQueryWhereDistinct
     });
   }
 
+  QueryBuilder<ExpEntities, ExpEntities, QDistinct> distinctByHashCode() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'hashCode');
+    });
+  }
+
+  QueryBuilder<ExpEntities, ExpEntities, QDistinct> distinctByStringify() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'stringify');
+    });
+  }
+
   QueryBuilder<ExpEntities, ExpEntities, QDistinct> distinctByValue() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'value');
@@ -1632,6 +1973,18 @@ extension ExpEntitiesQueryProperty
   QueryBuilder<ExpEntities, String, QQueryOperations> characterNameProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'characterName');
+    });
+  }
+
+  QueryBuilder<ExpEntities, int, QQueryOperations> hashCodeProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'hashCode');
+    });
+  }
+
+  QueryBuilder<ExpEntities, bool?, QQueryOperations> stringifyProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'stringify');
     });
   }
 
@@ -1668,15 +2021,25 @@ const HpEntitiesSchema = CollectionSchema(
       name: r'currHP',
       type: IsarType.long,
     ),
-    r'maxBonusHP': PropertySchema(
+    r'hashCode': PropertySchema(
       id: 3,
+      name: r'hashCode',
+      type: IsarType.long,
+    ),
+    r'maxBonusHP': PropertySchema(
+      id: 4,
       name: r'maxBonusHP',
       type: IsarType.long,
     ),
     r'maxHP': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'maxHP',
       type: IsarType.long,
+    ),
+    r'stringify': PropertySchema(
+      id: 6,
+      name: r'stringify',
+      type: IsarType.bool,
     )
   },
   estimateSize: _hpEntitiesEstimateSize,
@@ -1712,8 +2075,10 @@ void _hpEntitiesSerialize(
   writer.writeString(offsets[0], object.characterName);
   writer.writeLong(offsets[1], object.currBonusHP);
   writer.writeLong(offsets[2], object.currHP);
-  writer.writeLong(offsets[3], object.maxBonusHP);
-  writer.writeLong(offsets[4], object.maxHP);
+  writer.writeLong(offsets[3], object.hashCode);
+  writer.writeLong(offsets[4], object.maxBonusHP);
+  writer.writeLong(offsets[5], object.maxHP);
+  writer.writeBool(offsets[6], object.stringify);
 }
 
 HpEntities _hpEntitiesDeserialize(
@@ -1726,8 +2091,8 @@ HpEntities _hpEntitiesDeserialize(
     characterName: reader.readString(offsets[0]),
     currBonusHP: reader.readLong(offsets[1]),
     currHP: reader.readLong(offsets[2]),
-    maxBonusHP: reader.readLong(offsets[3]),
-    maxHP: reader.readLong(offsets[4]),
+    maxBonusHP: reader.readLong(offsets[4]),
+    maxHP: reader.readLong(offsets[5]),
   );
   return object;
 }
@@ -1749,6 +2114,10 @@ P _hpEntitiesDeserializeProp<P>(
       return (reader.readLong(offset)) as P;
     case 4:
       return (reader.readLong(offset)) as P;
+    case 5:
+      return (reader.readLong(offset)) as P;
+    case 6:
+      return (reader.readBoolOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -2088,6 +2457,60 @@ extension HpEntitiesQueryFilter
     });
   }
 
+  QueryBuilder<HpEntities, HpEntities, QAfterFilterCondition> hashCodeEqualTo(
+      int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'hashCode',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<HpEntities, HpEntities, QAfterFilterCondition>
+      hashCodeGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'hashCode',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<HpEntities, HpEntities, QAfterFilterCondition> hashCodeLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'hashCode',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<HpEntities, HpEntities, QAfterFilterCondition> hashCodeBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'hashCode',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
   QueryBuilder<HpEntities, HpEntities, QAfterFilterCondition> idEqualTo(
       Id value) {
     return QueryBuilder.apply(this, (query) {
@@ -2248,6 +2671,34 @@ extension HpEntitiesQueryFilter
       ));
     });
   }
+
+  QueryBuilder<HpEntities, HpEntities, QAfterFilterCondition>
+      stringifyIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'stringify',
+      ));
+    });
+  }
+
+  QueryBuilder<HpEntities, HpEntities, QAfterFilterCondition>
+      stringifyIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'stringify',
+      ));
+    });
+  }
+
+  QueryBuilder<HpEntities, HpEntities, QAfterFilterCondition> stringifyEqualTo(
+      bool? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'stringify',
+        value: value,
+      ));
+    });
+  }
 }
 
 extension HpEntitiesQueryObject
@@ -2294,6 +2745,18 @@ extension HpEntitiesQuerySortBy
     });
   }
 
+  QueryBuilder<HpEntities, HpEntities, QAfterSortBy> sortByHashCode() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'hashCode', Sort.asc);
+    });
+  }
+
+  QueryBuilder<HpEntities, HpEntities, QAfterSortBy> sortByHashCodeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'hashCode', Sort.desc);
+    });
+  }
+
   QueryBuilder<HpEntities, HpEntities, QAfterSortBy> sortByMaxBonusHP() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'maxBonusHP', Sort.asc);
@@ -2315,6 +2778,18 @@ extension HpEntitiesQuerySortBy
   QueryBuilder<HpEntities, HpEntities, QAfterSortBy> sortByMaxHPDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'maxHP', Sort.desc);
+    });
+  }
+
+  QueryBuilder<HpEntities, HpEntities, QAfterSortBy> sortByStringify() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'stringify', Sort.asc);
+    });
+  }
+
+  QueryBuilder<HpEntities, HpEntities, QAfterSortBy> sortByStringifyDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'stringify', Sort.desc);
     });
   }
 }
@@ -2357,6 +2832,18 @@ extension HpEntitiesQuerySortThenBy
     });
   }
 
+  QueryBuilder<HpEntities, HpEntities, QAfterSortBy> thenByHashCode() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'hashCode', Sort.asc);
+    });
+  }
+
+  QueryBuilder<HpEntities, HpEntities, QAfterSortBy> thenByHashCodeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'hashCode', Sort.desc);
+    });
+  }
+
   QueryBuilder<HpEntities, HpEntities, QAfterSortBy> thenById() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.asc);
@@ -2392,6 +2879,18 @@ extension HpEntitiesQuerySortThenBy
       return query.addSortBy(r'maxHP', Sort.desc);
     });
   }
+
+  QueryBuilder<HpEntities, HpEntities, QAfterSortBy> thenByStringify() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'stringify', Sort.asc);
+    });
+  }
+
+  QueryBuilder<HpEntities, HpEntities, QAfterSortBy> thenByStringifyDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'stringify', Sort.desc);
+    });
+  }
 }
 
 extension HpEntitiesQueryWhereDistinct
@@ -2416,6 +2915,12 @@ extension HpEntitiesQueryWhereDistinct
     });
   }
 
+  QueryBuilder<HpEntities, HpEntities, QDistinct> distinctByHashCode() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'hashCode');
+    });
+  }
+
   QueryBuilder<HpEntities, HpEntities, QDistinct> distinctByMaxBonusHP() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'maxBonusHP');
@@ -2425,6 +2930,12 @@ extension HpEntitiesQueryWhereDistinct
   QueryBuilder<HpEntities, HpEntities, QDistinct> distinctByMaxHP() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'maxHP');
+    });
+  }
+
+  QueryBuilder<HpEntities, HpEntities, QDistinct> distinctByStringify() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'stringify');
     });
   }
 }
@@ -2455,6 +2966,12 @@ extension HpEntitiesQueryProperty
     });
   }
 
+  QueryBuilder<HpEntities, int, QQueryOperations> hashCodeProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'hashCode');
+    });
+  }
+
   QueryBuilder<HpEntities, int, QQueryOperations> maxBonusHPProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'maxBonusHP');
@@ -2464,6 +2981,12 @@ extension HpEntitiesQueryProperty
   QueryBuilder<HpEntities, int, QQueryOperations> maxHPProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'maxHP');
+    });
+  }
+
+  QueryBuilder<HpEntities, bool?, QQueryOperations> stringifyProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'stringify');
     });
   }
 }
@@ -2484,19 +3007,29 @@ const StatEntitiesSchema = CollectionSchema(
       name: r'characterName',
       type: IsarType.string,
     ),
-    r'saveThrowMastered': PropertySchema(
+    r'hashCode': PropertySchema(
       id: 1,
+      name: r'hashCode',
+      type: IsarType.long,
+    ),
+    r'saveThrowMastered': PropertySchema(
+      id: 2,
       name: r'saveThrowMastered',
       type: IsarType.bool,
     ),
     r'statType': PropertySchema(
-      id: 2,
+      id: 3,
       name: r'statType',
       type: IsarType.byte,
       enumMap: _StatEntitiesstatTypeEnumValueMap,
     ),
+    r'stringify': PropertySchema(
+      id: 4,
+      name: r'stringify',
+      type: IsarType.bool,
+    ),
     r'value': PropertySchema(
-      id: 3,
+      id: 5,
       name: r'value',
       type: IsarType.long,
     )
@@ -2532,9 +3065,11 @@ void _statEntitiesSerialize(
   Map<Type, List<int>> allOffsets,
 ) {
   writer.writeString(offsets[0], object.characterName);
-  writer.writeBool(offsets[1], object.saveThrowMastered);
-  writer.writeByte(offsets[2], object.statType.index);
-  writer.writeLong(offsets[3], object.value);
+  writer.writeLong(offsets[1], object.hashCode);
+  writer.writeBool(offsets[2], object.saveThrowMastered);
+  writer.writeByte(offsets[3], object.statType.index);
+  writer.writeBool(offsets[4], object.stringify);
+  writer.writeLong(offsets[5], object.value);
 }
 
 StatEntities _statEntitiesDeserialize(
@@ -2545,11 +3080,11 @@ StatEntities _statEntitiesDeserialize(
 ) {
   final object = StatEntities(
     characterName: reader.readString(offsets[0]),
-    saveThrowMastered: reader.readBool(offsets[1]),
+    saveThrowMastered: reader.readBool(offsets[2]),
     statType:
-        _StatEntitiesstatTypeValueEnumMap[reader.readByteOrNull(offsets[2])] ??
+        _StatEntitiesstatTypeValueEnumMap[reader.readByteOrNull(offsets[3])] ??
             StatType.STR,
-    value: reader.readLong(offsets[3]),
+    value: reader.readLong(offsets[5]),
   );
   return object;
 }
@@ -2564,12 +3099,16 @@ P _statEntitiesDeserializeProp<P>(
     case 0:
       return (reader.readString(offset)) as P;
     case 1:
-      return (reader.readBool(offset)) as P;
+      return (reader.readLong(offset)) as P;
     case 2:
+      return (reader.readBool(offset)) as P;
+    case 3:
       return (_StatEntitiesstatTypeValueEnumMap[
               reader.readByteOrNull(offset)] ??
           StatType.STR) as P;
-    case 3:
+    case 4:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 5:
       return (reader.readLong(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -2821,6 +3360,62 @@ extension StatEntitiesQueryFilter
     });
   }
 
+  QueryBuilder<StatEntities, StatEntities, QAfterFilterCondition>
+      hashCodeEqualTo(int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'hashCode',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<StatEntities, StatEntities, QAfterFilterCondition>
+      hashCodeGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'hashCode',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<StatEntities, StatEntities, QAfterFilterCondition>
+      hashCodeLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'hashCode',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<StatEntities, StatEntities, QAfterFilterCondition>
+      hashCodeBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'hashCode',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
   QueryBuilder<StatEntities, StatEntities, QAfterFilterCondition> idEqualTo(
       Id value) {
     return QueryBuilder.apply(this, (query) {
@@ -2940,6 +3535,34 @@ extension StatEntitiesQueryFilter
     });
   }
 
+  QueryBuilder<StatEntities, StatEntities, QAfterFilterCondition>
+      stringifyIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'stringify',
+      ));
+    });
+  }
+
+  QueryBuilder<StatEntities, StatEntities, QAfterFilterCondition>
+      stringifyIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'stringify',
+      ));
+    });
+  }
+
+  QueryBuilder<StatEntities, StatEntities, QAfterFilterCondition>
+      stringifyEqualTo(bool? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'stringify',
+        value: value,
+      ));
+    });
+  }
+
   QueryBuilder<StatEntities, StatEntities, QAfterFilterCondition> valueEqualTo(
       int value) {
     return QueryBuilder.apply(this, (query) {
@@ -3016,6 +3639,18 @@ extension StatEntitiesQuerySortBy
     });
   }
 
+  QueryBuilder<StatEntities, StatEntities, QAfterSortBy> sortByHashCode() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'hashCode', Sort.asc);
+    });
+  }
+
+  QueryBuilder<StatEntities, StatEntities, QAfterSortBy> sortByHashCodeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'hashCode', Sort.desc);
+    });
+  }
+
   QueryBuilder<StatEntities, StatEntities, QAfterSortBy>
       sortBySaveThrowMastered() {
     return QueryBuilder.apply(this, (query) {
@@ -3039,6 +3674,18 @@ extension StatEntitiesQuerySortBy
   QueryBuilder<StatEntities, StatEntities, QAfterSortBy> sortByStatTypeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'statType', Sort.desc);
+    });
+  }
+
+  QueryBuilder<StatEntities, StatEntities, QAfterSortBy> sortByStringify() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'stringify', Sort.asc);
+    });
+  }
+
+  QueryBuilder<StatEntities, StatEntities, QAfterSortBy> sortByStringifyDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'stringify', Sort.desc);
     });
   }
 
@@ -3067,6 +3714,18 @@ extension StatEntitiesQuerySortThenBy
       thenByCharacterNameDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'characterName', Sort.desc);
+    });
+  }
+
+  QueryBuilder<StatEntities, StatEntities, QAfterSortBy> thenByHashCode() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'hashCode', Sort.asc);
+    });
+  }
+
+  QueryBuilder<StatEntities, StatEntities, QAfterSortBy> thenByHashCodeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'hashCode', Sort.desc);
     });
   }
 
@@ -3108,6 +3767,18 @@ extension StatEntitiesQuerySortThenBy
     });
   }
 
+  QueryBuilder<StatEntities, StatEntities, QAfterSortBy> thenByStringify() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'stringify', Sort.asc);
+    });
+  }
+
+  QueryBuilder<StatEntities, StatEntities, QAfterSortBy> thenByStringifyDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'stringify', Sort.desc);
+    });
+  }
+
   QueryBuilder<StatEntities, StatEntities, QAfterSortBy> thenByValue() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'value', Sort.asc);
@@ -3131,6 +3802,12 @@ extension StatEntitiesQueryWhereDistinct
     });
   }
 
+  QueryBuilder<StatEntities, StatEntities, QDistinct> distinctByHashCode() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'hashCode');
+    });
+  }
+
   QueryBuilder<StatEntities, StatEntities, QDistinct>
       distinctBySaveThrowMastered() {
     return QueryBuilder.apply(this, (query) {
@@ -3141,6 +3818,12 @@ extension StatEntitiesQueryWhereDistinct
   QueryBuilder<StatEntities, StatEntities, QDistinct> distinctByStatType() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'statType');
+    });
+  }
+
+  QueryBuilder<StatEntities, StatEntities, QDistinct> distinctByStringify() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'stringify');
     });
   }
 
@@ -3165,6 +3848,12 @@ extension StatEntitiesQueryProperty
     });
   }
 
+  QueryBuilder<StatEntities, int, QQueryOperations> hashCodeProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'hashCode');
+    });
+  }
+
   QueryBuilder<StatEntities, bool, QQueryOperations>
       saveThrowMasteredProperty() {
     return QueryBuilder.apply(this, (query) {
@@ -3175,6 +3864,12 @@ extension StatEntitiesQueryProperty
   QueryBuilder<StatEntities, StatType, QQueryOperations> statTypeProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'statType');
+    });
+  }
+
+  QueryBuilder<StatEntities, bool?, QQueryOperations> stringifyProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'stringify');
     });
   }
 
@@ -3226,23 +3921,33 @@ const WeaponEntitiesSchema = CollectionSchema(
       name: r'distance',
       type: IsarType.long,
     ),
-    r'mastered': PropertySchema(
+    r'hashCode': PropertySchema(
       id: 6,
+      name: r'hashCode',
+      type: IsarType.long,
+    ),
+    r'mastered': PropertySchema(
+      id: 7,
       name: r'mastered',
       type: IsarType.bool,
     ),
     r'name': PropertySchema(
-      id: 7,
+      id: 8,
       name: r'name',
       type: IsarType.string,
     ),
+    r'stringify': PropertySchema(
+      id: 9,
+      name: r'stringify',
+      type: IsarType.bool,
+    ),
     r'typeDamage': PropertySchema(
-      id: 8,
+      id: 10,
       name: r'typeDamage',
       type: IsarType.string,
     ),
     r'weaponType': PropertySchema(
-      id: 9,
+      id: 11,
       name: r'weaponType',
       type: IsarType.byte,
       enumMap: _WeaponEntitiesweaponTypeEnumValueMap,
@@ -3288,10 +3993,12 @@ void _weaponEntitiesSerialize(
   writer.writeString(offsets[3], object.description);
   writer.writeString(offsets[4], object.dice);
   writer.writeLong(offsets[5], object.distance);
-  writer.writeBool(offsets[6], object.mastered);
-  writer.writeString(offsets[7], object.name);
-  writer.writeString(offsets[8], object.typeDamage);
-  writer.writeByte(offsets[9], object.weaponType.index);
+  writer.writeLong(offsets[6], object.hashCode);
+  writer.writeBool(offsets[7], object.mastered);
+  writer.writeString(offsets[8], object.name);
+  writer.writeBool(offsets[9], object.stringify);
+  writer.writeString(offsets[10], object.typeDamage);
+  writer.writeByte(offsets[11], object.weaponType.index);
 }
 
 WeaponEntities _weaponEntitiesDeserialize(
@@ -3307,11 +4014,11 @@ WeaponEntities _weaponEntitiesDeserialize(
     description: reader.readString(offsets[3]),
     dice: reader.readString(offsets[4]),
     distance: reader.readLong(offsets[5]),
-    mastered: reader.readBool(offsets[6]),
-    name: reader.readString(offsets[7]),
-    typeDamage: reader.readString(offsets[8]),
+    mastered: reader.readBool(offsets[7]),
+    name: reader.readString(offsets[8]),
+    typeDamage: reader.readString(offsets[10]),
     weaponType: _WeaponEntitiesweaponTypeValueEnumMap[
-            reader.readByteOrNull(offsets[9])] ??
+            reader.readByteOrNull(offsets[11])] ??
         WeaponType.MELEE,
   );
   return object;
@@ -3337,12 +4044,16 @@ P _weaponEntitiesDeserializeProp<P>(
     case 5:
       return (reader.readLong(offset)) as P;
     case 6:
-      return (reader.readBool(offset)) as P;
+      return (reader.readLong(offset)) as P;
     case 7:
-      return (reader.readString(offset)) as P;
+      return (reader.readBool(offset)) as P;
     case 8:
       return (reader.readString(offset)) as P;
     case 9:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 10:
+      return (reader.readString(offset)) as P;
+    case 11:
       return (_WeaponEntitiesweaponTypeValueEnumMap[
               reader.readByteOrNull(offset)] ??
           WeaponType.MELEE) as P;
@@ -4032,6 +4743,62 @@ extension WeaponEntitiesQueryFilter
     });
   }
 
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      hashCodeEqualTo(int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'hashCode',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      hashCodeGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'hashCode',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      hashCodeLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'hashCode',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      hashCodeBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'hashCode',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
   QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> idEqualTo(
       Id value) {
     return QueryBuilder.apply(this, (query) {
@@ -4229,6 +4996,34 @@ extension WeaponEntitiesQueryFilter
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'name',
         value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      stringifyIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'stringify',
+      ));
+    });
+  }
+
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      stringifyIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'stringify',
+      ));
+    });
+  }
+
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      stringifyEqualTo(bool? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'stringify',
+        value: value,
       ));
     });
   }
@@ -4515,6 +5310,19 @@ extension WeaponEntitiesQuerySortBy
     });
   }
 
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy> sortByHashCode() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'hashCode', Sort.asc);
+    });
+  }
+
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy>
+      sortByHashCodeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'hashCode', Sort.desc);
+    });
+  }
+
   QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy> sortByMastered() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'mastered', Sort.asc);
@@ -4537,6 +5345,19 @@ extension WeaponEntitiesQuerySortBy
   QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy> sortByNameDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'name', Sort.desc);
+    });
+  }
+
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy> sortByStringify() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'stringify', Sort.asc);
+    });
+  }
+
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy>
+      sortByStringifyDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'stringify', Sort.desc);
     });
   }
 
@@ -4652,6 +5473,19 @@ extension WeaponEntitiesQuerySortThenBy
     });
   }
 
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy> thenByHashCode() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'hashCode', Sort.asc);
+    });
+  }
+
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy>
+      thenByHashCodeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'hashCode', Sort.desc);
+    });
+  }
+
   QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy> thenById() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.asc);
@@ -4686,6 +5520,19 @@ extension WeaponEntitiesQuerySortThenBy
   QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy> thenByNameDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'name', Sort.desc);
+    });
+  }
+
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy> thenByStringify() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'stringify', Sort.asc);
+    });
+  }
+
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy>
+      thenByStringifyDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'stringify', Sort.desc);
     });
   }
 
@@ -4762,6 +5609,12 @@ extension WeaponEntitiesQueryWhereDistinct
     });
   }
 
+  QueryBuilder<WeaponEntities, WeaponEntities, QDistinct> distinctByHashCode() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'hashCode');
+    });
+  }
+
   QueryBuilder<WeaponEntities, WeaponEntities, QDistinct> distinctByMastered() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'mastered');
@@ -4772,6 +5625,13 @@ extension WeaponEntitiesQueryWhereDistinct
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'name', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<WeaponEntities, WeaponEntities, QDistinct>
+      distinctByStringify() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'stringify');
     });
   }
 
@@ -4837,6 +5697,12 @@ extension WeaponEntitiesQueryProperty
     });
   }
 
+  QueryBuilder<WeaponEntities, int, QQueryOperations> hashCodeProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'hashCode');
+    });
+  }
+
   QueryBuilder<WeaponEntities, bool, QQueryOperations> masteredProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'mastered');
@@ -4846,6 +5712,12 @@ extension WeaponEntitiesQueryProperty
   QueryBuilder<WeaponEntities, String, QQueryOperations> nameProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'name');
+    });
+  }
+
+  QueryBuilder<WeaponEntities, bool?, QQueryOperations> stringifyProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'stringify');
     });
   }
 
@@ -4891,16 +5763,26 @@ const CompetenceEntitiesSchema = CollectionSchema(
       name: r'competenced',
       type: IsarType.bool,
     ),
-    r'mastered': PropertySchema(
+    r'hashCode': PropertySchema(
       id: 3,
+      name: r'hashCode',
+      type: IsarType.long,
+    ),
+    r'mastered': PropertySchema(
+      id: 4,
       name: r'mastered',
       type: IsarType.bool,
     ),
     r'statTypeScale': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'statTypeScale',
       type: IsarType.byte,
       enumMap: _CompetenceEntitiesstatTypeScaleEnumValueMap,
+    ),
+    r'stringify': PropertySchema(
+      id: 6,
+      name: r'stringify',
+      type: IsarType.bool,
     )
   },
   estimateSize: _competenceEntitiesEstimateSize,
@@ -4936,8 +5818,10 @@ void _competenceEntitiesSerialize(
   writer.writeString(offsets[0], object.characterName);
   writer.writeByte(offsets[1], object.competenceType.index);
   writer.writeBool(offsets[2], object.competenced);
-  writer.writeBool(offsets[3], object.mastered);
-  writer.writeByte(offsets[4], object.statTypeScale.index);
+  writer.writeLong(offsets[3], object.hashCode);
+  writer.writeBool(offsets[4], object.mastered);
+  writer.writeByte(offsets[5], object.statTypeScale.index);
+  writer.writeBool(offsets[6], object.stringify);
 }
 
 CompetenceEntities _competenceEntitiesDeserialize(
@@ -4952,9 +5836,9 @@ CompetenceEntities _competenceEntitiesDeserialize(
             reader.readByteOrNull(offsets[1])] ??
         CompetenceType.ACROBATICS,
     competenced: reader.readBool(offsets[2]),
-    mastered: reader.readBool(offsets[3]),
+    mastered: reader.readBool(offsets[4]),
     statTypeScale: _CompetenceEntitiesstatTypeScaleValueEnumMap[
-            reader.readByteOrNull(offsets[4])] ??
+            reader.readByteOrNull(offsets[5])] ??
         StatType.STR,
   );
   return object;
@@ -4976,11 +5860,15 @@ P _competenceEntitiesDeserializeProp<P>(
     case 2:
       return (reader.readBool(offset)) as P;
     case 3:
-      return (reader.readBool(offset)) as P;
+      return (reader.readLong(offset)) as P;
     case 4:
+      return (reader.readBool(offset)) as P;
+    case 5:
       return (_CompetenceEntitiesstatTypeScaleValueEnumMap[
               reader.readByteOrNull(offset)] ??
           StatType.STR) as P;
+    case 6:
+      return (reader.readBoolOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -5340,6 +6228,62 @@ extension CompetenceEntitiesQueryFilter
   }
 
   QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterFilterCondition>
+      hashCodeEqualTo(int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'hashCode',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterFilterCondition>
+      hashCodeGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'hashCode',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterFilterCondition>
+      hashCodeLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'hashCode',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterFilterCondition>
+      hashCodeBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'hashCode',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterFilterCondition>
       idEqualTo(Id value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -5460,6 +6404,34 @@ extension CompetenceEntitiesQueryFilter
       ));
     });
   }
+
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterFilterCondition>
+      stringifyIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'stringify',
+      ));
+    });
+  }
+
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterFilterCondition>
+      stringifyIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'stringify',
+      ));
+    });
+  }
+
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterFilterCondition>
+      stringifyEqualTo(bool? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'stringify',
+        value: value,
+      ));
+    });
+  }
 }
 
 extension CompetenceEntitiesQueryObject
@@ -5513,6 +6485,20 @@ extension CompetenceEntitiesQuerySortBy
   }
 
   QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterSortBy>
+      sortByHashCode() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'hashCode', Sort.asc);
+    });
+  }
+
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterSortBy>
+      sortByHashCodeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'hashCode', Sort.desc);
+    });
+  }
+
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterSortBy>
       sortByMastered() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'mastered', Sort.asc);
@@ -5537,6 +6523,20 @@ extension CompetenceEntitiesQuerySortBy
       sortByStatTypeScaleDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'statTypeScale', Sort.desc);
+    });
+  }
+
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterSortBy>
+      sortByStringify() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'stringify', Sort.asc);
+    });
+  }
+
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterSortBy>
+      sortByStringifyDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'stringify', Sort.desc);
     });
   }
 }
@@ -5586,6 +6586,20 @@ extension CompetenceEntitiesQuerySortThenBy
   }
 
   QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterSortBy>
+      thenByHashCode() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'hashCode', Sort.asc);
+    });
+  }
+
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterSortBy>
+      thenByHashCodeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'hashCode', Sort.desc);
+    });
+  }
+
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterSortBy>
       thenById() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.asc);
@@ -5626,6 +6640,20 @@ extension CompetenceEntitiesQuerySortThenBy
       return query.addSortBy(r'statTypeScale', Sort.desc);
     });
   }
+
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterSortBy>
+      thenByStringify() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'stringify', Sort.asc);
+    });
+  }
+
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterSortBy>
+      thenByStringifyDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'stringify', Sort.desc);
+    });
+  }
 }
 
 extension CompetenceEntitiesQueryWhereDistinct
@@ -5653,6 +6681,13 @@ extension CompetenceEntitiesQueryWhereDistinct
   }
 
   QueryBuilder<CompetenceEntities, CompetenceEntities, QDistinct>
+      distinctByHashCode() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'hashCode');
+    });
+  }
+
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QDistinct>
       distinctByMastered() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'mastered');
@@ -5663,6 +6698,13 @@ extension CompetenceEntitiesQueryWhereDistinct
       distinctByStatTypeScale() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'statTypeScale');
+    });
+  }
+
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QDistinct>
+      distinctByStringify() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'stringify');
     });
   }
 }
@@ -5696,6 +6738,12 @@ extension CompetenceEntitiesQueryProperty
     });
   }
 
+  QueryBuilder<CompetenceEntities, int, QQueryOperations> hashCodeProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'hashCode');
+    });
+  }
+
   QueryBuilder<CompetenceEntities, bool, QQueryOperations> masteredProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'mastered');
@@ -5706,6 +6754,13 @@ extension CompetenceEntitiesQueryProperty
       statTypeScaleProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'statTypeScale');
+    });
+  }
+
+  QueryBuilder<CompetenceEntities, bool?, QQueryOperations>
+      stringifyProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'stringify');
     });
   }
 }
