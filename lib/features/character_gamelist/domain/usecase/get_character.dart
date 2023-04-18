@@ -11,5 +11,5 @@ class GetCharacter implements UseCase<Character, String> {
   GetCharacter(this.repository);
 
   @override
-  Character call(String characterName)  =>  repository.getCharacter(characterName);
+  Future<Character> call(String characterName) async => await repository.getCharacter(characterName);
 }

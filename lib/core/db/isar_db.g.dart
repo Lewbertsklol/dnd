@@ -1443,21 +1443,7 @@ const ExpEntitiesSchema = CollectionSchema(
   deserialize: _expEntitiesDeserialize,
   deserializeProp: _expEntitiesDeserializeProp,
   idName: r'id',
-  indexes: {
-    r'characterName': IndexSchema(
-      id: 3786554864616779302,
-      name: r'characterName',
-      unique: true,
-      replace: true,
-      properties: [
-        IndexPropertySchema(
-          name: r'characterName',
-          type: IndexType.hash,
-          caseSensitive: true,
-        )
-      ],
-    )
-  },
+  indexes: {},
   links: {},
   embeddedSchemas: {},
   getId: _expEntitiesGetId,
@@ -1531,63 +1517,6 @@ List<IsarLinkBase<dynamic>> _expEntitiesGetLinks(ExpEntities object) {
 
 void _expEntitiesAttach(
     IsarCollection<dynamic> col, Id id, ExpEntities object) {}
-
-extension ExpEntitiesByIndex on IsarCollection<ExpEntities> {
-  Future<ExpEntities?> getByCharacterName(String characterName) {
-    return getByIndex(r'characterName', [characterName]);
-  }
-
-  ExpEntities? getByCharacterNameSync(String characterName) {
-    return getByIndexSync(r'characterName', [characterName]);
-  }
-
-  Future<bool> deleteByCharacterName(String characterName) {
-    return deleteByIndex(r'characterName', [characterName]);
-  }
-
-  bool deleteByCharacterNameSync(String characterName) {
-    return deleteByIndexSync(r'characterName', [characterName]);
-  }
-
-  Future<List<ExpEntities?>> getAllByCharacterName(
-      List<String> characterNameValues) {
-    final values = characterNameValues.map((e) => [e]).toList();
-    return getAllByIndex(r'characterName', values);
-  }
-
-  List<ExpEntities?> getAllByCharacterNameSync(
-      List<String> characterNameValues) {
-    final values = characterNameValues.map((e) => [e]).toList();
-    return getAllByIndexSync(r'characterName', values);
-  }
-
-  Future<int> deleteAllByCharacterName(List<String> characterNameValues) {
-    final values = characterNameValues.map((e) => [e]).toList();
-    return deleteAllByIndex(r'characterName', values);
-  }
-
-  int deleteAllByCharacterNameSync(List<String> characterNameValues) {
-    final values = characterNameValues.map((e) => [e]).toList();
-    return deleteAllByIndexSync(r'characterName', values);
-  }
-
-  Future<Id> putByCharacterName(ExpEntities object) {
-    return putByIndex(r'characterName', object);
-  }
-
-  Id putByCharacterNameSync(ExpEntities object, {bool saveLinks = true}) {
-    return putByIndexSync(r'characterName', object, saveLinks: saveLinks);
-  }
-
-  Future<List<Id>> putAllByCharacterName(List<ExpEntities> objects) {
-    return putAllByIndex(r'characterName', objects);
-  }
-
-  List<Id> putAllByCharacterNameSync(List<ExpEntities> objects,
-      {bool saveLinks = true}) {
-    return putAllByIndexSync(r'characterName', objects, saveLinks: saveLinks);
-  }
-}
 
 extension ExpEntitiesQueryWhereSort
     on QueryBuilder<ExpEntities, ExpEntities, QWhere> {
@@ -1663,51 +1592,6 @@ extension ExpEntitiesQueryWhere
         upper: upperId,
         includeUpper: includeUpper,
       ));
-    });
-  }
-
-  QueryBuilder<ExpEntities, ExpEntities, QAfterWhereClause>
-      characterNameEqualTo(String characterName) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.equalTo(
-        indexName: r'characterName',
-        value: [characterName],
-      ));
-    });
-  }
-
-  QueryBuilder<ExpEntities, ExpEntities, QAfterWhereClause>
-      characterNameNotEqualTo(String characterName) {
-    return QueryBuilder.apply(this, (query) {
-      if (query.whereSort == Sort.asc) {
-        return query
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'characterName',
-              lower: [],
-              upper: [characterName],
-              includeUpper: false,
-            ))
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'characterName',
-              lower: [characterName],
-              includeLower: false,
-              upper: [],
-            ));
-      } else {
-        return query
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'characterName',
-              lower: [characterName],
-              includeLower: false,
-              upper: [],
-            ))
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'characterName',
-              lower: [],
-              upper: [characterName],
-              includeUpper: false,
-            ));
-      }
     });
   }
 }
@@ -2277,21 +2161,7 @@ const HpEntitiesSchema = CollectionSchema(
   deserialize: _hpEntitiesDeserialize,
   deserializeProp: _hpEntitiesDeserializeProp,
   idName: r'id',
-  indexes: {
-    r'characterName': IndexSchema(
-      id: 3786554864616779302,
-      name: r'characterName',
-      unique: true,
-      replace: true,
-      properties: [
-        IndexPropertySchema(
-          name: r'characterName',
-          type: IndexType.hash,
-          caseSensitive: true,
-        )
-      ],
-    )
-  },
+  indexes: {},
   links: {},
   embeddedSchemas: {},
   getId: _hpEntitiesGetId,
@@ -2377,63 +2247,6 @@ List<IsarLinkBase<dynamic>> _hpEntitiesGetLinks(HpEntities object) {
 
 void _hpEntitiesAttach(IsarCollection<dynamic> col, Id id, HpEntities object) {}
 
-extension HpEntitiesByIndex on IsarCollection<HpEntities> {
-  Future<HpEntities?> getByCharacterName(String characterName) {
-    return getByIndex(r'characterName', [characterName]);
-  }
-
-  HpEntities? getByCharacterNameSync(String characterName) {
-    return getByIndexSync(r'characterName', [characterName]);
-  }
-
-  Future<bool> deleteByCharacterName(String characterName) {
-    return deleteByIndex(r'characterName', [characterName]);
-  }
-
-  bool deleteByCharacterNameSync(String characterName) {
-    return deleteByIndexSync(r'characterName', [characterName]);
-  }
-
-  Future<List<HpEntities?>> getAllByCharacterName(
-      List<String> characterNameValues) {
-    final values = characterNameValues.map((e) => [e]).toList();
-    return getAllByIndex(r'characterName', values);
-  }
-
-  List<HpEntities?> getAllByCharacterNameSync(
-      List<String> characterNameValues) {
-    final values = characterNameValues.map((e) => [e]).toList();
-    return getAllByIndexSync(r'characterName', values);
-  }
-
-  Future<int> deleteAllByCharacterName(List<String> characterNameValues) {
-    final values = characterNameValues.map((e) => [e]).toList();
-    return deleteAllByIndex(r'characterName', values);
-  }
-
-  int deleteAllByCharacterNameSync(List<String> characterNameValues) {
-    final values = characterNameValues.map((e) => [e]).toList();
-    return deleteAllByIndexSync(r'characterName', values);
-  }
-
-  Future<Id> putByCharacterName(HpEntities object) {
-    return putByIndex(r'characterName', object);
-  }
-
-  Id putByCharacterNameSync(HpEntities object, {bool saveLinks = true}) {
-    return putByIndexSync(r'characterName', object, saveLinks: saveLinks);
-  }
-
-  Future<List<Id>> putAllByCharacterName(List<HpEntities> objects) {
-    return putAllByIndex(r'characterName', objects);
-  }
-
-  List<Id> putAllByCharacterNameSync(List<HpEntities> objects,
-      {bool saveLinks = true}) {
-    return putAllByIndexSync(r'characterName', objects, saveLinks: saveLinks);
-  }
-}
-
 extension HpEntitiesQueryWhereSort
     on QueryBuilder<HpEntities, HpEntities, QWhere> {
   QueryBuilder<HpEntities, HpEntities, QAfterWhere> anyId() {
@@ -2507,51 +2320,6 @@ extension HpEntitiesQueryWhere
         upper: upperId,
         includeUpper: includeUpper,
       ));
-    });
-  }
-
-  QueryBuilder<HpEntities, HpEntities, QAfterWhereClause> characterNameEqualTo(
-      String characterName) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.equalTo(
-        indexName: r'characterName',
-        value: [characterName],
-      ));
-    });
-  }
-
-  QueryBuilder<HpEntities, HpEntities, QAfterWhereClause>
-      characterNameNotEqualTo(String characterName) {
-    return QueryBuilder.apply(this, (query) {
-      if (query.whereSort == Sort.asc) {
-        return query
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'characterName',
-              lower: [],
-              upper: [characterName],
-              includeUpper: false,
-            ))
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'characterName',
-              lower: [characterName],
-              includeLower: false,
-              upper: [],
-            ));
-      } else {
-        return query
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'characterName',
-              lower: [characterName],
-              includeLower: false,
-              upper: [],
-            ))
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'characterName',
-              lower: [],
-              upper: [characterName],
-              includeUpper: false,
-            ));
-      }
     });
   }
 }
@@ -4304,7 +4072,21 @@ const WeaponEntitiesSchema = CollectionSchema(
   deserialize: _weaponEntitiesDeserialize,
   deserializeProp: _weaponEntitiesDeserializeProp,
   idName: r'id',
-  indexes: {},
+  indexes: {
+    r'name': IndexSchema(
+      id: 879695947855722453,
+      name: r'name',
+      unique: true,
+      replace: true,
+      properties: [
+        IndexPropertySchema(
+          name: r'name',
+          type: IndexType.hash,
+          caseSensitive: true,
+        )
+      ],
+    )
+  },
   links: {},
   embeddedSchemas: {},
   getId: _weaponEntitiesGetId,
@@ -4430,6 +4212,61 @@ List<IsarLinkBase<dynamic>> _weaponEntitiesGetLinks(WeaponEntities object) {
 void _weaponEntitiesAttach(
     IsarCollection<dynamic> col, Id id, WeaponEntities object) {}
 
+extension WeaponEntitiesByIndex on IsarCollection<WeaponEntities> {
+  Future<WeaponEntities?> getByName(String name) {
+    return getByIndex(r'name', [name]);
+  }
+
+  WeaponEntities? getByNameSync(String name) {
+    return getByIndexSync(r'name', [name]);
+  }
+
+  Future<bool> deleteByName(String name) {
+    return deleteByIndex(r'name', [name]);
+  }
+
+  bool deleteByNameSync(String name) {
+    return deleteByIndexSync(r'name', [name]);
+  }
+
+  Future<List<WeaponEntities?>> getAllByName(List<String> nameValues) {
+    final values = nameValues.map((e) => [e]).toList();
+    return getAllByIndex(r'name', values);
+  }
+
+  List<WeaponEntities?> getAllByNameSync(List<String> nameValues) {
+    final values = nameValues.map((e) => [e]).toList();
+    return getAllByIndexSync(r'name', values);
+  }
+
+  Future<int> deleteAllByName(List<String> nameValues) {
+    final values = nameValues.map((e) => [e]).toList();
+    return deleteAllByIndex(r'name', values);
+  }
+
+  int deleteAllByNameSync(List<String> nameValues) {
+    final values = nameValues.map((e) => [e]).toList();
+    return deleteAllByIndexSync(r'name', values);
+  }
+
+  Future<Id> putByName(WeaponEntities object) {
+    return putByIndex(r'name', object);
+  }
+
+  Id putByNameSync(WeaponEntities object, {bool saveLinks = true}) {
+    return putByIndexSync(r'name', object, saveLinks: saveLinks);
+  }
+
+  Future<List<Id>> putAllByName(List<WeaponEntities> objects) {
+    return putAllByIndex(r'name', objects);
+  }
+
+  List<Id> putAllByNameSync(List<WeaponEntities> objects,
+      {bool saveLinks = true}) {
+    return putAllByIndexSync(r'name', objects, saveLinks: saveLinks);
+  }
+}
+
 extension WeaponEntitiesQueryWhereSort
     on QueryBuilder<WeaponEntities, WeaponEntities, QWhere> {
   QueryBuilder<WeaponEntities, WeaponEntities, QAfterWhere> anyId() {
@@ -4507,6 +4344,51 @@ extension WeaponEntitiesQueryWhere
         upper: upperId,
         includeUpper: includeUpper,
       ));
+    });
+  }
+
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterWhereClause> nameEqualTo(
+      String name) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'name',
+        value: [name],
+      ));
+    });
+  }
+
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterWhereClause>
+      nameNotEqualTo(String name) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'name',
+              lower: [],
+              upper: [name],
+              includeUpper: false,
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'name',
+              lower: [name],
+              includeLower: false,
+              upper: [],
+            ));
+      } else {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'name',
+              lower: [name],
+              includeLower: false,
+              upper: [],
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'name',
+              lower: [],
+              upper: [name],
+              includeUpper: false,
+            ));
+      }
     });
   }
 }

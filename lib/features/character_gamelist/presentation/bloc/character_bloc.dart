@@ -28,6 +28,5 @@ class CharacterBloc extends Bloc<CharacterEvent, CharacterState> {
   Future<void> _updateCharacter(UpdateCharacterEvent event, Emitter<CharacterState> emit) async {
     final character = await updateCharacter(event.params);
     emit(CharacterLoaded(character));
-    print('Я заэмитил нового персонажа');
   }
 }

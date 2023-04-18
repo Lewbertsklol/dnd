@@ -4,9 +4,9 @@ import '../../domain/repositories/character_list_repository.dart';
 import '../models/character_model.dart';
 
 abstract class CharacterListLocalDatasource {
- List<CharacterModel> getCharacterList();
-  List<CharacterModel> createCharacter(ParamsForNewCharacter params);
-  List<CharacterModel> deleteCharacter(String characterName);
-  CharacterModel getCharacter(String characterName);
-  CharacterModel updateCharacter(NewParams params);
+  Future<List<CharacterModel>> getCharacterList();
+  Future<List<CharacterModel>> createCharacter(ParamsForNewCharacter params);
+  Future<List<CharacterModel>> deleteCharacter(String characterName);
+  Future<CharacterModel> getCharacter(String characterName);
+  Future<CharacterModel> updateCharacter(NewParams params);
 }

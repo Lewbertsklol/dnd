@@ -9,5 +9,5 @@ class GetCharacterList implements UseCase<List<Character>, NoParams> {
   GetCharacterList(this.repository);
 
   @override
-  List<Character> call(NoParams params)  => repository.getCharacterList();
+  Future<List<Character>> call(NoParams params) async => await repository.getCharacterList();
 }

@@ -7,8 +7,8 @@ import '../../../character_list_view/domain/entities/stats.dart';
 import '../../../character_list_view/domain/entities/weapon.dart';
 
 abstract class CharacterRepository {
-  Character getCharacter(String characterName);
-  Character updateCharacter(NewParams newParams);
+  Future<Character> getCharacter(String characterName);
+  Future<Character> updateCharacter(NewParams newParams);
 }
 
 class NewParams {

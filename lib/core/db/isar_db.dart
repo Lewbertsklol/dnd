@@ -26,7 +26,6 @@ class CharacterEntities extends Equatable {
 @Collection(ignore: {'props'})
 class ExpEntities extends Equatable {
   final Id id = Isar.autoIncrement;
-  @Index(replace: true, unique: true)
   final String characterName;
   final int value;
 
@@ -39,7 +38,6 @@ class ExpEntities extends Equatable {
 @Collection(ignore: {'props'})
 class HpEntities extends Equatable {
   final Id id = Isar.autoIncrement;
-  @Index(replace: true, unique: true)
   final String characterName;
   final int maxHP;
   final int currHP;
@@ -76,6 +74,7 @@ class StatEntities extends Equatable {
 class WeaponEntities extends Equatable {
   final Id id = Isar.autoIncrement;
   final String characterName;
+  @Index(replace: true, unique: true)
   final String name;
   final String typeDamage;
   final int distance;

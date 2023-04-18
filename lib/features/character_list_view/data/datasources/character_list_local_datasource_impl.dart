@@ -13,7 +13,7 @@ import 'character_list_local_datasource.dart';
 
 class CharacterListLocalDatasourceImpl implements CharacterListLocalDatasource {
   @override
-  List<CharacterModel> createCharacter(ParamsForNewCharacter paramsFromScreen) {
+  Future<List<CharacterModel>> createCharacter(ParamsForNewCharacter paramsFromScreen) async {
     const classDefenceForNewCharacter = 10;
     const expForNewCharacter = Exp();
     const hpForNewCharacter = HP();
@@ -56,6 +56,7 @@ class CharacterListLocalDatasourceImpl implements CharacterListLocalDatasource {
             name: "${paramsFromScreen.name}'s palka",
             typeDamage: 'typeDamage',
             distance: 5,
+            master: false,
             dice: 'dice',
             weaponType: WeaponType.MELEE,
             bonusAttackChance: 0,
@@ -64,57 +65,52 @@ class CharacterListLocalDatasourceImpl implements CharacterListLocalDatasource {
       ],
     );
 
-    _writeCharacter(newCharacter);
-    List<CharacterModel> characterList = getCharacterList();
-    return characterList;
+    await _writeCharacter(newCharacter);
+    Future<List<CharacterModel>> characterList = getCharacterList();
+    return Future.value(characterList);
   }
 
   @override
-  List<CharacterModel> deleteCharacter(String characterName) {
+  Future<List<CharacterModel>> deleteCharacter(String characterName) async {
     final isar = Isar.getInstance();
     if (isar == null) return [];
 
-    isar.writeTxnSync(() {
-      isar.collection<CharacterEntities>().filter().nameEqualTo(characterName).deleteAll();
-      isar.collection<ExpEntities>().filter().characterNameEqualTo(characterName).deleteAll();
-      isar.collection<HpEntities>().filter().characterNameEqualTo(characterName).deleteAll();
-      isar.collection<StatEntities>().filter().characterNameEqualTo(characterName).deleteAll();
-      isar.collection<WeaponEntities>().filter().characterNameEqualTo(characterName).deleteAll();
-      isar.collection<CompetenceEntities>().filter().characterNameEqualTo(characterName).deleteAll();
+    await isar.writeTxn(() async {
+      await isar.collection<CharacterEntities>().filter().nameEqualTo(characterName).deleteAll();
+      await isar.collection<ExpEntities>().filter().characterNameEqualTo(characterName).deleteAll();
+      await isar.collection<HpEntities>().filter().characterNameEqualTo(characterName).deleteAll();
+      await isar.collection<StatEntities>().filter().characterNameEqualTo(characterName).deleteAll();
+      await isar.collection<WeaponEntities>().filter().characterNameEqualTo(characterName).deleteAll();
+      await isar.collection<CompetenceEntities>().filter().characterNameEqualTo(characterName).deleteAll();
     });
-    List<CharacterModel> characterList = getCharacterList();
-    return characterList;
+    Future<List<CharacterModel>> characterList = getCharacterList();
+    return Future.value(characterList);
   }
 
   @override
-  List<CharacterModel> getCharacterList() {
+  Future<List<CharacterModel>> getCharacterList() async {
     final isar = Isar.getInstance();
     if (isar == null) return [];
 
     final List<CharacterModel> characterList = [];
-    final characterNames = isar.collection<CharacterEntities>().where().findAllSync();
+    final characterNames = await isar.collection<CharacterEntities>().where().findAll();
 
     for (int i = 0; i < characterNames.length; i++) {
-      characterList.add(getCharacter(characterNames[i].name));
+      characterList.add(await getCharacter(characterNames[i].name));
     }
-    return characterList;
+    return Future.value(characterList);
   }
 
   @override
-  CharacterModel getCharacter(String characterName) {
+  Future<CharacterModel> getCharacter(String characterName) async {
     final isar = Isar.getInstance()!;
 
-    CharacterEntities characterEntities = (isar.collection<CharacterEntities>().filter().nameEqualTo(characterName).findAllSync()).first;
-    ExpEntities exp = (isar.collection<ExpEntities>().filter().characterNameEqualTo(characterName).findAllSync()).first;
-    HpEntities hp = (isar.collection<HpEntities>().filter().characterNameEqualTo(characterName).findAllSync()).first;
-    List<StatEntities> stats = isar.collection<StatEntities>().filter().characterNameEqualTo(characterName).findAllSync();
-    List<CompetenceEntities> competences = isar.collection<CompetenceEntities>().filter().characterNameEqualTo(characterName).findAllSync();
-    List<WeaponEntities> weapons = isar.collection<WeaponEntities>().filter().characterNameEqualTo(characterName).findAllSync();
-
-    // print('Достал из БД оружие:');
-    // for (WeaponEntities weapon in weapons) {
-    //   print(weapon);
-    // }
+    CharacterEntities characterEntities = (await isar.collection<CharacterEntities>().filter().nameEqualTo(characterName).findAll()).first;
+    ExpEntities exp = (await isar.collection<ExpEntities>().filter().characterNameEqualTo(characterName).findAll()).first;
+    HpEntities hp = (await isar.collection<HpEntities>().filter().characterNameEqualTo(characterName).findAll()).first;
+    List<StatEntities> stats = await isar.collection<StatEntities>().filter().characterNameEqualTo(characterName).findAll();
+    List<CompetenceEntities> competences = await isar.collection<CompetenceEntities>().filter().characterNameEqualTo(characterName).findAll();
+    List<WeaponEntities> weapons = await isar.collection<WeaponEntities>().filter().characterNameEqualTo(characterName).findAll();
     final character = CharacterModel(
       name: characterEntities.name,
       race: characterEntities.race,
@@ -150,13 +146,13 @@ class CharacterListLocalDatasourceImpl implements CharacterListLocalDatasource {
               description: weaponEntitie.description))
           .toList(),
     );
-    return character;
+    return Future.value(character);
   }
 
   @override
-  CharacterModel updateCharacter(NewParams params) {
-    final character = getCharacter(params.characterName);
-    deleteCharacter(character.name);
+  Future<CharacterModel> updateCharacter(NewParams params) async {
+    final character = await getCharacter(params.characterName);
+    await deleteCharacter(character.name);
 
     final updatedCharacter = character.copyWith(
       name: params.newName,
@@ -167,14 +163,12 @@ class CharacterListLocalDatasourceImpl implements CharacterListLocalDatasource {
       weapons: params.weapons,
       competences: params.competences,
     );
-    // print('Обновленный персонаж');
-    // print(updatedCharacter);
 
-    _writeCharacter(updatedCharacter);
-    return updatedCharacter;
+    await _writeCharacter(updatedCharacter);
+    return Future.value(updatedCharacter);
   }
 
-  void _writeCharacter(CharacterModel character) {
+  Future<void> _writeCharacter(CharacterModel character) async {
     final isar = Isar.getInstance();
     if (isar == null) return;
 
@@ -230,17 +224,14 @@ class CharacterListLocalDatasourceImpl implements CharacterListLocalDatasource {
         competenced: competence.competenced,
       ));
     }
-    // print('Положил в БД оружие:');
-    // for (WeaponEntities weapon in weapons) {
-    //   print(weapon);
-    // }
-    isar.writeTxnSync(() {
-      isar.collection<CharacterEntities>().putSync(characterEntities);
-      isar.collection<ExpEntities>().putSync(exp);
-      isar.collection<HpEntities>().putSync(hp);
-      isar.collection<StatEntities>().putAllSync(stats);
-      isar.collection<WeaponEntities>().putAllSync(weapons);
-      isar.collection<CompetenceEntities>().putAllSync(competences);
+
+    await isar.writeTxn(() async {
+      await isar.collection<CharacterEntities>().put(characterEntities);
+      await isar.collection<ExpEntities>().put(exp);
+      await isar.collection<HpEntities>().put(hp);
+      await isar.collection<StatEntities>().putAll(stats);
+      await isar.collection<WeaponEntities>().putAll(weapons);
+      await isar.collection<CompetenceEntities>().putAll(competences);
     });
   }
 }

@@ -8,5 +8,5 @@ class UpdateCharacter implements UseCase<Character, NewParams> {
   UpdateCharacter(this.repository);
 
   @override
-  Character call(NewParams newParams) =>  repository.updateCharacter(newParams);
+  Future<Character> call(NewParams newParams) async => await repository.updateCharacter(newParams);
 }
