@@ -6,7 +6,7 @@ import '../../domain/repositories/character_repository.dart';
 import '../bloc/character_bloc.dart';
 
 void changeWeaponMaster(BuildContext context, CharacterLoaded state, Weapon weapon) {
-  final newWeapon = Weapon(
+  final Weapon newWeapon = Weapon(
     master: !weapon.master,
     name: weapon.name,
     typeDamage: weapon.typeDamage,
@@ -17,9 +17,9 @@ void changeWeaponMaster(BuildContext context, CharacterLoaded state, Weapon weap
     bonusAttackDamage: weapon.bonusAttackDamage,
     description: weapon.description,
   );
-  final weapons = state.character.weapons.map((oldWeapon) => oldWeapon.name == newWeapon.name ? newWeapon : oldWeapon).toList();
+  final List<Weapon> weapons = state.character.weapons.map((oldWeapon) => oldWeapon.name == newWeapon.name ? newWeapon : oldWeapon).toList();
 
-  print(newWeapon);
+  //print(newWeapon);
   context.read<CharacterBloc>().add(
         UpdateCharacterEvent(
           params: NewParams(

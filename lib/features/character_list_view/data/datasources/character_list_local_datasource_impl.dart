@@ -166,7 +166,7 @@ class CharacterListLocalDatasourceImpl implements CharacterListLocalDatasource {
     );
 
     await _writeCharacter(updatedCharacter);
-    return Future.value(updatedCharacter);
+    return updatedCharacter;
   }
 
   Future<void> _writeCharacter(CharacterModel character) async {

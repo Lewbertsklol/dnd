@@ -6,13 +6,13 @@ import '../../domain/repositories/character_repository.dart';
 import '../bloc/character_bloc.dart';
 
 void addStatValue(BuildContext context, CharacterLoaded state, Stat stat) {
-  final newStat = Stat(
+  final Stat newStat = Stat(
     statType: stat.statType,
     value: stat.value + 1,
     saveThrowMastered: stat.saveThrowMastered,
   );
-  final stats = (state.character.stats.map((oldStat) => oldStat.statType == newStat.statType ? newStat : oldStat)).toList();
-  print(newStat);
+  final List<Stat> stats = (state.character.stats.map((oldStat) => oldStat.statType == newStat.statType ? newStat : oldStat)).toList();
+  //print(newStat);
   context.read<CharacterBloc>().add(
         UpdateCharacterEvent(
           params: NewParams(
@@ -24,13 +24,13 @@ void addStatValue(BuildContext context, CharacterLoaded state, Stat stat) {
 }
 
 void removeStatValue(BuildContext context, CharacterLoaded state, Stat stat) {
-  final newStat = Stat(
+  final Stat newStat = Stat(
     statType: stat.statType,
     value: stat.value - 1,
     saveThrowMastered: stat.saveThrowMastered,
   );
-  final stats = (state.character.stats.map((oldStat) => oldStat.statType == newStat.statType ? newStat : oldStat)).toList();
-  print(newStat);
+  final List<Stat> stats = (state.character.stats.map((oldStat) => oldStat.statType == newStat.statType ? newStat : oldStat)).toList();
+  //print(newStat);
   context.read<CharacterBloc>().add(
         UpdateCharacterEvent(
           params: NewParams(

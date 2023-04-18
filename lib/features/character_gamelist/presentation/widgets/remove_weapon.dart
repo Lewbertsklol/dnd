@@ -6,8 +6,7 @@ import '../../../character_list_view/domain/entities/weapon.dart';
 import '../../domain/repositories/character_repository.dart';
 
 void removeWeapon(BuildContext context, CharacterLoaded state, Weapon weapon) {
-  state.character.weapons.remove(weapon);
-  var weapons = state.character.weapons;
+  final List<Weapon> weapons = (state.character.weapons.where((oldWeapon) => oldWeapon != weapon)).toList();
   context.read<CharacterBloc>().add(
         UpdateCharacterEvent(
           params: NewParams(

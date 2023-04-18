@@ -355,7 +355,7 @@ class CommonScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final characterName = ModalRoute.of(context)?.settings.arguments as String;
     context.read<CharacterBloc>().add(GetCharacterEvent(characterName));
-
+    
     return BlocBuilder<CharacterBloc, CharacterState>(
       builder: (context, state) {
         if (state is CharacterInitial) {

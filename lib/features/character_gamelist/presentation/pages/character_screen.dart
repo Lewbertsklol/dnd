@@ -74,7 +74,7 @@ class _CharacterScreenState extends State<CharacterScreen> with TickerProviderSt
                         LengthLimitingTextInputFormatter(7),
                       ],
                       onSubmitted: (value) {
-                        addExp(context, state, int.tryParse(_expController.text) ?? 0); //!
+                        addExp(context, state, int.tryParse(_expController.text) ?? 0); //!     
                         FocusScope.of(context).unfocus();
                         _expController.clear();
                         SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);

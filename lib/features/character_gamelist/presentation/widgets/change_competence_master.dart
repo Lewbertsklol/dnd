@@ -6,14 +6,14 @@ import '../../domain/repositories/character_repository.dart';
 import '../bloc/character_bloc.dart';
 
 void changeCompetenceMastered(BuildContext context, CharacterLoaded state, Competence competence) {
-  final newCompetence = Competence(
+  final Competence newCompetence = Competence(
     competenceType: competence.competenceType,
     statTypeScale: competence.statTypeScale,
     mastered: !competence.mastered,
     competenced: competence.competenced,
   );
-  print(newCompetence);
-  final competences =
+  //print(newCompetence);
+  final List<Competence> competences =
       (state.character.competences.map((oldCompetence) => oldCompetence.competenceType == newCompetence.competenceType ? newCompetence : oldCompetence)).toList();
   context.read<CharacterBloc>().add(
         UpdateCharacterEvent(

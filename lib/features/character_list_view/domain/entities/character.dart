@@ -17,8 +17,8 @@ class Character extends Equatable {
   final Exp exp;
   final HP hp;
   final List<Stat> stats;
-  final List<Weapon> weapons;
   final List<Competence> competences;
+  final List<Weapon> weapons;
   //Inventory? inventory;
   //final List<GameClass> gameClasses;
 
@@ -31,8 +31,8 @@ class Character extends Equatable {
     required this.exp,
     required this.hp,
     required this.stats,
-    required this.weapons,
     required this.competences,
+    required this.weapons,
     //required this.inventory,
   });
   int get levelPoint => exp.level;
@@ -70,7 +70,7 @@ class Character extends Equatable {
       weapon.master ? _whichStatUsesWeapon(weapon) + bonusModificator + weapon.bonusAttackChance : _whichStatUsesWeapon(weapon) + weapon.bonusAttackChance;
   int getAttackDamageWithWeapon(Weapon weapon) => _whichStatUsesWeapon(weapon) + weapon.bonusAttackDamage;
   @override
-  List<Object?> get props => [name, stats, competences, weapons];
+  List<Object?> get props => [name, race, sex, backstory, exp, hp, stats, competences, weapons];
   @override
   bool? get stringify => true;
 }
