@@ -9,5 +9,5 @@ class DeleteCharacter implements UseCase<List<Character>, String> {
   DeleteCharacter(this.repository);
 
   @override
-  Future<List<Character>> call(String characterName) async => await repository.deleteCharacter(characterName);
+  List<Character> call(String characterName)  =>  repository.deleteCharacter(characterName);
 }

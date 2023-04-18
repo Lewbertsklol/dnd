@@ -10,7 +10,10 @@ void removeWeapon(BuildContext context, CharacterLoaded state, Weapon weapon) {
   var weapons = state.character.weapons;
   context.read<CharacterBloc>().add(
         UpdateCharacterEvent(
-          params: NewParams(characterName: state.character.name, weapons: weapons),
+          params: NewParams(
+            characterName: state.character.name,
+            weapons: weapons,
+          ),
         ),
       );
 }

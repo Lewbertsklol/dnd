@@ -18,7 +18,8 @@ void changeWeaponMaster(BuildContext context, CharacterLoaded state, Weapon weap
     description: weapon.description,
   );
   final weapons = state.character.weapons.map((oldWeapon) => oldWeapon.name == newWeapon.name ? newWeapon : oldWeapon).toList();
-  print(newWeapon);
+  print('Изменил $weapon');
+  print('на $newWeapon');
   context.read<CharacterBloc>().add(
         UpdateCharacterEvent(
           params: NewParams(

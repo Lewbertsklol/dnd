@@ -1,9 +1,9 @@
 import 'package:dnd/features/character_list_view/domain/entities/character.dart';
 
 abstract class CharacterListRepository {
-  Future<List<Character>> getCharacterList();
-  Future<List<Character>> createCharacter(ParamsForNewCharacter params);
-  Future<List<Character>> deleteCharacter(String characterName);
+  List<Character> getCharacterList();
+  List<Character> createCharacter(ParamsForNewCharacter params);
+  List<Character> deleteCharacter(String characterName);
 }
 
 class ParamsForNewCharacter {

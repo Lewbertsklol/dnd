@@ -9,5 +9,5 @@ class CreateCharacter implements UseCase<List<Character>, ParamsForNewCharacter>
   CreateCharacter(this.repository);
 
   @override
-  Future<List<Character>> call(ParamsForNewCharacter params) async => await repository.createCharacter(params);
+  List<Character> call(ParamsForNewCharacter params)  =>  repository.createCharacter(params);
 }

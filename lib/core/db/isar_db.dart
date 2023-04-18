@@ -10,6 +10,7 @@ part 'isar_db.g.dart';
 @Collection(ignore: {'props'})
 class CharacterEntities extends Equatable {
   final Id id = Isar.autoIncrement;
+  @Index(replace: true, unique: true)
   final String name;
   final String race;
   final String sex;
@@ -25,6 +26,7 @@ class CharacterEntities extends Equatable {
 @Collection(ignore: {'props'})
 class ExpEntities extends Equatable {
   final Id id = Isar.autoIncrement;
+  @Index(replace: true, unique: true)
   final String characterName;
   final int value;
 
@@ -37,6 +39,7 @@ class ExpEntities extends Equatable {
 @Collection(ignore: {'props'})
 class HpEntities extends Equatable {
   final Id id = Isar.autoIncrement;
+  @Index(replace: true, unique: true)
   final String characterName;
   final int maxHP;
   final int currHP;
@@ -76,7 +79,7 @@ class WeaponEntities extends Equatable {
   final String name;
   final String typeDamage;
   final int distance;
-  final bool mastered;
+  final bool master;
   final String dice;
   @enumerated
   final WeaponType weaponType;
@@ -89,7 +92,7 @@ class WeaponEntities extends Equatable {
     required this.name,
     required this.typeDamage,
     required this.distance,
-    required this.mastered,
+    required this.master,
     required this.dice,
     required this.weaponType,
     required this.bonusAttackChance,
@@ -98,7 +101,7 @@ class WeaponEntities extends Equatable {
   });
 
   @override
-  List<Object?> get props => [name, mastered];
+  List<Object?> get props => [name, master];
 }
 
 @Collection(ignore: {'props'})

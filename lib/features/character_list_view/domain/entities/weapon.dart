@@ -26,8 +26,6 @@ class Weapon extends Equatable {
     required this.description,
   });
 
-  set master(bool value) => value;
-
   @override
   List<Object?> get props => [name, master];
 

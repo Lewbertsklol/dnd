@@ -70,7 +70,7 @@ class Character extends Equatable {
       weapon.master ? _whichStatUsesWeapon(weapon) + bonusModificator + weapon.bonusAttackChance : _whichStatUsesWeapon(weapon) + weapon.bonusAttackChance;
   int getAttackDamageWithWeapon(Weapon weapon) => _whichStatUsesWeapon(weapon) + weapon.bonusAttackDamage;
   @override
-  List<Object?> get props => [name, competences];
+  List<Object?> get props => [name, stats, competences, weapons];
   @override
   bool? get stringify => true;
 }

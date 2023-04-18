@@ -7,9 +7,9 @@ class CharacterRepositoryImpl implements CharacterRepository{
   final CharacterListLocalDatasource localDatasource;
   CharacterRepositoryImpl({required this.localDatasource});
   @override
-  Future<Character> getCharacter(String characterName) async => localDatasource.getCharacter(characterName);
+  Character getCharacter(String characterName) => localDatasource.getCharacter(characterName);
 
   @override
-  Future<Character> updateCharacter(NewParams params) async => localDatasource.updateCharacter(params);
+  Character updateCharacter(NewParams params) => localDatasource.updateCharacter(params);
 
 }
