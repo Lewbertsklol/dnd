@@ -73,4 +73,6 @@ class Character extends Equatable {
   List<Object?> get props => [name, race, sex, backstory, exp, hp, stats, competences, weapons];
   @override
   bool? get stringify => true;
+
+
 }
