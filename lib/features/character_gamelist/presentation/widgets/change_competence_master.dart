@@ -8,7 +8,6 @@ import '../bloc/character_bloc.dart';
 void changeCompetenceMastered(BuildContext context, CharacterLoaded state, Competence competence) {
   final Competence newCompetence = Competence(
     competenceType: competence.competenceType,
-    statTypeScale: competence.statTypeScale,
     mastered: !competence.mastered,
     competenced: competence.competenced,
   );

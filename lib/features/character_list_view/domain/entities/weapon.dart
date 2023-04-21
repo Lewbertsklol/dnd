@@ -1,6 +1,8 @@
 // ignore_for_file: constant_identifier_names
 import 'package:equatable/equatable.dart';
 
+import 'game_class.dart';
+
 enum WeaponType { MELEE, RANGE, FENCING }
 
 class Weapon extends Equatable {
@@ -8,7 +10,7 @@ class Weapon extends Equatable {
   final String typeDamage;
   final int distance;
   final bool master;
-  final String dice;
+  final List<DiceType> dices;
   final WeaponType weaponType;
   final int bonusAttackChance;
   final int bonusAttackDamage;
@@ -19,7 +21,7 @@ class Weapon extends Equatable {
     required this.typeDamage,
     required this.distance,
     this.master = false,
-    required this.dice,
+    required this.dices,
     required this.weaponType,
     required this.bonusAttackChance,
     required this.bonusAttackDamage,
@@ -27,7 +29,7 @@ class Weapon extends Equatable {
   });
 
   @override
-  List<Object?> get props => [name, master, typeDamage, distance, weaponType, bonusAttackChance, bonusAttackDamage, description, dice];
+  List<Object?> get props => [name, master, typeDamage, distance, weaponType, bonusAttackChance, bonusAttackDamage, description, dices];
 
   @override
   bool? get stringify => true;

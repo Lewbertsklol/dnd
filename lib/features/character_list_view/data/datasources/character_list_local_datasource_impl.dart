@@ -2,6 +2,7 @@ import 'package:dnd/features/character_gamelist/domain/repositories/character_re
 import 'package:dnd/features/character_list_view/data/models/character_model.dart';
 import 'package:dnd/features/character_list_view/domain/entities/competence.dart';
 import 'package:dnd/features/character_list_view/domain/entities/exp.dart';
+import 'package:dnd/features/character_list_view/domain/entities/game_class.dart';
 import 'package:dnd/features/character_list_view/domain/entities/hp.dart';
 import 'package:dnd/features/character_list_view/domain/entities/stats.dart';
 import 'package:dnd/features/character_list_view/domain/entities/weapon.dart';
@@ -22,25 +23,9 @@ class CharacterListLocalDatasourceImpl implements CharacterListLocalDatasource {
       statsForNewCharacter.add(Stat(statType: statType));
     }
     final competencesForNewCharacter = <Competence>[];
-    competencesForNewCharacter.add(const Competence(competenceType: CompetenceType.ACROBATICS, statTypeScale: StatType.DEX));
-    competencesForNewCharacter.add(const Competence(competenceType: CompetenceType.ANALISYS, statTypeScale: StatType.INT));
-    competencesForNewCharacter.add(const Competence(competenceType: CompetenceType.ATHLETICS, statTypeScale: StatType.STR));
-    competencesForNewCharacter.add(const Competence(competenceType: CompetenceType.ATTENTION, statTypeScale: StatType.WIS));
-    competencesForNewCharacter.add(const Competence(competenceType: CompetenceType.SURVIVAL, statTypeScale: StatType.WIS));
-    competencesForNewCharacter.add(const Competence(competenceType: CompetenceType.PERFOMANCE, statTypeScale: StatType.CHR));
-    competencesForNewCharacter.add(const Competence(competenceType: CompetenceType.HARASSMENT, statTypeScale: StatType.CHR));
-    competencesForNewCharacter.add(const Competence(competenceType: CompetenceType.HISTORY, statTypeScale: StatType.INT));
-    competencesForNewCharacter.add(const Competence(competenceType: CompetenceType.FAST_HANDS, statTypeScale: StatType.DEX));
-    competencesForNewCharacter.add(const Competence(competenceType: CompetenceType.MAGIC, statTypeScale: StatType.INT));
-    competencesForNewCharacter.add(const Competence(competenceType: CompetenceType.MEDICINE, statTypeScale: StatType.WIS));
-    competencesForNewCharacter.add(const Competence(competenceType: CompetenceType.LIE, statTypeScale: StatType.CHR));
-    competencesForNewCharacter.add(const Competence(competenceType: CompetenceType.NATURE, statTypeScale: StatType.INT));
-    competencesForNewCharacter.add(const Competence(competenceType: CompetenceType.INSIGHT, statTypeScale: StatType.WIS));
-    competencesForNewCharacter.add(const Competence(competenceType: CompetenceType.RELIGION, statTypeScale: StatType.INT));
-    competencesForNewCharacter.add(const Competence(competenceType: CompetenceType.STEALTH, statTypeScale: StatType.DEX));
-    competencesForNewCharacter.add(const Competence(competenceType: CompetenceType.PERSUASION, statTypeScale: StatType.CHR));
-    competencesForNewCharacter.add(const Competence(competenceType: CompetenceType.ANIMAL_CARE, statTypeScale: StatType.WIS));
-
+    for (CompetenceType competenceType in CompetenceType.values) {
+      competencesForNewCharacter.add(Competence(competenceType: competenceType));
+    }
     final CharacterModel newCharacter = CharacterModel(
       name: paramsFromScreen.name,
       race: paramsFromScreen.race,
@@ -57,12 +42,14 @@ class CharacterListLocalDatasourceImpl implements CharacterListLocalDatasource {
             typeDamage: 'typeDamage',
             distance: 5,
             master: false,
-            dice: 'dice',
+            dices: const [DiceType.D6],
             weaponType: WeaponType.MELEE,
             bonusAttackChance: 0,
             bonusAttackDamage: 0,
             description: 'description')
       ],
+      items: const [],
+      gameClasses: const [],
     );
 
     await _writeCharacter(newCharacter);
@@ -129,7 +116,6 @@ class CharacterListLocalDatasourceImpl implements CharacterListLocalDatasource {
       competences: competences
           .map((competenceEntitie) => Competence(
                 competenceType: competenceEntitie.competenceType,
-                statTypeScale: competenceEntitie.statTypeScale,
                 mastered: competenceEntitie.mastered,
                 competenced: competenceEntitie.competenced,
               ))
@@ -140,12 +126,14 @@ class CharacterListLocalDatasourceImpl implements CharacterListLocalDatasource {
               name: weaponEntitie.name,
               typeDamage: weaponEntitie.typeDamage,
               distance: weaponEntitie.distance,
-              dice: weaponEntitie.dice,
+              dices: weaponEntitie.dices,
               weaponType: weaponEntitie.weaponType,
               bonusAttackChance: weaponEntitie.bonusAttackChance,
               bonusAttackDamage: weaponEntitie.bonusAttackDamage,
               description: weaponEntitie.description))
           .toList(),
+      items: const [],
+      gameClasses: const [],
     );
     return Future.value(character);
   }
@@ -199,7 +187,7 @@ class CharacterListLocalDatasourceImpl implements CharacterListLocalDatasource {
         typeDamage: weapon.typeDamage,
         distance: weapon.distance,
         master: weapon.master,
-        dice: weapon.dice,
+        dices: weapon.dices,
         weaponType: weapon.weaponType,
         bonusAttackChance: weapon.bonusAttackChance,
         bonusAttackDamage: weapon.bonusAttackDamage,
@@ -220,7 +208,6 @@ class CharacterListLocalDatasourceImpl implements CharacterListLocalDatasource {
       competences.add(CompetenceEntities(
         characterName: character.name,
         competenceType: competence.competenceType,
-        statTypeScale: competence.statTypeScale,
         mastered: competence.mastered,
         competenced: competence.competenced,
       ));

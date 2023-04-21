@@ -3,8 +3,9 @@ import 'package:equatable/equatable.dart';
 import 'package:dnd/features/character_list_view/domain/entities/competence.dart';
 
 import 'exp.dart';
+import 'game_class.dart';
 import 'hp.dart';
-//import 'inventory.dart';
+import 'item.dart';
 import 'stats.dart';
 import 'weapon.dart';
 
@@ -19,8 +20,8 @@ class Character extends Equatable {
   final List<Stat> stats;
   final List<Competence> competences;
   final List<Weapon> weapons;
-  //Inventory? inventory;
-  //final List<GameClass> gameClasses;
+  final List<Item> items;
+  final List<GameClass> gameClasses;
 
   const Character({
     required this.name,
@@ -33,46 +34,44 @@ class Character extends Equatable {
     required this.stats,
     required this.competences,
     required this.weapons,
-    //required this.inventory,
+    required this.items,
+    required this.gameClasses,
   });
   int get levelPoint => exp.level;
   int get initiative => getStatByType(StatType.DEX).modificator;
   int get bonusModificator => ((exp.level - 1) ~/ 4) + 2;
 
   int getValueOfCompetenceByType(CompetenceType competenceType) => getCompetenceByType(competenceType).competenced
-      ? getStatByType(getCompetenceByType(competenceType).statTypeScale).modificator + 2 * bonusModificator
+      ? getStatByType(competenceType.statTypeScale).modificator + 2 * bonusModificator
       : getCompetenceByType(competenceType).mastered
-          ? getStatByType(getCompetenceByType(competenceType).statTypeScale).modificator + bonusModificator
-          : getStatByType(getCompetenceByType(competenceType).statTypeScale).modificator;
+          ? getStatByType(competenceType.statTypeScale).modificator + bonusModificator
+          : getStatByType(competenceType.statTypeScale).modificator;
 
   Stat getStatByType(StatType statType) => stats.firstWhere((stat) => stat.statType == statType);
   Competence getCompetenceByType(CompetenceType competenceType) => competences.firstWhere((competence) => competence.competenceType == competenceType);
 
-  int getSaveThrowValue(StatType statType) {
-    for (Stat stat in stats) {
-      if (stat.statType == statType) return stat.saveThrowMastered ? stat.modificator + bonusModificator : stat.modificator;
+  int getSaveThrowValue(StatType statType) =>
+      getStatByType(statType).saveThrowMastered ? getStatByType(statType).modificator + bonusModificator : getStatByType(statType).modificator;
+
+  Stat _statUsedByWeapon(Weapon weapon) {
+    switch (weapon.weaponType) {
+      case WeaponType.MELEE:
+        return getStatByType(StatType.STR);
+      case WeaponType.RANGE:
+        return getStatByType(StatType.DEX);
+      case WeaponType.FENCING:
+        return getStatByType(StatType.STR).modificator > getStatByType(StatType.DEX).modificator ? getStatByType(StatType.STR) : getStatByType(StatType.DEX);
     }
-    return -1000;
   }
 
-  int _whichStatUsesWeapon(Weapon weapon) {
-    if (weapon.weaponType == WeaponType.MELEE) return getStatByType(StatType.STR).modificator;
-    if (weapon.weaponType == WeaponType.RANGE) return getStatByType(StatType.DEX).modificator;
-    if (weapon.weaponType == WeaponType.FENCING) {
-      return getStatByType(StatType.DEX).modificator > getStatByType(StatType.STR).modificator
-          ? getStatByType(StatType.DEX).modificator
-          : getStatByType(StatType.STR).modificator;
-    }
-    return -1000;
-  }
+  int getAttackChanceWithWeapon(Weapon weapon) => weapon.master
+      ? _statUsedByWeapon(weapon).modificator + bonusModificator + weapon.bonusAttackChance
+      : _statUsedByWeapon(weapon).modificator + weapon.bonusAttackChance;
+  int getAttackDamageWithWeapon(Weapon weapon) => _statUsedByWeapon(weapon).modificator + weapon.bonusAttackDamage;
 
-  int getAttackChanceWithWeapon(Weapon weapon) =>
-      weapon.master ? _whichStatUsesWeapon(weapon) + bonusModificator + weapon.bonusAttackChance : _whichStatUsesWeapon(weapon) + weapon.bonusAttackChance;
-  int getAttackDamageWithWeapon(Weapon weapon) => _whichStatUsesWeapon(weapon) + weapon.bonusAttackDamage;
+  List<Item> getItemsByType(ItemType itemType) => items.where((item) => item.itemType == itemType).toList();
   @override
   List<Object?> get props => [name, race, sex, backstory, exp, hp, stats, competences, weapons];
   @override
   bool? get stringify => true;
-
-
 }

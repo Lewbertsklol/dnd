@@ -74,7 +74,7 @@ class _CharacterScreenState extends State<CharacterScreen> with TickerProviderSt
                         LengthLimitingTextInputFormatter(7),
                       ],
                       onSubmitted: (value) {
-                        addExp(context, state, int.tryParse(_expController.text) ?? 0); //!     
+                        addExp(context, state, int.tryParse(_expController.text) ?? 0); //!
                         FocusScope.of(context).unfocus();
                         _expController.clear();
                         SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
@@ -269,14 +269,14 @@ class WeaponCard extends StatelessWidget {
                     const Expanded(child: SizedBox()),
                     state.character.getAttackDamageWithWeapon(weapon) > 0
                         ? Text(
-                            '   Урн ${weapon.dice} +${state.character.getAttackDamageWithWeapon(weapon)}',
+                            '   Урн ${weapon.dices} +${state.character.getAttackDamageWithWeapon(weapon)}',
                             style: const TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
                             ),
                           )
                         : Text(
-                            '   Урн ${weapon.dice}  ${state.character.getAttackDamageWithWeapon(weapon)}',
+                            '   Урн ${weapon.dices}  ${state.character.getAttackDamageWithWeapon(weapon)}',
                             style: const TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,

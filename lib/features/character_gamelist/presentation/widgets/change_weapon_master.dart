@@ -11,7 +11,7 @@ void changeWeaponMaster(BuildContext context, CharacterLoaded state, Weapon weap
     name: weapon.name,
     typeDamage: weapon.typeDamage,
     distance: weapon.distance,
-    dice: weapon.dice,
+    dices: weapon.dices,
     weaponType: weapon.weaponType,
     bonusAttackChance: weapon.bonusAttackChance,
     bonusAttackDamage: weapon.bonusAttackDamage,

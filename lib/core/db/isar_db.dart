@@ -1,3 +1,4 @@
+import 'package:dnd/features/character_list_view/domain/entities/game_class.dart';
 import 'package:dnd/features/character_list_view/domain/entities/weapon.dart';
 import 'package:equatable/equatable.dart';
 import 'package:isar/isar.dart';
@@ -79,7 +80,8 @@ class WeaponEntities extends Equatable {
   final String typeDamage;
   final int distance;
   final bool master;
-  final String dice;
+  @enumerated
+  final List<DiceType> dices;
   @enumerated
   final WeaponType weaponType;
   final int bonusAttackChance;
@@ -92,7 +94,7 @@ class WeaponEntities extends Equatable {
     required this.typeDamage,
     required this.distance,
     required this.master,
-    required this.dice,
+    required this.dices,
     required this.weaponType,
     required this.bonusAttackChance,
     required this.bonusAttackDamage,
@@ -104,24 +106,21 @@ class WeaponEntities extends Equatable {
 }
 
 @Collection(ignore: {'props'})
-class CompetenceEntities extends Equatable{
+class CompetenceEntities extends Equatable {
   final Id id = Isar.autoIncrement;
   final String characterName;
   @enumerated
   final CompetenceType competenceType;
-  @enumerated
-  final StatType statTypeScale;
   final bool mastered;
   final bool competenced;
 
   const CompetenceEntities({
     required this.characterName,
     required this.competenceType,
-    required this.statTypeScale,
     required this.mastered,
     required this.competenced,
   });
 
   @override
-  List<Object?> get props => [competenceType, statTypeScale, mastered, competenced];
+  List<Object?> get props => [competenceType, mastered, competenced];
 }

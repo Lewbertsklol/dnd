@@ -4025,10 +4025,11 @@ const WeaponEntitiesSchema = CollectionSchema(
       name: r'description',
       type: IsarType.string,
     ),
-    r'dice': PropertySchema(
+    r'dices': PropertySchema(
       id: 4,
-      name: r'dice',
-      type: IsarType.string,
+      name: r'dices',
+      type: IsarType.byteList,
+      enumMap: _WeaponEntitiesdicesEnumValueMap,
     ),
     r'distance': PropertySchema(
       id: 5,
@@ -4103,7 +4104,7 @@ int _weaponEntitiesEstimateSize(
   var bytesCount = offsets.last;
   bytesCount += 3 + object.characterName.length * 3;
   bytesCount += 3 + object.description.length * 3;
-  bytesCount += 3 + object.dice.length * 3;
+  bytesCount += 3 + object.dices.length;
   bytesCount += 3 + object.name.length * 3;
   bytesCount += 3 + object.typeDamage.length * 3;
   return bytesCount;
@@ -4119,7 +4120,7 @@ void _weaponEntitiesSerialize(
   writer.writeLong(offsets[1], object.bonusAttackDamage);
   writer.writeString(offsets[2], object.characterName);
   writer.writeString(offsets[3], object.description);
-  writer.writeString(offsets[4], object.dice);
+  writer.writeByteList(offsets[4], object.dices.map((e) => e.index).toList());
   writer.writeLong(offsets[5], object.distance);
   writer.writeLong(offsets[6], object.hashCode);
   writer.writeBool(offsets[7], object.master);
@@ -4140,7 +4141,11 @@ WeaponEntities _weaponEntitiesDeserialize(
     bonusAttackDamage: reader.readLong(offsets[1]),
     characterName: reader.readString(offsets[2]),
     description: reader.readString(offsets[3]),
-    dice: reader.readString(offsets[4]),
+    dices: reader
+            .readByteList(offsets[4])
+            ?.map((e) => _WeaponEntitiesdicesValueEnumMap[e] ?? DiceType.D4)
+            .toList() ??
+        [],
     distance: reader.readLong(offsets[5]),
     master: reader.readBool(offsets[7]),
     name: reader.readString(offsets[8]),
@@ -4168,7 +4173,11 @@ P _weaponEntitiesDeserializeProp<P>(
     case 3:
       return (reader.readString(offset)) as P;
     case 4:
-      return (reader.readString(offset)) as P;
+      return (reader
+              .readByteList(offset)
+              ?.map((e) => _WeaponEntitiesdicesValueEnumMap[e] ?? DiceType.D4)
+              .toList() ??
+          []) as P;
     case 5:
       return (reader.readLong(offset)) as P;
     case 6:
@@ -4190,6 +4199,22 @@ P _weaponEntitiesDeserializeProp<P>(
   }
 }
 
+const _WeaponEntitiesdicesEnumValueMap = {
+  'D4': 0,
+  'D6': 1,
+  'D8': 2,
+  'D10': 3,
+  'D12': 4,
+  'D20': 5,
+};
+const _WeaponEntitiesdicesValueEnumMap = {
+  0: DiceType.D4,
+  1: DiceType.D6,
+  2: DiceType.D8,
+  3: DiceType.D10,
+  4: DiceType.D12,
+  5: DiceType.D20,
+};
 const _WeaponEntitiesweaponTypeEnumValueMap = {
   'MELEE': 0,
   'RANGE': 1,
@@ -4780,138 +4805,147 @@ extension WeaponEntitiesQueryFilter
   }
 
   QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
-      diceEqualTo(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+      dicesElementEqualTo(DiceType value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'dice',
+        property: r'dices',
         value: value,
-        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
-      diceGreaterThan(
-    String value, {
+      dicesElementGreaterThan(
+    DiceType value, {
     bool include = false,
-    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
-        property: r'dice',
+        property: r'dices',
         value: value,
-        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
-      diceLessThan(
-    String value, {
+      dicesElementLessThan(
+    DiceType value, {
     bool include = false,
-    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
-        property: r'dice',
+        property: r'dices',
         value: value,
-        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
-      diceBetween(
-    String lower,
-    String upper, {
+      dicesElementBetween(
+    DiceType lower,
+    DiceType upper, {
     bool includeLower = true,
     bool includeUpper = true,
-    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
-        property: r'dice',
+        property: r'dices',
         lower: lower,
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
-      diceStartsWith(
-    String value, {
-    bool caseSensitive = true,
+      dicesLengthEqualTo(int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'dices',
+        length,
+        true,
+        length,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      dicesIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'dices',
+        0,
+        true,
+        0,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      dicesIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'dices',
+        0,
+        false,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      dicesLengthLessThan(
+    int length, {
+    bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'dice',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.listLength(
+        r'dices',
+        0,
+        true,
+        length,
+        include,
+      );
     });
   }
 
   QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
-      diceEndsWith(
-    String value, {
-    bool caseSensitive = true,
+      dicesLengthGreaterThan(
+    int length, {
+    bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'dice',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.listLength(
+        r'dices',
+        length,
+        include,
+        999999,
+        true,
+      );
     });
   }
 
   QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
-      diceContains(String value, {bool caseSensitive = true}) {
+      dicesLengthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'dice',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
-      diceMatches(String pattern, {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'dice',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
-      diceIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'dice',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
-      diceIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'dice',
-        value: '',
-      ));
+      return query.listLength(
+        r'dices',
+        lower,
+        includeLower,
+        upper,
+        includeUpper,
+      );
     });
   }
 
@@ -5513,18 +5547,6 @@ extension WeaponEntitiesQuerySortBy
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy> sortByDice() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'dice', Sort.asc);
-    });
-  }
-
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy> sortByDiceDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'dice', Sort.desc);
-    });
-  }
-
   QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy> sortByDistance() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'distance', Sort.asc);
@@ -5676,18 +5698,6 @@ extension WeaponEntitiesQuerySortThenBy
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy> thenByDice() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'dice', Sort.asc);
-    });
-  }
-
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy> thenByDiceDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'dice', Sort.desc);
-    });
-  }
-
   QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy> thenByDistance() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'distance', Sort.asc);
@@ -5824,10 +5834,9 @@ extension WeaponEntitiesQueryWhereDistinct
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QDistinct> distinctByDice(
-      {bool caseSensitive = true}) {
+  QueryBuilder<WeaponEntities, WeaponEntities, QDistinct> distinctByDices() {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'dice', caseSensitive: caseSensitive);
+      return query.addDistinctBy(r'dices');
     });
   }
 
@@ -5913,9 +5922,10 @@ extension WeaponEntitiesQueryProperty
     });
   }
 
-  QueryBuilder<WeaponEntities, String, QQueryOperations> diceProperty() {
+  QueryBuilder<WeaponEntities, List<DiceType>, QQueryOperations>
+      dicesProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'dice');
+      return query.addPropertyName(r'dices');
     });
   }
 
@@ -6001,14 +6011,8 @@ const CompetenceEntitiesSchema = CollectionSchema(
       name: r'mastered',
       type: IsarType.bool,
     ),
-    r'statTypeScale': PropertySchema(
-      id: 5,
-      name: r'statTypeScale',
-      type: IsarType.byte,
-      enumMap: _CompetenceEntitiesstatTypeScaleEnumValueMap,
-    ),
     r'stringify': PropertySchema(
-      id: 6,
+      id: 5,
       name: r'stringify',
       type: IsarType.bool,
     )
@@ -6048,8 +6052,7 @@ void _competenceEntitiesSerialize(
   writer.writeBool(offsets[2], object.competenced);
   writer.writeLong(offsets[3], object.hashCode);
   writer.writeBool(offsets[4], object.mastered);
-  writer.writeByte(offsets[5], object.statTypeScale.index);
-  writer.writeBool(offsets[6], object.stringify);
+  writer.writeBool(offsets[5], object.stringify);
 }
 
 CompetenceEntities _competenceEntitiesDeserialize(
@@ -6065,9 +6068,6 @@ CompetenceEntities _competenceEntitiesDeserialize(
         CompetenceType.ACROBATICS,
     competenced: reader.readBool(offsets[2]),
     mastered: reader.readBool(offsets[4]),
-    statTypeScale: _CompetenceEntitiesstatTypeScaleValueEnumMap[
-            reader.readByteOrNull(offsets[5])] ??
-        StatType.STR,
   );
   return object;
 }
@@ -6092,10 +6092,6 @@ P _competenceEntitiesDeserializeProp<P>(
     case 4:
       return (reader.readBool(offset)) as P;
     case 5:
-      return (_CompetenceEntitiesstatTypeScaleValueEnumMap[
-              reader.readByteOrNull(offset)] ??
-          StatType.STR) as P;
-    case 6:
       return (reader.readBoolOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -6141,22 +6137,6 @@ const _CompetenceEntitiescompetenceTypeValueEnumMap = {
   15: CompetenceType.STEALTH,
   16: CompetenceType.PERSUASION,
   17: CompetenceType.ANIMAL_CARE,
-};
-const _CompetenceEntitiesstatTypeScaleEnumValueMap = {
-  'STR': 0,
-  'DEX': 1,
-  'VIT': 2,
-  'INT': 3,
-  'WIS': 4,
-  'CHR': 5,
-};
-const _CompetenceEntitiesstatTypeScaleValueEnumMap = {
-  0: StatType.STR,
-  1: StatType.DEX,
-  2: StatType.VIT,
-  3: StatType.INT,
-  4: StatType.WIS,
-  5: StatType.CHR,
 };
 
 Id _competenceEntitiesGetId(CompetenceEntities object) {
@@ -6578,62 +6558,6 @@ extension CompetenceEntitiesQueryFilter
   }
 
   QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterFilterCondition>
-      statTypeScaleEqualTo(StatType value) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'statTypeScale',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterFilterCondition>
-      statTypeScaleGreaterThan(
-    StatType value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'statTypeScale',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterFilterCondition>
-      statTypeScaleLessThan(
-    StatType value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'statTypeScale',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterFilterCondition>
-      statTypeScaleBetween(
-    StatType lower,
-    StatType upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'statTypeScale',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
-    });
-  }
-
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterFilterCondition>
       stringifyIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -6741,20 +6665,6 @@ extension CompetenceEntitiesQuerySortBy
   }
 
   QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterSortBy>
-      sortByStatTypeScale() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'statTypeScale', Sort.asc);
-    });
-  }
-
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterSortBy>
-      sortByStatTypeScaleDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'statTypeScale', Sort.desc);
-    });
-  }
-
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterSortBy>
       sortByStringify() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'stringify', Sort.asc);
@@ -6856,20 +6766,6 @@ extension CompetenceEntitiesQuerySortThenBy
   }
 
   QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterSortBy>
-      thenByStatTypeScale() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'statTypeScale', Sort.asc);
-    });
-  }
-
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterSortBy>
-      thenByStatTypeScaleDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'statTypeScale', Sort.desc);
-    });
-  }
-
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterSortBy>
       thenByStringify() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'stringify', Sort.asc);
@@ -6923,13 +6819,6 @@ extension CompetenceEntitiesQueryWhereDistinct
   }
 
   QueryBuilder<CompetenceEntities, CompetenceEntities, QDistinct>
-      distinctByStatTypeScale() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'statTypeScale');
-    });
-  }
-
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QDistinct>
       distinctByStringify() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'stringify');
@@ -6975,13 +6864,6 @@ extension CompetenceEntitiesQueryProperty
   QueryBuilder<CompetenceEntities, bool, QQueryOperations> masteredProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'mastered');
-    });
-  }
-
-  QueryBuilder<CompetenceEntities, StatType, QQueryOperations>
-      statTypeScaleProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'statTypeScale');
     });
   }
 
