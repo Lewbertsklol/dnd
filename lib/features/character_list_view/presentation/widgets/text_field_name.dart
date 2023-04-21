@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../domain/entities/game_class.dart';
 import '../../domain/repositories/character_list_repository.dart';
 import '../bloc/character_list_bloc.dart';
 
@@ -19,9 +20,11 @@ class TextFieldCharacterName extends StatelessWidget {
                   race: 'race',
                   sex: 'sex',
                   backstory: 'backstory',
+                  gameClassType: GameClassType.WARLOCK,
                 ),
               ),
             );
+
         Navigator.of(context).pop();
         SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
       },

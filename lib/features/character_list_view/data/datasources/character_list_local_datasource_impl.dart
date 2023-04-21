@@ -4,11 +4,14 @@ import 'package:dnd/features/character_list_view/domain/entities/competence.dart
 import 'package:dnd/features/character_list_view/domain/entities/exp.dart';
 import 'package:dnd/features/character_list_view/domain/entities/game_class.dart';
 import 'package:dnd/features/character_list_view/domain/entities/hp.dart';
+import 'package:dnd/features/character_list_view/domain/entities/spell.dart';
 import 'package:dnd/features/character_list_view/domain/entities/stats.dart';
 import 'package:dnd/features/character_list_view/domain/entities/weapon.dart';
 import 'package:isar/isar.dart';
 import '../../../../core/db/isar_db.dart';
 
+import '../../domain/entities/item.dart';
+import '../../domain/entities/skill.dart';
 import '../../domain/repositories/character_list_repository.dart';
 import 'character_list_local_datasource.dart';
 
@@ -18,6 +21,12 @@ class CharacterListLocalDatasourceImpl implements CharacterListLocalDatasource {
     const classDefenceForNewCharacter = 10;
     const expForNewCharacter = Exp();
     const hpForNewCharacter = HP();
+    final gameClassFromScreen = GameClass(
+      gameClassType: paramsFromScreen.gameClassType,
+      hitDices: const [DiceType.D6],
+      spells: const [],
+      skills: const [],
+    );
     final statsForNewCharacter = <Stat>[];
     for (StatType statType in StatType.values) {
       statsForNewCharacter.add(Stat(statType: statType));
@@ -48,8 +57,16 @@ class CharacterListLocalDatasourceImpl implements CharacterListLocalDatasource {
             bonusAttackDamage: 0,
             description: 'description')
       ],
-      items: const [],
-      gameClasses: const [],
+      items: [
+        Item(
+          name: "${paramsFromScreen.name}'s Bulka",
+          description: 'description',
+          itemType: ItemType.FOOD,
+        )
+      ],
+      gameClasses: [
+        gameClassFromScreen,
+      ],
     );
 
     await _writeCharacter(newCharacter);
@@ -69,6 +86,10 @@ class CharacterListLocalDatasourceImpl implements CharacterListLocalDatasource {
       await isar.collection<StatEntities>().filter().characterNameEqualTo(characterName).deleteAll();
       await isar.collection<WeaponEntities>().filter().characterNameEqualTo(characterName).deleteAll();
       await isar.collection<CompetenceEntities>().filter().characterNameEqualTo(characterName).deleteAll();
+      await isar.collection<ItemEntities>().filter().characterNameEqualTo(characterName).deleteAll();
+      await isar.collection<GameClassEntities>().filter().characterNameEqualTo(characterName).deleteAll();
+      await isar.collection<SkillEntities>().filter().characterNameEqualTo(characterName).deleteAll();
+      await isar.collection<SpellEntities>().filter().characterNameEqualTo(characterName).deleteAll();
     });
     Future<List<CharacterModel>> characterList = getCharacterList();
     return Future.value(characterList);
@@ -98,6 +119,30 @@ class CharacterListLocalDatasourceImpl implements CharacterListLocalDatasource {
     List<StatEntities> stats = await isar.collection<StatEntities>().filter().characterNameEqualTo(characterName).findAll();
     List<CompetenceEntities> competences = await isar.collection<CompetenceEntities>().filter().characterNameEqualTo(characterName).findAll();
     List<WeaponEntities> weapons = await isar.collection<WeaponEntities>().filter().characterNameEqualTo(characterName).findAll();
+    List<ItemEntities> items = await isar.collection<ItemEntities>().filter().characterNameEqualTo(characterName).findAll();
+    List<GameClassEntities> gameClasses = await isar.collection<GameClassEntities>().filter().characterNameEqualTo(characterName).findAll();
+    List<SkillEntities> skillsEntities = await isar.collection<SkillEntities>().filter().characterNameEqualTo(characterName).findAll();
+    List<SpellEntities> spellsEntities = await isar.collection<SpellEntities>().filter().characterNameEqualTo(characterName).findAll();
+    List<Skill> skills = skillsEntities
+        .map((skillEntitie) => Skill(
+              name: skillEntitie.name,
+              description: skillEntitie.description,
+            ))
+        .toList();
+    List<Spell> spells = spellsEntities
+        .map((spellEntitie) => Spell(
+              name: spellEntitie.name,
+              description: spellEntitie.description,
+              schoolType: spellEntitie.schoolType,
+              components: spellEntitie.components,
+              spellLevelType: spellEntitie.spellLevelType,
+              distance: spellEntitie.distance,
+              castTime: spellEntitie.castTime,
+              durationTime: spellEntitie.durationTime,
+              prepared: spellEntitie.prepared,
+            ))
+        .toList();
+
     final character = CharacterModel(
       name: characterEntities.name,
       race: characterEntities.race,
@@ -132,8 +177,21 @@ class CharacterListLocalDatasourceImpl implements CharacterListLocalDatasource {
               bonusAttackDamage: weaponEntitie.bonusAttackDamage,
               description: weaponEntitie.description))
           .toList(),
-      items: const [],
-      gameClasses: const [],
+      items: items
+          .map((itemEntitie) => Item(
+                name: itemEntitie.name,
+                description: itemEntitie.description,
+                itemType: itemEntitie.itemType,
+              ))
+          .toList(),
+      gameClasses: gameClasses
+          .map((gameClassEntitie) => GameClass(               //! Неправильно
+                gameClassType: gameClassEntitie.gameClassType,
+                hitDices: gameClassEntitie.hitDices,
+                spells: spells,
+                skills: skills,
+              ))
+          .toList(),
     );
     return Future.value(character);
   }

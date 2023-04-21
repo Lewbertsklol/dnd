@@ -14,6 +14,7 @@ class Character extends Equatable {
   final String race;
   final String sex;
   final String backstory;
+  final String? customNameOfMulticlass;
   final int cd;
   final Exp exp;
   final HP hp;
@@ -28,6 +29,7 @@ class Character extends Equatable {
     required this.race,
     required this.sex,
     required this.backstory,
+    this.customNameOfMulticlass,
     required this.cd,
     required this.exp,
     required this.hp,
@@ -37,10 +39,10 @@ class Character extends Equatable {
     required this.items,
     required this.gameClasses,
   });
-  int get levelPoint => exp.level;
+  int get sumOfAllClassLevels => gameClasses.map((gameClass) => gameClass.classLevel).reduce((value, element) => value + element);
+  int get freeLevelPoint => exp.level - sumOfAllClassLevels;
   int get initiative => getStatByType(StatType.DEX).modificator;
   int get bonusModificator => ((exp.level - 1) ~/ 4) + 2;
-
   int getValueOfCompetenceByType(CompetenceType competenceType) => getCompetenceByType(competenceType).competenced
       ? getStatByType(competenceType.statTypeScale).modificator + 2 * bonusModificator
       : getCompetenceByType(competenceType).mastered
@@ -49,10 +51,8 @@ class Character extends Equatable {
 
   Stat getStatByType(StatType statType) => stats.firstWhere((stat) => stat.statType == statType);
   Competence getCompetenceByType(CompetenceType competenceType) => competences.firstWhere((competence) => competence.competenceType == competenceType);
-
   int getSaveThrowValue(StatType statType) =>
       getStatByType(statType).saveThrowMastered ? getStatByType(statType).modificator + bonusModificator : getStatByType(statType).modificator;
-
   Stat _statUsedByWeapon(Weapon weapon) {
     switch (weapon.weaponType) {
       case WeaponType.MELEE:
@@ -68,10 +68,9 @@ class Character extends Equatable {
       ? _statUsedByWeapon(weapon).modificator + bonusModificator + weapon.bonusAttackChance
       : _statUsedByWeapon(weapon).modificator + weapon.bonusAttackChance;
   int getAttackDamageWithWeapon(Weapon weapon) => _statUsedByWeapon(weapon).modificator + weapon.bonusAttackDamage;
-
   List<Item> getItemsByType(ItemType itemType) => items.where((item) => item.itemType == itemType).toList();
   @override
-  List<Object?> get props => [name, race, sex, backstory, exp, hp, stats, competences, weapons];
+  List<Object?> get props => [name, race, sex, backstory, exp, hp, stats, competences, weapons, items, gameClasses];
   @override
   bool? get stringify => true;
 }
