@@ -27,29 +27,29 @@ const CharacterEntitiesSchema = CollectionSchema(
       name: r'cd',
       type: IsarType.long,
     ),
-    r'hashCode': PropertySchema(
+    r'customNameOfMulticlass': PropertySchema(
       id: 2,
+      name: r'customNameOfMulticlass',
+      type: IsarType.string,
+    ),
+    r'hashCode': PropertySchema(
+      id: 3,
       name: r'hashCode',
       type: IsarType.long,
     ),
     r'name': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'name',
       type: IsarType.string,
     ),
     r'race': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'race',
       type: IsarType.string,
     ),
     r'sex': PropertySchema(
-      id: 5,
-      name: r'sex',
-      type: IsarType.string,
-    ),
-    r'specialNameOfClass': PropertySchema(
       id: 6,
-      name: r'specialNameOfClass',
+      name: r'sex',
       type: IsarType.string,
     ),
     r'stringify': PropertySchema(
@@ -93,15 +93,15 @@ int _characterEntitiesEstimateSize(
 ) {
   var bytesCount = offsets.last;
   bytesCount += 3 + object.backstory.length * 3;
-  bytesCount += 3 + object.name.length * 3;
-  bytesCount += 3 + object.race.length * 3;
-  bytesCount += 3 + object.sex.length * 3;
   {
     final value = object.customNameOfMulticlass;
     if (value != null) {
       bytesCount += 3 + value.length * 3;
     }
   }
+  bytesCount += 3 + object.name.length * 3;
+  bytesCount += 3 + object.race.length * 3;
+  bytesCount += 3 + object.sex.length * 3;
   return bytesCount;
 }
 
@@ -113,11 +113,11 @@ void _characterEntitiesSerialize(
 ) {
   writer.writeString(offsets[0], object.backstory);
   writer.writeLong(offsets[1], object.cd);
-  writer.writeLong(offsets[2], object.hashCode);
-  writer.writeString(offsets[3], object.name);
-  writer.writeString(offsets[4], object.race);
-  writer.writeString(offsets[5], object.sex);
-  writer.writeString(offsets[6], object.customNameOfMulticlass);
+  writer.writeString(offsets[2], object.customNameOfMulticlass);
+  writer.writeLong(offsets[3], object.hashCode);
+  writer.writeString(offsets[4], object.name);
+  writer.writeString(offsets[5], object.race);
+  writer.writeString(offsets[6], object.sex);
   writer.writeBool(offsets[7], object.stringify);
 }
 
@@ -130,10 +130,10 @@ CharacterEntities _characterEntitiesDeserialize(
   final object = CharacterEntities(
     backstory: reader.readString(offsets[0]),
     cd: reader.readLong(offsets[1]),
-    name: reader.readString(offsets[3]),
-    race: reader.readString(offsets[4]),
-    sex: reader.readString(offsets[5]),
-    customNameOfMulticlass: reader.readStringOrNull(offsets[6]),
+    customNameOfMulticlass: reader.readStringOrNull(offsets[2]),
+    name: reader.readString(offsets[4]),
+    race: reader.readString(offsets[5]),
+    sex: reader.readString(offsets[6]),
   );
   return object;
 }
@@ -150,15 +150,15 @@ P _characterEntitiesDeserializeProp<P>(
     case 1:
       return (reader.readLong(offset)) as P;
     case 2:
-      return (reader.readLong(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 3:
-      return (reader.readString(offset)) as P;
+      return (reader.readLong(offset)) as P;
     case 4:
       return (reader.readString(offset)) as P;
     case 5:
       return (reader.readString(offset)) as P;
     case 6:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 7:
       return (reader.readBoolOrNull(offset)) as P;
     default:
@@ -170,11 +170,13 @@ Id _characterEntitiesGetId(CharacterEntities object) {
   return object.id;
 }
 
-List<IsarLinkBase<dynamic>> _characterEntitiesGetLinks(CharacterEntities object) {
+List<IsarLinkBase<dynamic>> _characterEntitiesGetLinks(
+    CharacterEntities object) {
   return [];
 }
 
-void _characterEntitiesAttach(IsarCollection<dynamic> col, Id id, CharacterEntities object) {}
+void _characterEntitiesAttach(
+    IsarCollection<dynamic> col, Id id, CharacterEntities object) {}
 
 extension CharacterEntitiesByIndex on IsarCollection<CharacterEntities> {
   Future<CharacterEntities?> getByName(String name) {
@@ -225,12 +227,14 @@ extension CharacterEntitiesByIndex on IsarCollection<CharacterEntities> {
     return putAllByIndex(r'name', objects);
   }
 
-  List<Id> putAllByNameSync(List<CharacterEntities> objects, {bool saveLinks = true}) {
+  List<Id> putAllByNameSync(List<CharacterEntities> objects,
+      {bool saveLinks = true}) {
     return putAllByIndexSync(r'name', objects, saveLinks: saveLinks);
   }
 }
 
-extension CharacterEntitiesQueryWhereSort on QueryBuilder<CharacterEntities, CharacterEntities, QWhere> {
+extension CharacterEntitiesQueryWhereSort
+    on QueryBuilder<CharacterEntities, CharacterEntities, QWhere> {
   QueryBuilder<CharacterEntities, CharacterEntities, QAfterWhere> anyId() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(const IdWhereClause.any());
@@ -238,8 +242,10 @@ extension CharacterEntitiesQueryWhereSort on QueryBuilder<CharacterEntities, Cha
   }
 }
 
-extension CharacterEntitiesQueryWhere on QueryBuilder<CharacterEntities, CharacterEntities, QWhereClause> {
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterWhereClause> idEqualTo(Id id) {
+extension CharacterEntitiesQueryWhere
+    on QueryBuilder<CharacterEntities, CharacterEntities, QWhereClause> {
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterWhereClause>
+      idEqualTo(Id id) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(IdWhereClause.between(
         lower: id,
@@ -248,7 +254,8 @@ extension CharacterEntitiesQueryWhere on QueryBuilder<CharacterEntities, Charact
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterWhereClause> idNotEqualTo(Id id) {
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterWhereClause>
+      idNotEqualTo(Id id) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
@@ -270,7 +277,8 @@ extension CharacterEntitiesQueryWhere on QueryBuilder<CharacterEntities, Charact
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterWhereClause> idGreaterThan(Id id, {bool include = false}) {
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterWhereClause>
+      idGreaterThan(Id id, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         IdWhereClause.greaterThan(lower: id, includeLower: include),
@@ -278,7 +286,8 @@ extension CharacterEntitiesQueryWhere on QueryBuilder<CharacterEntities, Charact
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterWhereClause> idLessThan(Id id, {bool include = false}) {
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterWhereClause>
+      idLessThan(Id id, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         IdWhereClause.lessThan(upper: id, includeUpper: include),
@@ -286,7 +295,8 @@ extension CharacterEntitiesQueryWhere on QueryBuilder<CharacterEntities, Charact
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterWhereClause> idBetween(
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterWhereClause>
+      idBetween(
     Id lowerId,
     Id upperId, {
     bool includeLower = true,
@@ -302,7 +312,8 @@ extension CharacterEntitiesQueryWhere on QueryBuilder<CharacterEntities, Charact
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterWhereClause> nameEqualTo(String name) {
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterWhereClause>
+      nameEqualTo(String name) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(IndexWhereClause.equalTo(
         indexName: r'name',
@@ -311,7 +322,8 @@ extension CharacterEntitiesQueryWhere on QueryBuilder<CharacterEntities, Charact
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterWhereClause> nameNotEqualTo(String name) {
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterWhereClause>
+      nameNotEqualTo(String name) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
@@ -346,8 +358,10 @@ extension CharacterEntitiesQueryWhere on QueryBuilder<CharacterEntities, Charact
   }
 }
 
-extension CharacterEntitiesQueryFilter on QueryBuilder<CharacterEntities, CharacterEntities, QFilterCondition> {
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition> backstoryEqualTo(
+extension CharacterEntitiesQueryFilter
+    on QueryBuilder<CharacterEntities, CharacterEntities, QFilterCondition> {
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      backstoryEqualTo(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -360,7 +374,8 @@ extension CharacterEntitiesQueryFilter on QueryBuilder<CharacterEntities, Charac
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition> backstoryGreaterThan(
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      backstoryGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -375,7 +390,8 @@ extension CharacterEntitiesQueryFilter on QueryBuilder<CharacterEntities, Charac
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition> backstoryLessThan(
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      backstoryLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -390,7 +406,8 @@ extension CharacterEntitiesQueryFilter on QueryBuilder<CharacterEntities, Charac
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition> backstoryBetween(
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      backstoryBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -409,7 +426,8 @@ extension CharacterEntitiesQueryFilter on QueryBuilder<CharacterEntities, Charac
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition> backstoryStartsWith(
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      backstoryStartsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -422,7 +440,8 @@ extension CharacterEntitiesQueryFilter on QueryBuilder<CharacterEntities, Charac
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition> backstoryEndsWith(
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      backstoryEndsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -435,7 +454,8 @@ extension CharacterEntitiesQueryFilter on QueryBuilder<CharacterEntities, Charac
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition> backstoryContains(String value, {bool caseSensitive = true}) {
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      backstoryContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
         property: r'backstory',
@@ -445,7 +465,8 @@ extension CharacterEntitiesQueryFilter on QueryBuilder<CharacterEntities, Charac
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition> backstoryMatches(String pattern, {bool caseSensitive = true}) {
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      backstoryMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.matches(
         property: r'backstory',
@@ -455,7 +476,8 @@ extension CharacterEntitiesQueryFilter on QueryBuilder<CharacterEntities, Charac
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition> backstoryIsEmpty() {
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      backstoryIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'backstory',
@@ -464,7 +486,8 @@ extension CharacterEntitiesQueryFilter on QueryBuilder<CharacterEntities, Charac
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition> backstoryIsNotEmpty() {
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      backstoryIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'backstory',
@@ -473,7 +496,8 @@ extension CharacterEntitiesQueryFilter on QueryBuilder<CharacterEntities, Charac
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition> cdEqualTo(int value) {
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      cdEqualTo(int value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'cd',
@@ -482,7 +506,8 @@ extension CharacterEntitiesQueryFilter on QueryBuilder<CharacterEntities, Charac
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition> cdGreaterThan(
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      cdGreaterThan(
     int value, {
     bool include = false,
   }) {
@@ -495,7 +520,8 @@ extension CharacterEntitiesQueryFilter on QueryBuilder<CharacterEntities, Charac
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition> cdLessThan(
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      cdLessThan(
     int value, {
     bool include = false,
   }) {
@@ -508,7 +534,8 @@ extension CharacterEntitiesQueryFilter on QueryBuilder<CharacterEntities, Charac
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition> cdBetween(
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      cdBetween(
     int lower,
     int upper, {
     bool includeLower = true,
@@ -525,7 +552,164 @@ extension CharacterEntitiesQueryFilter on QueryBuilder<CharacterEntities, Charac
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition> hashCodeEqualTo(int value) {
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      customNameOfMulticlassIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'customNameOfMulticlass',
+      ));
+    });
+  }
+
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      customNameOfMulticlassIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'customNameOfMulticlass',
+      ));
+    });
+  }
+
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      customNameOfMulticlassEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'customNameOfMulticlass',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      customNameOfMulticlassGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'customNameOfMulticlass',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      customNameOfMulticlassLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'customNameOfMulticlass',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      customNameOfMulticlassBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'customNameOfMulticlass',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      customNameOfMulticlassStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'customNameOfMulticlass',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      customNameOfMulticlassEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'customNameOfMulticlass',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      customNameOfMulticlassContains(String value,
+          {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'customNameOfMulticlass',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      customNameOfMulticlassMatches(String pattern,
+          {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'customNameOfMulticlass',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      customNameOfMulticlassIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'customNameOfMulticlass',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      customNameOfMulticlassIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'customNameOfMulticlass',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      hashCodeEqualTo(int value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'hashCode',
@@ -534,7 +718,8 @@ extension CharacterEntitiesQueryFilter on QueryBuilder<CharacterEntities, Charac
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition> hashCodeGreaterThan(
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      hashCodeGreaterThan(
     int value, {
     bool include = false,
   }) {
@@ -547,7 +732,8 @@ extension CharacterEntitiesQueryFilter on QueryBuilder<CharacterEntities, Charac
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition> hashCodeLessThan(
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      hashCodeLessThan(
     int value, {
     bool include = false,
   }) {
@@ -560,7 +746,8 @@ extension CharacterEntitiesQueryFilter on QueryBuilder<CharacterEntities, Charac
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition> hashCodeBetween(
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      hashCodeBetween(
     int lower,
     int upper, {
     bool includeLower = true,
@@ -577,7 +764,8 @@ extension CharacterEntitiesQueryFilter on QueryBuilder<CharacterEntities, Charac
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition> idEqualTo(Id value) {
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      idEqualTo(Id value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'id',
@@ -586,7 +774,8 @@ extension CharacterEntitiesQueryFilter on QueryBuilder<CharacterEntities, Charac
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition> idGreaterThan(
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      idGreaterThan(
     Id value, {
     bool include = false,
   }) {
@@ -599,7 +788,8 @@ extension CharacterEntitiesQueryFilter on QueryBuilder<CharacterEntities, Charac
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition> idLessThan(
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      idLessThan(
     Id value, {
     bool include = false,
   }) {
@@ -612,7 +802,8 @@ extension CharacterEntitiesQueryFilter on QueryBuilder<CharacterEntities, Charac
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition> idBetween(
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      idBetween(
     Id lower,
     Id upper, {
     bool includeLower = true,
@@ -629,7 +820,8 @@ extension CharacterEntitiesQueryFilter on QueryBuilder<CharacterEntities, Charac
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition> nameEqualTo(
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      nameEqualTo(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -642,7 +834,8 @@ extension CharacterEntitiesQueryFilter on QueryBuilder<CharacterEntities, Charac
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition> nameGreaterThan(
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      nameGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -657,7 +850,8 @@ extension CharacterEntitiesQueryFilter on QueryBuilder<CharacterEntities, Charac
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition> nameLessThan(
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      nameLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -672,7 +866,8 @@ extension CharacterEntitiesQueryFilter on QueryBuilder<CharacterEntities, Charac
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition> nameBetween(
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      nameBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -691,7 +886,8 @@ extension CharacterEntitiesQueryFilter on QueryBuilder<CharacterEntities, Charac
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition> nameStartsWith(
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      nameStartsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -704,7 +900,8 @@ extension CharacterEntitiesQueryFilter on QueryBuilder<CharacterEntities, Charac
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition> nameEndsWith(
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      nameEndsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -717,7 +914,8 @@ extension CharacterEntitiesQueryFilter on QueryBuilder<CharacterEntities, Charac
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition> nameContains(String value, {bool caseSensitive = true}) {
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      nameContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
         property: r'name',
@@ -727,7 +925,8 @@ extension CharacterEntitiesQueryFilter on QueryBuilder<CharacterEntities, Charac
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition> nameMatches(String pattern, {bool caseSensitive = true}) {
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      nameMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.matches(
         property: r'name',
@@ -737,7 +936,8 @@ extension CharacterEntitiesQueryFilter on QueryBuilder<CharacterEntities, Charac
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition> nameIsEmpty() {
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      nameIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'name',
@@ -746,7 +946,8 @@ extension CharacterEntitiesQueryFilter on QueryBuilder<CharacterEntities, Charac
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition> nameIsNotEmpty() {
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      nameIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'name',
@@ -755,7 +956,8 @@ extension CharacterEntitiesQueryFilter on QueryBuilder<CharacterEntities, Charac
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition> raceEqualTo(
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      raceEqualTo(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -768,7 +970,8 @@ extension CharacterEntitiesQueryFilter on QueryBuilder<CharacterEntities, Charac
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition> raceGreaterThan(
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      raceGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -783,7 +986,8 @@ extension CharacterEntitiesQueryFilter on QueryBuilder<CharacterEntities, Charac
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition> raceLessThan(
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      raceLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -798,7 +1002,8 @@ extension CharacterEntitiesQueryFilter on QueryBuilder<CharacterEntities, Charac
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition> raceBetween(
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      raceBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -817,7 +1022,8 @@ extension CharacterEntitiesQueryFilter on QueryBuilder<CharacterEntities, Charac
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition> raceStartsWith(
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      raceStartsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -830,7 +1036,8 @@ extension CharacterEntitiesQueryFilter on QueryBuilder<CharacterEntities, Charac
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition> raceEndsWith(
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      raceEndsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -843,7 +1050,8 @@ extension CharacterEntitiesQueryFilter on QueryBuilder<CharacterEntities, Charac
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition> raceContains(String value, {bool caseSensitive = true}) {
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      raceContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
         property: r'race',
@@ -853,7 +1061,8 @@ extension CharacterEntitiesQueryFilter on QueryBuilder<CharacterEntities, Charac
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition> raceMatches(String pattern, {bool caseSensitive = true}) {
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      raceMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.matches(
         property: r'race',
@@ -863,7 +1072,8 @@ extension CharacterEntitiesQueryFilter on QueryBuilder<CharacterEntities, Charac
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition> raceIsEmpty() {
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      raceIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'race',
@@ -872,7 +1082,8 @@ extension CharacterEntitiesQueryFilter on QueryBuilder<CharacterEntities, Charac
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition> raceIsNotEmpty() {
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      raceIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'race',
@@ -881,7 +1092,8 @@ extension CharacterEntitiesQueryFilter on QueryBuilder<CharacterEntities, Charac
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition> sexEqualTo(
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      sexEqualTo(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -894,7 +1106,8 @@ extension CharacterEntitiesQueryFilter on QueryBuilder<CharacterEntities, Charac
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition> sexGreaterThan(
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      sexGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -909,7 +1122,8 @@ extension CharacterEntitiesQueryFilter on QueryBuilder<CharacterEntities, Charac
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition> sexLessThan(
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      sexLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -924,7 +1138,8 @@ extension CharacterEntitiesQueryFilter on QueryBuilder<CharacterEntities, Charac
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition> sexBetween(
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      sexBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -943,7 +1158,8 @@ extension CharacterEntitiesQueryFilter on QueryBuilder<CharacterEntities, Charac
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition> sexStartsWith(
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      sexStartsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -956,7 +1172,8 @@ extension CharacterEntitiesQueryFilter on QueryBuilder<CharacterEntities, Charac
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition> sexEndsWith(
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      sexEndsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -969,7 +1186,8 @@ extension CharacterEntitiesQueryFilter on QueryBuilder<CharacterEntities, Charac
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition> sexContains(String value, {bool caseSensitive = true}) {
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      sexContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
         property: r'sex',
@@ -979,7 +1197,8 @@ extension CharacterEntitiesQueryFilter on QueryBuilder<CharacterEntities, Charac
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition> sexMatches(String pattern, {bool caseSensitive = true}) {
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      sexMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.matches(
         property: r'sex',
@@ -989,7 +1208,8 @@ extension CharacterEntitiesQueryFilter on QueryBuilder<CharacterEntities, Charac
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition> sexIsEmpty() {
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      sexIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'sex',
@@ -998,7 +1218,8 @@ extension CharacterEntitiesQueryFilter on QueryBuilder<CharacterEntities, Charac
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition> sexIsNotEmpty() {
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      sexIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'sex',
@@ -1007,149 +1228,8 @@ extension CharacterEntitiesQueryFilter on QueryBuilder<CharacterEntities, Charac
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition> specialNameOfClassIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'specialNameOfClass',
-      ));
-    });
-  }
-
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition> specialNameOfClassIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'specialNameOfClass',
-      ));
-    });
-  }
-
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition> specialNameOfClassEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'specialNameOfClass',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition> specialNameOfClassGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'specialNameOfClass',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition> specialNameOfClassLessThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'specialNameOfClass',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition> specialNameOfClassBetween(
-    String? lower,
-    String? upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'specialNameOfClass',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition> specialNameOfClassStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'specialNameOfClass',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition> specialNameOfClassEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'specialNameOfClass',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition> specialNameOfClassContains(String value, {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'specialNameOfClass',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition> specialNameOfClassMatches(String pattern, {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'specialNameOfClass',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition> specialNameOfClassIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'specialNameOfClass',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition> specialNameOfClassIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'specialNameOfClass',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition> stringifyIsNull() {
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      stringifyIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
         property: r'stringify',
@@ -1157,7 +1237,8 @@ extension CharacterEntitiesQueryFilter on QueryBuilder<CharacterEntities, Charac
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition> stringifyIsNotNull() {
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      stringifyIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNotNull(
         property: r'stringify',
@@ -1165,7 +1246,8 @@ extension CharacterEntitiesQueryFilter on QueryBuilder<CharacterEntities, Charac
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition> stringifyEqualTo(bool? value) {
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterFilterCondition>
+      stringifyEqualTo(bool? value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'stringify',
@@ -1175,18 +1257,23 @@ extension CharacterEntitiesQueryFilter on QueryBuilder<CharacterEntities, Charac
   }
 }
 
-extension CharacterEntitiesQueryObject on QueryBuilder<CharacterEntities, CharacterEntities, QFilterCondition> {}
+extension CharacterEntitiesQueryObject
+    on QueryBuilder<CharacterEntities, CharacterEntities, QFilterCondition> {}
 
-extension CharacterEntitiesQueryLinks on QueryBuilder<CharacterEntities, CharacterEntities, QFilterCondition> {}
+extension CharacterEntitiesQueryLinks
+    on QueryBuilder<CharacterEntities, CharacterEntities, QFilterCondition> {}
 
-extension CharacterEntitiesQuerySortBy on QueryBuilder<CharacterEntities, CharacterEntities, QSortBy> {
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterSortBy> sortByBackstory() {
+extension CharacterEntitiesQuerySortBy
+    on QueryBuilder<CharacterEntities, CharacterEntities, QSortBy> {
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterSortBy>
+      sortByBackstory() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'backstory', Sort.asc);
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterSortBy> sortByBackstoryDesc() {
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterSortBy>
+      sortByBackstoryDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'backstory', Sort.desc);
     });
@@ -1198,43 +1285,64 @@ extension CharacterEntitiesQuerySortBy on QueryBuilder<CharacterEntities, Charac
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterSortBy> sortByCdDesc() {
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterSortBy>
+      sortByCdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'cd', Sort.desc);
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterSortBy> sortByHashCode() {
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterSortBy>
+      sortByCustomNameOfMulticlass() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'customNameOfMulticlass', Sort.asc);
+    });
+  }
+
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterSortBy>
+      sortByCustomNameOfMulticlassDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'customNameOfMulticlass', Sort.desc);
+    });
+  }
+
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterSortBy>
+      sortByHashCode() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'hashCode', Sort.asc);
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterSortBy> sortByHashCodeDesc() {
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterSortBy>
+      sortByHashCodeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'hashCode', Sort.desc);
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterSortBy> sortByName() {
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterSortBy>
+      sortByName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'name', Sort.asc);
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterSortBy> sortByNameDesc() {
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterSortBy>
+      sortByNameDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'name', Sort.desc);
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterSortBy> sortByRace() {
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterSortBy>
+      sortByRace() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'race', Sort.asc);
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterSortBy> sortByRaceDesc() {
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterSortBy>
+      sortByRaceDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'race', Sort.desc);
     });
@@ -1246,45 +1354,39 @@ extension CharacterEntitiesQuerySortBy on QueryBuilder<CharacterEntities, Charac
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterSortBy> sortBySexDesc() {
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterSortBy>
+      sortBySexDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'sex', Sort.desc);
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterSortBy> sortBySpecialNameOfClass() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'specialNameOfClass', Sort.asc);
-    });
-  }
-
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterSortBy> sortBySpecialNameOfClassDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'specialNameOfClass', Sort.desc);
-    });
-  }
-
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterSortBy> sortByStringify() {
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterSortBy>
+      sortByStringify() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'stringify', Sort.asc);
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterSortBy> sortByStringifyDesc() {
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterSortBy>
+      sortByStringifyDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'stringify', Sort.desc);
     });
   }
 }
 
-extension CharacterEntitiesQuerySortThenBy on QueryBuilder<CharacterEntities, CharacterEntities, QSortThenBy> {
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterSortBy> thenByBackstory() {
+extension CharacterEntitiesQuerySortThenBy
+    on QueryBuilder<CharacterEntities, CharacterEntities, QSortThenBy> {
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterSortBy>
+      thenByBackstory() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'backstory', Sort.asc);
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterSortBy> thenByBackstoryDesc() {
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterSortBy>
+      thenByBackstoryDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'backstory', Sort.desc);
     });
@@ -1296,19 +1398,36 @@ extension CharacterEntitiesQuerySortThenBy on QueryBuilder<CharacterEntities, Ch
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterSortBy> thenByCdDesc() {
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterSortBy>
+      thenByCdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'cd', Sort.desc);
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterSortBy> thenByHashCode() {
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterSortBy>
+      thenByCustomNameOfMulticlass() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'customNameOfMulticlass', Sort.asc);
+    });
+  }
+
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterSortBy>
+      thenByCustomNameOfMulticlassDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'customNameOfMulticlass', Sort.desc);
+    });
+  }
+
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterSortBy>
+      thenByHashCode() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'hashCode', Sort.asc);
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterSortBy> thenByHashCodeDesc() {
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterSortBy>
+      thenByHashCodeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'hashCode', Sort.desc);
     });
@@ -1320,31 +1439,36 @@ extension CharacterEntitiesQuerySortThenBy on QueryBuilder<CharacterEntities, Ch
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterSortBy> thenByIdDesc() {
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterSortBy>
+      thenByIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.desc);
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterSortBy> thenByName() {
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterSortBy>
+      thenByName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'name', Sort.asc);
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterSortBy> thenByNameDesc() {
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterSortBy>
+      thenByNameDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'name', Sort.desc);
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterSortBy> thenByRace() {
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterSortBy>
+      thenByRace() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'race', Sort.asc);
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterSortBy> thenByRaceDesc() {
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterSortBy>
+      thenByRaceDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'race', Sort.desc);
     });
@@ -1356,39 +1480,32 @@ extension CharacterEntitiesQuerySortThenBy on QueryBuilder<CharacterEntities, Ch
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterSortBy> thenBySexDesc() {
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterSortBy>
+      thenBySexDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'sex', Sort.desc);
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterSortBy> thenBySpecialNameOfClass() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'specialNameOfClass', Sort.asc);
-    });
-  }
-
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterSortBy> thenBySpecialNameOfClassDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'specialNameOfClass', Sort.desc);
-    });
-  }
-
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterSortBy> thenByStringify() {
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterSortBy>
+      thenByStringify() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'stringify', Sort.asc);
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QAfterSortBy> thenByStringifyDesc() {
+  QueryBuilder<CharacterEntities, CharacterEntities, QAfterSortBy>
+      thenByStringifyDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'stringify', Sort.desc);
     });
   }
 }
 
-extension CharacterEntitiesQueryWhereDistinct on QueryBuilder<CharacterEntities, CharacterEntities, QDistinct> {
-  QueryBuilder<CharacterEntities, CharacterEntities, QDistinct> distinctByBackstory({bool caseSensitive = true}) {
+extension CharacterEntitiesQueryWhereDistinct
+    on QueryBuilder<CharacterEntities, CharacterEntities, QDistinct> {
+  QueryBuilder<CharacterEntities, CharacterEntities, QDistinct>
+      distinctByBackstory({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'backstory', caseSensitive: caseSensitive);
     });
@@ -1400,51 +1517,60 @@ extension CharacterEntitiesQueryWhereDistinct on QueryBuilder<CharacterEntities,
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QDistinct> distinctByHashCode() {
+  QueryBuilder<CharacterEntities, CharacterEntities, QDistinct>
+      distinctByCustomNameOfMulticlass({bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'customNameOfMulticlass',
+          caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<CharacterEntities, CharacterEntities, QDistinct>
+      distinctByHashCode() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'hashCode');
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QDistinct> distinctByName({bool caseSensitive = true}) {
+  QueryBuilder<CharacterEntities, CharacterEntities, QDistinct> distinctByName(
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'name', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QDistinct> distinctByRace({bool caseSensitive = true}) {
+  QueryBuilder<CharacterEntities, CharacterEntities, QDistinct> distinctByRace(
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'race', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QDistinct> distinctBySex({bool caseSensitive = true}) {
+  QueryBuilder<CharacterEntities, CharacterEntities, QDistinct> distinctBySex(
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'sex', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<CharacterEntities, CharacterEntities, QDistinct> distinctBySpecialNameOfClass({bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'specialNameOfClass', caseSensitive: caseSensitive);
-    });
-  }
-
-  QueryBuilder<CharacterEntities, CharacterEntities, QDistinct> distinctByStringify() {
+  QueryBuilder<CharacterEntities, CharacterEntities, QDistinct>
+      distinctByStringify() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'stringify');
     });
   }
 }
 
-extension CharacterEntitiesQueryProperty on QueryBuilder<CharacterEntities, CharacterEntities, QQueryProperty> {
+extension CharacterEntitiesQueryProperty
+    on QueryBuilder<CharacterEntities, CharacterEntities, QQueryProperty> {
   QueryBuilder<CharacterEntities, int, QQueryOperations> idProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'id');
     });
   }
 
-  QueryBuilder<CharacterEntities, String, QQueryOperations> backstoryProperty() {
+  QueryBuilder<CharacterEntities, String, QQueryOperations>
+      backstoryProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'backstory');
     });
@@ -1453,6 +1579,13 @@ extension CharacterEntitiesQueryProperty on QueryBuilder<CharacterEntities, Char
   QueryBuilder<CharacterEntities, int, QQueryOperations> cdProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'cd');
+    });
+  }
+
+  QueryBuilder<CharacterEntities, String?, QQueryOperations>
+      customNameOfMulticlassProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'customNameOfMulticlass');
     });
   }
 
@@ -1477,12 +1610,6 @@ extension CharacterEntitiesQueryProperty on QueryBuilder<CharacterEntities, Char
   QueryBuilder<CharacterEntities, String, QQueryOperations> sexProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'sex');
-    });
-  }
-
-  QueryBuilder<CharacterEntities, String?, QQueryOperations> specialNameOfClassProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'specialNameOfClass');
     });
   }
 
@@ -1602,9 +1729,11 @@ List<IsarLinkBase<dynamic>> _expEntitiesGetLinks(ExpEntities object) {
   return [];
 }
 
-void _expEntitiesAttach(IsarCollection<dynamic> col, Id id, ExpEntities object) {}
+void _expEntitiesAttach(
+    IsarCollection<dynamic> col, Id id, ExpEntities object) {}
 
-extension ExpEntitiesQueryWhereSort on QueryBuilder<ExpEntities, ExpEntities, QWhere> {
+extension ExpEntitiesQueryWhereSort
+    on QueryBuilder<ExpEntities, ExpEntities, QWhere> {
   QueryBuilder<ExpEntities, ExpEntities, QAfterWhere> anyId() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(const IdWhereClause.any());
@@ -1612,7 +1741,8 @@ extension ExpEntitiesQueryWhereSort on QueryBuilder<ExpEntities, ExpEntities, QW
   }
 }
 
-extension ExpEntitiesQueryWhere on QueryBuilder<ExpEntities, ExpEntities, QWhereClause> {
+extension ExpEntitiesQueryWhere
+    on QueryBuilder<ExpEntities, ExpEntities, QWhereClause> {
   QueryBuilder<ExpEntities, ExpEntities, QAfterWhereClause> idEqualTo(Id id) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(IdWhereClause.between(
@@ -1622,7 +1752,8 @@ extension ExpEntitiesQueryWhere on QueryBuilder<ExpEntities, ExpEntities, QWhere
     });
   }
 
-  QueryBuilder<ExpEntities, ExpEntities, QAfterWhereClause> idNotEqualTo(Id id) {
+  QueryBuilder<ExpEntities, ExpEntities, QAfterWhereClause> idNotEqualTo(
+      Id id) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
@@ -1644,7 +1775,8 @@ extension ExpEntitiesQueryWhere on QueryBuilder<ExpEntities, ExpEntities, QWhere
     });
   }
 
-  QueryBuilder<ExpEntities, ExpEntities, QAfterWhereClause> idGreaterThan(Id id, {bool include = false}) {
+  QueryBuilder<ExpEntities, ExpEntities, QAfterWhereClause> idGreaterThan(Id id,
+      {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         IdWhereClause.greaterThan(lower: id, includeLower: include),
@@ -1652,7 +1784,8 @@ extension ExpEntitiesQueryWhere on QueryBuilder<ExpEntities, ExpEntities, QWhere
     });
   }
 
-  QueryBuilder<ExpEntities, ExpEntities, QAfterWhereClause> idLessThan(Id id, {bool include = false}) {
+  QueryBuilder<ExpEntities, ExpEntities, QAfterWhereClause> idLessThan(Id id,
+      {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         IdWhereClause.lessThan(upper: id, includeUpper: include),
@@ -1677,8 +1810,10 @@ extension ExpEntitiesQueryWhere on QueryBuilder<ExpEntities, ExpEntities, QWhere
   }
 }
 
-extension ExpEntitiesQueryFilter on QueryBuilder<ExpEntities, ExpEntities, QFilterCondition> {
-  QueryBuilder<ExpEntities, ExpEntities, QAfterFilterCondition> characterNameEqualTo(
+extension ExpEntitiesQueryFilter
+    on QueryBuilder<ExpEntities, ExpEntities, QFilterCondition> {
+  QueryBuilder<ExpEntities, ExpEntities, QAfterFilterCondition>
+      characterNameEqualTo(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -1691,7 +1826,8 @@ extension ExpEntitiesQueryFilter on QueryBuilder<ExpEntities, ExpEntities, QFilt
     });
   }
 
-  QueryBuilder<ExpEntities, ExpEntities, QAfterFilterCondition> characterNameGreaterThan(
+  QueryBuilder<ExpEntities, ExpEntities, QAfterFilterCondition>
+      characterNameGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -1706,7 +1842,8 @@ extension ExpEntitiesQueryFilter on QueryBuilder<ExpEntities, ExpEntities, QFilt
     });
   }
 
-  QueryBuilder<ExpEntities, ExpEntities, QAfterFilterCondition> characterNameLessThan(
+  QueryBuilder<ExpEntities, ExpEntities, QAfterFilterCondition>
+      characterNameLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -1721,7 +1858,8 @@ extension ExpEntitiesQueryFilter on QueryBuilder<ExpEntities, ExpEntities, QFilt
     });
   }
 
-  QueryBuilder<ExpEntities, ExpEntities, QAfterFilterCondition> characterNameBetween(
+  QueryBuilder<ExpEntities, ExpEntities, QAfterFilterCondition>
+      characterNameBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -1740,7 +1878,8 @@ extension ExpEntitiesQueryFilter on QueryBuilder<ExpEntities, ExpEntities, QFilt
     });
   }
 
-  QueryBuilder<ExpEntities, ExpEntities, QAfterFilterCondition> characterNameStartsWith(
+  QueryBuilder<ExpEntities, ExpEntities, QAfterFilterCondition>
+      characterNameStartsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -1753,7 +1892,8 @@ extension ExpEntitiesQueryFilter on QueryBuilder<ExpEntities, ExpEntities, QFilt
     });
   }
 
-  QueryBuilder<ExpEntities, ExpEntities, QAfterFilterCondition> characterNameEndsWith(
+  QueryBuilder<ExpEntities, ExpEntities, QAfterFilterCondition>
+      characterNameEndsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -1766,7 +1906,8 @@ extension ExpEntitiesQueryFilter on QueryBuilder<ExpEntities, ExpEntities, QFilt
     });
   }
 
-  QueryBuilder<ExpEntities, ExpEntities, QAfterFilterCondition> characterNameContains(String value, {bool caseSensitive = true}) {
+  QueryBuilder<ExpEntities, ExpEntities, QAfterFilterCondition>
+      characterNameContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
         property: r'characterName',
@@ -1776,7 +1917,8 @@ extension ExpEntitiesQueryFilter on QueryBuilder<ExpEntities, ExpEntities, QFilt
     });
   }
 
-  QueryBuilder<ExpEntities, ExpEntities, QAfterFilterCondition> characterNameMatches(String pattern, {bool caseSensitive = true}) {
+  QueryBuilder<ExpEntities, ExpEntities, QAfterFilterCondition>
+      characterNameMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.matches(
         property: r'characterName',
@@ -1786,7 +1928,8 @@ extension ExpEntitiesQueryFilter on QueryBuilder<ExpEntities, ExpEntities, QFilt
     });
   }
 
-  QueryBuilder<ExpEntities, ExpEntities, QAfterFilterCondition> characterNameIsEmpty() {
+  QueryBuilder<ExpEntities, ExpEntities, QAfterFilterCondition>
+      characterNameIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'characterName',
@@ -1795,7 +1938,8 @@ extension ExpEntitiesQueryFilter on QueryBuilder<ExpEntities, ExpEntities, QFilt
     });
   }
 
-  QueryBuilder<ExpEntities, ExpEntities, QAfterFilterCondition> characterNameIsNotEmpty() {
+  QueryBuilder<ExpEntities, ExpEntities, QAfterFilterCondition>
+      characterNameIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'characterName',
@@ -1804,7 +1948,8 @@ extension ExpEntitiesQueryFilter on QueryBuilder<ExpEntities, ExpEntities, QFilt
     });
   }
 
-  QueryBuilder<ExpEntities, ExpEntities, QAfterFilterCondition> hashCodeEqualTo(int value) {
+  QueryBuilder<ExpEntities, ExpEntities, QAfterFilterCondition> hashCodeEqualTo(
+      int value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'hashCode',
@@ -1813,7 +1958,8 @@ extension ExpEntitiesQueryFilter on QueryBuilder<ExpEntities, ExpEntities, QFilt
     });
   }
 
-  QueryBuilder<ExpEntities, ExpEntities, QAfterFilterCondition> hashCodeGreaterThan(
+  QueryBuilder<ExpEntities, ExpEntities, QAfterFilterCondition>
+      hashCodeGreaterThan(
     int value, {
     bool include = false,
   }) {
@@ -1826,7 +1972,8 @@ extension ExpEntitiesQueryFilter on QueryBuilder<ExpEntities, ExpEntities, QFilt
     });
   }
 
-  QueryBuilder<ExpEntities, ExpEntities, QAfterFilterCondition> hashCodeLessThan(
+  QueryBuilder<ExpEntities, ExpEntities, QAfterFilterCondition>
+      hashCodeLessThan(
     int value, {
     bool include = false,
   }) {
@@ -1856,7 +2003,8 @@ extension ExpEntitiesQueryFilter on QueryBuilder<ExpEntities, ExpEntities, QFilt
     });
   }
 
-  QueryBuilder<ExpEntities, ExpEntities, QAfterFilterCondition> idEqualTo(Id value) {
+  QueryBuilder<ExpEntities, ExpEntities, QAfterFilterCondition> idEqualTo(
+      Id value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'id',
@@ -1908,7 +2056,8 @@ extension ExpEntitiesQueryFilter on QueryBuilder<ExpEntities, ExpEntities, QFilt
     });
   }
 
-  QueryBuilder<ExpEntities, ExpEntities, QAfterFilterCondition> stringifyIsNull() {
+  QueryBuilder<ExpEntities, ExpEntities, QAfterFilterCondition>
+      stringifyIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
         property: r'stringify',
@@ -1916,7 +2065,8 @@ extension ExpEntitiesQueryFilter on QueryBuilder<ExpEntities, ExpEntities, QFilt
     });
   }
 
-  QueryBuilder<ExpEntities, ExpEntities, QAfterFilterCondition> stringifyIsNotNull() {
+  QueryBuilder<ExpEntities, ExpEntities, QAfterFilterCondition>
+      stringifyIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNotNull(
         property: r'stringify',
@@ -1924,7 +2074,8 @@ extension ExpEntitiesQueryFilter on QueryBuilder<ExpEntities, ExpEntities, QFilt
     });
   }
 
-  QueryBuilder<ExpEntities, ExpEntities, QAfterFilterCondition> stringifyEqualTo(bool? value) {
+  QueryBuilder<ExpEntities, ExpEntities, QAfterFilterCondition>
+      stringifyEqualTo(bool? value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'stringify',
@@ -1933,7 +2084,8 @@ extension ExpEntitiesQueryFilter on QueryBuilder<ExpEntities, ExpEntities, QFilt
     });
   }
 
-  QueryBuilder<ExpEntities, ExpEntities, QAfterFilterCondition> valueEqualTo(int value) {
+  QueryBuilder<ExpEntities, ExpEntities, QAfterFilterCondition> valueEqualTo(
+      int value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'value',
@@ -1942,7 +2094,8 @@ extension ExpEntitiesQueryFilter on QueryBuilder<ExpEntities, ExpEntities, QFilt
     });
   }
 
-  QueryBuilder<ExpEntities, ExpEntities, QAfterFilterCondition> valueGreaterThan(
+  QueryBuilder<ExpEntities, ExpEntities, QAfterFilterCondition>
+      valueGreaterThan(
     int value, {
     bool include = false,
   }) {
@@ -1986,18 +2139,22 @@ extension ExpEntitiesQueryFilter on QueryBuilder<ExpEntities, ExpEntities, QFilt
   }
 }
 
-extension ExpEntitiesQueryObject on QueryBuilder<ExpEntities, ExpEntities, QFilterCondition> {}
+extension ExpEntitiesQueryObject
+    on QueryBuilder<ExpEntities, ExpEntities, QFilterCondition> {}
 
-extension ExpEntitiesQueryLinks on QueryBuilder<ExpEntities, ExpEntities, QFilterCondition> {}
+extension ExpEntitiesQueryLinks
+    on QueryBuilder<ExpEntities, ExpEntities, QFilterCondition> {}
 
-extension ExpEntitiesQuerySortBy on QueryBuilder<ExpEntities, ExpEntities, QSortBy> {
+extension ExpEntitiesQuerySortBy
+    on QueryBuilder<ExpEntities, ExpEntities, QSortBy> {
   QueryBuilder<ExpEntities, ExpEntities, QAfterSortBy> sortByCharacterName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'characterName', Sort.asc);
     });
   }
 
-  QueryBuilder<ExpEntities, ExpEntities, QAfterSortBy> sortByCharacterNameDesc() {
+  QueryBuilder<ExpEntities, ExpEntities, QAfterSortBy>
+      sortByCharacterNameDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'characterName', Sort.desc);
     });
@@ -2040,14 +2197,16 @@ extension ExpEntitiesQuerySortBy on QueryBuilder<ExpEntities, ExpEntities, QSort
   }
 }
 
-extension ExpEntitiesQuerySortThenBy on QueryBuilder<ExpEntities, ExpEntities, QSortThenBy> {
+extension ExpEntitiesQuerySortThenBy
+    on QueryBuilder<ExpEntities, ExpEntities, QSortThenBy> {
   QueryBuilder<ExpEntities, ExpEntities, QAfterSortBy> thenByCharacterName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'characterName', Sort.asc);
     });
   }
 
-  QueryBuilder<ExpEntities, ExpEntities, QAfterSortBy> thenByCharacterNameDesc() {
+  QueryBuilder<ExpEntities, ExpEntities, QAfterSortBy>
+      thenByCharacterNameDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'characterName', Sort.desc);
     });
@@ -2102,10 +2261,13 @@ extension ExpEntitiesQuerySortThenBy on QueryBuilder<ExpEntities, ExpEntities, Q
   }
 }
 
-extension ExpEntitiesQueryWhereDistinct on QueryBuilder<ExpEntities, ExpEntities, QDistinct> {
-  QueryBuilder<ExpEntities, ExpEntities, QDistinct> distinctByCharacterName({bool caseSensitive = true}) {
+extension ExpEntitiesQueryWhereDistinct
+    on QueryBuilder<ExpEntities, ExpEntities, QDistinct> {
+  QueryBuilder<ExpEntities, ExpEntities, QDistinct> distinctByCharacterName(
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'characterName', caseSensitive: caseSensitive);
+      return query.addDistinctBy(r'characterName',
+          caseSensitive: caseSensitive);
     });
   }
 
@@ -2128,7 +2290,8 @@ extension ExpEntitiesQueryWhereDistinct on QueryBuilder<ExpEntities, ExpEntities
   }
 }
 
-extension ExpEntitiesQueryProperty on QueryBuilder<ExpEntities, ExpEntities, QQueryProperty> {
+extension ExpEntitiesQueryProperty
+    on QueryBuilder<ExpEntities, ExpEntities, QQueryProperty> {
   QueryBuilder<ExpEntities, int, QQueryOperations> idProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'id');
@@ -2298,7 +2461,8 @@ List<IsarLinkBase<dynamic>> _hpEntitiesGetLinks(HpEntities object) {
 
 void _hpEntitiesAttach(IsarCollection<dynamic> col, Id id, HpEntities object) {}
 
-extension HpEntitiesQueryWhereSort on QueryBuilder<HpEntities, HpEntities, QWhere> {
+extension HpEntitiesQueryWhereSort
+    on QueryBuilder<HpEntities, HpEntities, QWhere> {
   QueryBuilder<HpEntities, HpEntities, QAfterWhere> anyId() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(const IdWhereClause.any());
@@ -2306,7 +2470,8 @@ extension HpEntitiesQueryWhereSort on QueryBuilder<HpEntities, HpEntities, QWher
   }
 }
 
-extension HpEntitiesQueryWhere on QueryBuilder<HpEntities, HpEntities, QWhereClause> {
+extension HpEntitiesQueryWhere
+    on QueryBuilder<HpEntities, HpEntities, QWhereClause> {
   QueryBuilder<HpEntities, HpEntities, QAfterWhereClause> idEqualTo(Id id) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(IdWhereClause.between(
@@ -2338,7 +2503,8 @@ extension HpEntitiesQueryWhere on QueryBuilder<HpEntities, HpEntities, QWhereCla
     });
   }
 
-  QueryBuilder<HpEntities, HpEntities, QAfterWhereClause> idGreaterThan(Id id, {bool include = false}) {
+  QueryBuilder<HpEntities, HpEntities, QAfterWhereClause> idGreaterThan(Id id,
+      {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         IdWhereClause.greaterThan(lower: id, includeLower: include),
@@ -2346,7 +2512,8 @@ extension HpEntitiesQueryWhere on QueryBuilder<HpEntities, HpEntities, QWhereCla
     });
   }
 
-  QueryBuilder<HpEntities, HpEntities, QAfterWhereClause> idLessThan(Id id, {bool include = false}) {
+  QueryBuilder<HpEntities, HpEntities, QAfterWhereClause> idLessThan(Id id,
+      {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         IdWhereClause.lessThan(upper: id, includeUpper: include),
@@ -2371,8 +2538,10 @@ extension HpEntitiesQueryWhere on QueryBuilder<HpEntities, HpEntities, QWhereCla
   }
 }
 
-extension HpEntitiesQueryFilter on QueryBuilder<HpEntities, HpEntities, QFilterCondition> {
-  QueryBuilder<HpEntities, HpEntities, QAfterFilterCondition> characterNameEqualTo(
+extension HpEntitiesQueryFilter
+    on QueryBuilder<HpEntities, HpEntities, QFilterCondition> {
+  QueryBuilder<HpEntities, HpEntities, QAfterFilterCondition>
+      characterNameEqualTo(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -2385,7 +2554,8 @@ extension HpEntitiesQueryFilter on QueryBuilder<HpEntities, HpEntities, QFilterC
     });
   }
 
-  QueryBuilder<HpEntities, HpEntities, QAfterFilterCondition> characterNameGreaterThan(
+  QueryBuilder<HpEntities, HpEntities, QAfterFilterCondition>
+      characterNameGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -2400,7 +2570,8 @@ extension HpEntitiesQueryFilter on QueryBuilder<HpEntities, HpEntities, QFilterC
     });
   }
 
-  QueryBuilder<HpEntities, HpEntities, QAfterFilterCondition> characterNameLessThan(
+  QueryBuilder<HpEntities, HpEntities, QAfterFilterCondition>
+      characterNameLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -2415,7 +2586,8 @@ extension HpEntitiesQueryFilter on QueryBuilder<HpEntities, HpEntities, QFilterC
     });
   }
 
-  QueryBuilder<HpEntities, HpEntities, QAfterFilterCondition> characterNameBetween(
+  QueryBuilder<HpEntities, HpEntities, QAfterFilterCondition>
+      characterNameBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -2434,7 +2606,8 @@ extension HpEntitiesQueryFilter on QueryBuilder<HpEntities, HpEntities, QFilterC
     });
   }
 
-  QueryBuilder<HpEntities, HpEntities, QAfterFilterCondition> characterNameStartsWith(
+  QueryBuilder<HpEntities, HpEntities, QAfterFilterCondition>
+      characterNameStartsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -2447,7 +2620,8 @@ extension HpEntitiesQueryFilter on QueryBuilder<HpEntities, HpEntities, QFilterC
     });
   }
 
-  QueryBuilder<HpEntities, HpEntities, QAfterFilterCondition> characterNameEndsWith(
+  QueryBuilder<HpEntities, HpEntities, QAfterFilterCondition>
+      characterNameEndsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -2460,7 +2634,8 @@ extension HpEntitiesQueryFilter on QueryBuilder<HpEntities, HpEntities, QFilterC
     });
   }
 
-  QueryBuilder<HpEntities, HpEntities, QAfterFilterCondition> characterNameContains(String value, {bool caseSensitive = true}) {
+  QueryBuilder<HpEntities, HpEntities, QAfterFilterCondition>
+      characterNameContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
         property: r'characterName',
@@ -2470,7 +2645,8 @@ extension HpEntitiesQueryFilter on QueryBuilder<HpEntities, HpEntities, QFilterC
     });
   }
 
-  QueryBuilder<HpEntities, HpEntities, QAfterFilterCondition> characterNameMatches(String pattern, {bool caseSensitive = true}) {
+  QueryBuilder<HpEntities, HpEntities, QAfterFilterCondition>
+      characterNameMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.matches(
         property: r'characterName',
@@ -2480,7 +2656,8 @@ extension HpEntitiesQueryFilter on QueryBuilder<HpEntities, HpEntities, QFilterC
     });
   }
 
-  QueryBuilder<HpEntities, HpEntities, QAfterFilterCondition> characterNameIsEmpty() {
+  QueryBuilder<HpEntities, HpEntities, QAfterFilterCondition>
+      characterNameIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'characterName',
@@ -2489,7 +2666,8 @@ extension HpEntitiesQueryFilter on QueryBuilder<HpEntities, HpEntities, QFilterC
     });
   }
 
-  QueryBuilder<HpEntities, HpEntities, QAfterFilterCondition> characterNameIsNotEmpty() {
+  QueryBuilder<HpEntities, HpEntities, QAfterFilterCondition>
+      characterNameIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'characterName',
@@ -2498,7 +2676,8 @@ extension HpEntitiesQueryFilter on QueryBuilder<HpEntities, HpEntities, QFilterC
     });
   }
 
-  QueryBuilder<HpEntities, HpEntities, QAfterFilterCondition> currBonusHPEqualTo(int value) {
+  QueryBuilder<HpEntities, HpEntities, QAfterFilterCondition>
+      currBonusHPEqualTo(int value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'currBonusHP',
@@ -2507,7 +2686,8 @@ extension HpEntitiesQueryFilter on QueryBuilder<HpEntities, HpEntities, QFilterC
     });
   }
 
-  QueryBuilder<HpEntities, HpEntities, QAfterFilterCondition> currBonusHPGreaterThan(
+  QueryBuilder<HpEntities, HpEntities, QAfterFilterCondition>
+      currBonusHPGreaterThan(
     int value, {
     bool include = false,
   }) {
@@ -2520,7 +2700,8 @@ extension HpEntitiesQueryFilter on QueryBuilder<HpEntities, HpEntities, QFilterC
     });
   }
 
-  QueryBuilder<HpEntities, HpEntities, QAfterFilterCondition> currBonusHPLessThan(
+  QueryBuilder<HpEntities, HpEntities, QAfterFilterCondition>
+      currBonusHPLessThan(
     int value, {
     bool include = false,
   }) {
@@ -2533,7 +2714,8 @@ extension HpEntitiesQueryFilter on QueryBuilder<HpEntities, HpEntities, QFilterC
     });
   }
 
-  QueryBuilder<HpEntities, HpEntities, QAfterFilterCondition> currBonusHPBetween(
+  QueryBuilder<HpEntities, HpEntities, QAfterFilterCondition>
+      currBonusHPBetween(
     int lower,
     int upper, {
     bool includeLower = true,
@@ -2550,7 +2732,8 @@ extension HpEntitiesQueryFilter on QueryBuilder<HpEntities, HpEntities, QFilterC
     });
   }
 
-  QueryBuilder<HpEntities, HpEntities, QAfterFilterCondition> currHPEqualTo(int value) {
+  QueryBuilder<HpEntities, HpEntities, QAfterFilterCondition> currHPEqualTo(
+      int value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'currHP',
@@ -2602,7 +2785,8 @@ extension HpEntitiesQueryFilter on QueryBuilder<HpEntities, HpEntities, QFilterC
     });
   }
 
-  QueryBuilder<HpEntities, HpEntities, QAfterFilterCondition> hashCodeEqualTo(int value) {
+  QueryBuilder<HpEntities, HpEntities, QAfterFilterCondition> hashCodeEqualTo(
+      int value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'hashCode',
@@ -2611,7 +2795,8 @@ extension HpEntitiesQueryFilter on QueryBuilder<HpEntities, HpEntities, QFilterC
     });
   }
 
-  QueryBuilder<HpEntities, HpEntities, QAfterFilterCondition> hashCodeGreaterThan(
+  QueryBuilder<HpEntities, HpEntities, QAfterFilterCondition>
+      hashCodeGreaterThan(
     int value, {
     bool include = false,
   }) {
@@ -2654,7 +2839,8 @@ extension HpEntitiesQueryFilter on QueryBuilder<HpEntities, HpEntities, QFilterC
     });
   }
 
-  QueryBuilder<HpEntities, HpEntities, QAfterFilterCondition> idEqualTo(Id value) {
+  QueryBuilder<HpEntities, HpEntities, QAfterFilterCondition> idEqualTo(
+      Id value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'id',
@@ -2706,7 +2892,8 @@ extension HpEntitiesQueryFilter on QueryBuilder<HpEntities, HpEntities, QFilterC
     });
   }
 
-  QueryBuilder<HpEntities, HpEntities, QAfterFilterCondition> maxBonusHPEqualTo(int value) {
+  QueryBuilder<HpEntities, HpEntities, QAfterFilterCondition> maxBonusHPEqualTo(
+      int value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'maxBonusHP',
@@ -2715,7 +2902,8 @@ extension HpEntitiesQueryFilter on QueryBuilder<HpEntities, HpEntities, QFilterC
     });
   }
 
-  QueryBuilder<HpEntities, HpEntities, QAfterFilterCondition> maxBonusHPGreaterThan(
+  QueryBuilder<HpEntities, HpEntities, QAfterFilterCondition>
+      maxBonusHPGreaterThan(
     int value, {
     bool include = false,
   }) {
@@ -2728,7 +2916,8 @@ extension HpEntitiesQueryFilter on QueryBuilder<HpEntities, HpEntities, QFilterC
     });
   }
 
-  QueryBuilder<HpEntities, HpEntities, QAfterFilterCondition> maxBonusHPLessThan(
+  QueryBuilder<HpEntities, HpEntities, QAfterFilterCondition>
+      maxBonusHPLessThan(
     int value, {
     bool include = false,
   }) {
@@ -2758,7 +2947,8 @@ extension HpEntitiesQueryFilter on QueryBuilder<HpEntities, HpEntities, QFilterC
     });
   }
 
-  QueryBuilder<HpEntities, HpEntities, QAfterFilterCondition> maxHPEqualTo(int value) {
+  QueryBuilder<HpEntities, HpEntities, QAfterFilterCondition> maxHPEqualTo(
+      int value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'maxHP',
@@ -2810,7 +3000,8 @@ extension HpEntitiesQueryFilter on QueryBuilder<HpEntities, HpEntities, QFilterC
     });
   }
 
-  QueryBuilder<HpEntities, HpEntities, QAfterFilterCondition> stringifyIsNull() {
+  QueryBuilder<HpEntities, HpEntities, QAfterFilterCondition>
+      stringifyIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
         property: r'stringify',
@@ -2818,7 +3009,8 @@ extension HpEntitiesQueryFilter on QueryBuilder<HpEntities, HpEntities, QFilterC
     });
   }
 
-  QueryBuilder<HpEntities, HpEntities, QAfterFilterCondition> stringifyIsNotNull() {
+  QueryBuilder<HpEntities, HpEntities, QAfterFilterCondition>
+      stringifyIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNotNull(
         property: r'stringify',
@@ -2826,7 +3018,8 @@ extension HpEntitiesQueryFilter on QueryBuilder<HpEntities, HpEntities, QFilterC
     });
   }
 
-  QueryBuilder<HpEntities, HpEntities, QAfterFilterCondition> stringifyEqualTo(bool? value) {
+  QueryBuilder<HpEntities, HpEntities, QAfterFilterCondition> stringifyEqualTo(
+      bool? value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'stringify',
@@ -2836,11 +3029,14 @@ extension HpEntitiesQueryFilter on QueryBuilder<HpEntities, HpEntities, QFilterC
   }
 }
 
-extension HpEntitiesQueryObject on QueryBuilder<HpEntities, HpEntities, QFilterCondition> {}
+extension HpEntitiesQueryObject
+    on QueryBuilder<HpEntities, HpEntities, QFilterCondition> {}
 
-extension HpEntitiesQueryLinks on QueryBuilder<HpEntities, HpEntities, QFilterCondition> {}
+extension HpEntitiesQueryLinks
+    on QueryBuilder<HpEntities, HpEntities, QFilterCondition> {}
 
-extension HpEntitiesQuerySortBy on QueryBuilder<HpEntities, HpEntities, QSortBy> {
+extension HpEntitiesQuerySortBy
+    on QueryBuilder<HpEntities, HpEntities, QSortBy> {
   QueryBuilder<HpEntities, HpEntities, QAfterSortBy> sortByCharacterName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'characterName', Sort.asc);
@@ -2926,7 +3122,8 @@ extension HpEntitiesQuerySortBy on QueryBuilder<HpEntities, HpEntities, QSortBy>
   }
 }
 
-extension HpEntitiesQuerySortThenBy on QueryBuilder<HpEntities, HpEntities, QSortThenBy> {
+extension HpEntitiesQuerySortThenBy
+    on QueryBuilder<HpEntities, HpEntities, QSortThenBy> {
   QueryBuilder<HpEntities, HpEntities, QAfterSortBy> thenByCharacterName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'characterName', Sort.asc);
@@ -3024,10 +3221,13 @@ extension HpEntitiesQuerySortThenBy on QueryBuilder<HpEntities, HpEntities, QSor
   }
 }
 
-extension HpEntitiesQueryWhereDistinct on QueryBuilder<HpEntities, HpEntities, QDistinct> {
-  QueryBuilder<HpEntities, HpEntities, QDistinct> distinctByCharacterName({bool caseSensitive = true}) {
+extension HpEntitiesQueryWhereDistinct
+    on QueryBuilder<HpEntities, HpEntities, QDistinct> {
+  QueryBuilder<HpEntities, HpEntities, QDistinct> distinctByCharacterName(
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'characterName', caseSensitive: caseSensitive);
+      return query.addDistinctBy(r'characterName',
+          caseSensitive: caseSensitive);
     });
   }
 
@@ -3068,7 +3268,8 @@ extension HpEntitiesQueryWhereDistinct on QueryBuilder<HpEntities, HpEntities, Q
   }
 }
 
-extension HpEntitiesQueryProperty on QueryBuilder<HpEntities, HpEntities, QQueryProperty> {
+extension HpEntitiesQueryProperty
+    on QueryBuilder<HpEntities, HpEntities, QQueryProperty> {
   QueryBuilder<HpEntities, int, QQueryOperations> idProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'id');
@@ -3208,7 +3409,9 @@ StatEntities _statEntitiesDeserialize(
   final object = StatEntities(
     characterName: reader.readString(offsets[0]),
     saveThrowMastered: reader.readBool(offsets[2]),
-    statType: _StatEntitiesstatTypeValueEnumMap[reader.readByteOrNull(offsets[3])] ?? StatType.STR,
+    statType:
+        _StatEntitiesstatTypeValueEnumMap[reader.readByteOrNull(offsets[3])] ??
+            StatType.STR,
     value: reader.readLong(offsets[5]),
   );
   return object;
@@ -3228,7 +3431,9 @@ P _statEntitiesDeserializeProp<P>(
     case 2:
       return (reader.readBool(offset)) as P;
     case 3:
-      return (_StatEntitiesstatTypeValueEnumMap[reader.readByteOrNull(offset)] ?? StatType.STR) as P;
+      return (_StatEntitiesstatTypeValueEnumMap[
+              reader.readByteOrNull(offset)] ??
+          StatType.STR) as P;
     case 4:
       return (reader.readBoolOrNull(offset)) as P;
     case 5:
@@ -3263,9 +3468,11 @@ List<IsarLinkBase<dynamic>> _statEntitiesGetLinks(StatEntities object) {
   return [];
 }
 
-void _statEntitiesAttach(IsarCollection<dynamic> col, Id id, StatEntities object) {}
+void _statEntitiesAttach(
+    IsarCollection<dynamic> col, Id id, StatEntities object) {}
 
-extension StatEntitiesQueryWhereSort on QueryBuilder<StatEntities, StatEntities, QWhere> {
+extension StatEntitiesQueryWhereSort
+    on QueryBuilder<StatEntities, StatEntities, QWhere> {
   QueryBuilder<StatEntities, StatEntities, QAfterWhere> anyId() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(const IdWhereClause.any());
@@ -3273,7 +3480,8 @@ extension StatEntitiesQueryWhereSort on QueryBuilder<StatEntities, StatEntities,
   }
 }
 
-extension StatEntitiesQueryWhere on QueryBuilder<StatEntities, StatEntities, QWhereClause> {
+extension StatEntitiesQueryWhere
+    on QueryBuilder<StatEntities, StatEntities, QWhereClause> {
   QueryBuilder<StatEntities, StatEntities, QAfterWhereClause> idEqualTo(Id id) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(IdWhereClause.between(
@@ -3283,7 +3491,8 @@ extension StatEntitiesQueryWhere on QueryBuilder<StatEntities, StatEntities, QWh
     });
   }
 
-  QueryBuilder<StatEntities, StatEntities, QAfterWhereClause> idNotEqualTo(Id id) {
+  QueryBuilder<StatEntities, StatEntities, QAfterWhereClause> idNotEqualTo(
+      Id id) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
@@ -3305,7 +3514,9 @@ extension StatEntitiesQueryWhere on QueryBuilder<StatEntities, StatEntities, QWh
     });
   }
 
-  QueryBuilder<StatEntities, StatEntities, QAfterWhereClause> idGreaterThan(Id id, {bool include = false}) {
+  QueryBuilder<StatEntities, StatEntities, QAfterWhereClause> idGreaterThan(
+      Id id,
+      {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         IdWhereClause.greaterThan(lower: id, includeLower: include),
@@ -3313,7 +3524,8 @@ extension StatEntitiesQueryWhere on QueryBuilder<StatEntities, StatEntities, QWh
     });
   }
 
-  QueryBuilder<StatEntities, StatEntities, QAfterWhereClause> idLessThan(Id id, {bool include = false}) {
+  QueryBuilder<StatEntities, StatEntities, QAfterWhereClause> idLessThan(Id id,
+      {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         IdWhereClause.lessThan(upper: id, includeUpper: include),
@@ -3338,8 +3550,10 @@ extension StatEntitiesQueryWhere on QueryBuilder<StatEntities, StatEntities, QWh
   }
 }
 
-extension StatEntitiesQueryFilter on QueryBuilder<StatEntities, StatEntities, QFilterCondition> {
-  QueryBuilder<StatEntities, StatEntities, QAfterFilterCondition> characterNameEqualTo(
+extension StatEntitiesQueryFilter
+    on QueryBuilder<StatEntities, StatEntities, QFilterCondition> {
+  QueryBuilder<StatEntities, StatEntities, QAfterFilterCondition>
+      characterNameEqualTo(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -3352,7 +3566,8 @@ extension StatEntitiesQueryFilter on QueryBuilder<StatEntities, StatEntities, QF
     });
   }
 
-  QueryBuilder<StatEntities, StatEntities, QAfterFilterCondition> characterNameGreaterThan(
+  QueryBuilder<StatEntities, StatEntities, QAfterFilterCondition>
+      characterNameGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -3367,7 +3582,8 @@ extension StatEntitiesQueryFilter on QueryBuilder<StatEntities, StatEntities, QF
     });
   }
 
-  QueryBuilder<StatEntities, StatEntities, QAfterFilterCondition> characterNameLessThan(
+  QueryBuilder<StatEntities, StatEntities, QAfterFilterCondition>
+      characterNameLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -3382,7 +3598,8 @@ extension StatEntitiesQueryFilter on QueryBuilder<StatEntities, StatEntities, QF
     });
   }
 
-  QueryBuilder<StatEntities, StatEntities, QAfterFilterCondition> characterNameBetween(
+  QueryBuilder<StatEntities, StatEntities, QAfterFilterCondition>
+      characterNameBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -3401,7 +3618,8 @@ extension StatEntitiesQueryFilter on QueryBuilder<StatEntities, StatEntities, QF
     });
   }
 
-  QueryBuilder<StatEntities, StatEntities, QAfterFilterCondition> characterNameStartsWith(
+  QueryBuilder<StatEntities, StatEntities, QAfterFilterCondition>
+      characterNameStartsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -3414,7 +3632,8 @@ extension StatEntitiesQueryFilter on QueryBuilder<StatEntities, StatEntities, QF
     });
   }
 
-  QueryBuilder<StatEntities, StatEntities, QAfterFilterCondition> characterNameEndsWith(
+  QueryBuilder<StatEntities, StatEntities, QAfterFilterCondition>
+      characterNameEndsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -3427,7 +3646,8 @@ extension StatEntitiesQueryFilter on QueryBuilder<StatEntities, StatEntities, QF
     });
   }
 
-  QueryBuilder<StatEntities, StatEntities, QAfterFilterCondition> characterNameContains(String value, {bool caseSensitive = true}) {
+  QueryBuilder<StatEntities, StatEntities, QAfterFilterCondition>
+      characterNameContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
         property: r'characterName',
@@ -3437,7 +3657,8 @@ extension StatEntitiesQueryFilter on QueryBuilder<StatEntities, StatEntities, QF
     });
   }
 
-  QueryBuilder<StatEntities, StatEntities, QAfterFilterCondition> characterNameMatches(String pattern, {bool caseSensitive = true}) {
+  QueryBuilder<StatEntities, StatEntities, QAfterFilterCondition>
+      characterNameMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.matches(
         property: r'characterName',
@@ -3447,7 +3668,8 @@ extension StatEntitiesQueryFilter on QueryBuilder<StatEntities, StatEntities, QF
     });
   }
 
-  QueryBuilder<StatEntities, StatEntities, QAfterFilterCondition> characterNameIsEmpty() {
+  QueryBuilder<StatEntities, StatEntities, QAfterFilterCondition>
+      characterNameIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'characterName',
@@ -3456,7 +3678,8 @@ extension StatEntitiesQueryFilter on QueryBuilder<StatEntities, StatEntities, QF
     });
   }
 
-  QueryBuilder<StatEntities, StatEntities, QAfterFilterCondition> characterNameIsNotEmpty() {
+  QueryBuilder<StatEntities, StatEntities, QAfterFilterCondition>
+      characterNameIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'characterName',
@@ -3465,7 +3688,8 @@ extension StatEntitiesQueryFilter on QueryBuilder<StatEntities, StatEntities, QF
     });
   }
 
-  QueryBuilder<StatEntities, StatEntities, QAfterFilterCondition> hashCodeEqualTo(int value) {
+  QueryBuilder<StatEntities, StatEntities, QAfterFilterCondition>
+      hashCodeEqualTo(int value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'hashCode',
@@ -3474,7 +3698,8 @@ extension StatEntitiesQueryFilter on QueryBuilder<StatEntities, StatEntities, QF
     });
   }
 
-  QueryBuilder<StatEntities, StatEntities, QAfterFilterCondition> hashCodeGreaterThan(
+  QueryBuilder<StatEntities, StatEntities, QAfterFilterCondition>
+      hashCodeGreaterThan(
     int value, {
     bool include = false,
   }) {
@@ -3487,7 +3712,8 @@ extension StatEntitiesQueryFilter on QueryBuilder<StatEntities, StatEntities, QF
     });
   }
 
-  QueryBuilder<StatEntities, StatEntities, QAfterFilterCondition> hashCodeLessThan(
+  QueryBuilder<StatEntities, StatEntities, QAfterFilterCondition>
+      hashCodeLessThan(
     int value, {
     bool include = false,
   }) {
@@ -3500,7 +3726,8 @@ extension StatEntitiesQueryFilter on QueryBuilder<StatEntities, StatEntities, QF
     });
   }
 
-  QueryBuilder<StatEntities, StatEntities, QAfterFilterCondition> hashCodeBetween(
+  QueryBuilder<StatEntities, StatEntities, QAfterFilterCondition>
+      hashCodeBetween(
     int lower,
     int upper, {
     bool includeLower = true,
@@ -3517,7 +3744,8 @@ extension StatEntitiesQueryFilter on QueryBuilder<StatEntities, StatEntities, QF
     });
   }
 
-  QueryBuilder<StatEntities, StatEntities, QAfterFilterCondition> idEqualTo(Id value) {
+  QueryBuilder<StatEntities, StatEntities, QAfterFilterCondition> idEqualTo(
+      Id value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'id',
@@ -3569,7 +3797,8 @@ extension StatEntitiesQueryFilter on QueryBuilder<StatEntities, StatEntities, QF
     });
   }
 
-  QueryBuilder<StatEntities, StatEntities, QAfterFilterCondition> saveThrowMasteredEqualTo(bool value) {
+  QueryBuilder<StatEntities, StatEntities, QAfterFilterCondition>
+      saveThrowMasteredEqualTo(bool value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'saveThrowMastered',
@@ -3578,7 +3807,8 @@ extension StatEntitiesQueryFilter on QueryBuilder<StatEntities, StatEntities, QF
     });
   }
 
-  QueryBuilder<StatEntities, StatEntities, QAfterFilterCondition> statTypeEqualTo(StatType value) {
+  QueryBuilder<StatEntities, StatEntities, QAfterFilterCondition>
+      statTypeEqualTo(StatType value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'statType',
@@ -3587,7 +3817,8 @@ extension StatEntitiesQueryFilter on QueryBuilder<StatEntities, StatEntities, QF
     });
   }
 
-  QueryBuilder<StatEntities, StatEntities, QAfterFilterCondition> statTypeGreaterThan(
+  QueryBuilder<StatEntities, StatEntities, QAfterFilterCondition>
+      statTypeGreaterThan(
     StatType value, {
     bool include = false,
   }) {
@@ -3600,7 +3831,8 @@ extension StatEntitiesQueryFilter on QueryBuilder<StatEntities, StatEntities, QF
     });
   }
 
-  QueryBuilder<StatEntities, StatEntities, QAfterFilterCondition> statTypeLessThan(
+  QueryBuilder<StatEntities, StatEntities, QAfterFilterCondition>
+      statTypeLessThan(
     StatType value, {
     bool include = false,
   }) {
@@ -3613,7 +3845,8 @@ extension StatEntitiesQueryFilter on QueryBuilder<StatEntities, StatEntities, QF
     });
   }
 
-  QueryBuilder<StatEntities, StatEntities, QAfterFilterCondition> statTypeBetween(
+  QueryBuilder<StatEntities, StatEntities, QAfterFilterCondition>
+      statTypeBetween(
     StatType lower,
     StatType upper, {
     bool includeLower = true,
@@ -3630,7 +3863,8 @@ extension StatEntitiesQueryFilter on QueryBuilder<StatEntities, StatEntities, QF
     });
   }
 
-  QueryBuilder<StatEntities, StatEntities, QAfterFilterCondition> stringifyIsNull() {
+  QueryBuilder<StatEntities, StatEntities, QAfterFilterCondition>
+      stringifyIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
         property: r'stringify',
@@ -3638,7 +3872,8 @@ extension StatEntitiesQueryFilter on QueryBuilder<StatEntities, StatEntities, QF
     });
   }
 
-  QueryBuilder<StatEntities, StatEntities, QAfterFilterCondition> stringifyIsNotNull() {
+  QueryBuilder<StatEntities, StatEntities, QAfterFilterCondition>
+      stringifyIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNotNull(
         property: r'stringify',
@@ -3646,7 +3881,8 @@ extension StatEntitiesQueryFilter on QueryBuilder<StatEntities, StatEntities, QF
     });
   }
 
-  QueryBuilder<StatEntities, StatEntities, QAfterFilterCondition> stringifyEqualTo(bool? value) {
+  QueryBuilder<StatEntities, StatEntities, QAfterFilterCondition>
+      stringifyEqualTo(bool? value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'stringify',
@@ -3655,7 +3891,8 @@ extension StatEntitiesQueryFilter on QueryBuilder<StatEntities, StatEntities, QF
     });
   }
 
-  QueryBuilder<StatEntities, StatEntities, QAfterFilterCondition> valueEqualTo(int value) {
+  QueryBuilder<StatEntities, StatEntities, QAfterFilterCondition> valueEqualTo(
+      int value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'value',
@@ -3664,7 +3901,8 @@ extension StatEntitiesQueryFilter on QueryBuilder<StatEntities, StatEntities, QF
     });
   }
 
-  QueryBuilder<StatEntities, StatEntities, QAfterFilterCondition> valueGreaterThan(
+  QueryBuilder<StatEntities, StatEntities, QAfterFilterCondition>
+      valueGreaterThan(
     int value, {
     bool include = false,
   }) {
@@ -3708,18 +3946,22 @@ extension StatEntitiesQueryFilter on QueryBuilder<StatEntities, StatEntities, QF
   }
 }
 
-extension StatEntitiesQueryObject on QueryBuilder<StatEntities, StatEntities, QFilterCondition> {}
+extension StatEntitiesQueryObject
+    on QueryBuilder<StatEntities, StatEntities, QFilterCondition> {}
 
-extension StatEntitiesQueryLinks on QueryBuilder<StatEntities, StatEntities, QFilterCondition> {}
+extension StatEntitiesQueryLinks
+    on QueryBuilder<StatEntities, StatEntities, QFilterCondition> {}
 
-extension StatEntitiesQuerySortBy on QueryBuilder<StatEntities, StatEntities, QSortBy> {
+extension StatEntitiesQuerySortBy
+    on QueryBuilder<StatEntities, StatEntities, QSortBy> {
   QueryBuilder<StatEntities, StatEntities, QAfterSortBy> sortByCharacterName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'characterName', Sort.asc);
     });
   }
 
-  QueryBuilder<StatEntities, StatEntities, QAfterSortBy> sortByCharacterNameDesc() {
+  QueryBuilder<StatEntities, StatEntities, QAfterSortBy>
+      sortByCharacterNameDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'characterName', Sort.desc);
     });
@@ -3737,13 +3979,15 @@ extension StatEntitiesQuerySortBy on QueryBuilder<StatEntities, StatEntities, QS
     });
   }
 
-  QueryBuilder<StatEntities, StatEntities, QAfterSortBy> sortBySaveThrowMastered() {
+  QueryBuilder<StatEntities, StatEntities, QAfterSortBy>
+      sortBySaveThrowMastered() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'saveThrowMastered', Sort.asc);
     });
   }
 
-  QueryBuilder<StatEntities, StatEntities, QAfterSortBy> sortBySaveThrowMasteredDesc() {
+  QueryBuilder<StatEntities, StatEntities, QAfterSortBy>
+      sortBySaveThrowMasteredDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'saveThrowMastered', Sort.desc);
     });
@@ -3786,14 +4030,16 @@ extension StatEntitiesQuerySortBy on QueryBuilder<StatEntities, StatEntities, QS
   }
 }
 
-extension StatEntitiesQuerySortThenBy on QueryBuilder<StatEntities, StatEntities, QSortThenBy> {
+extension StatEntitiesQuerySortThenBy
+    on QueryBuilder<StatEntities, StatEntities, QSortThenBy> {
   QueryBuilder<StatEntities, StatEntities, QAfterSortBy> thenByCharacterName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'characterName', Sort.asc);
     });
   }
 
-  QueryBuilder<StatEntities, StatEntities, QAfterSortBy> thenByCharacterNameDesc() {
+  QueryBuilder<StatEntities, StatEntities, QAfterSortBy>
+      thenByCharacterNameDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'characterName', Sort.desc);
     });
@@ -3823,13 +4069,15 @@ extension StatEntitiesQuerySortThenBy on QueryBuilder<StatEntities, StatEntities
     });
   }
 
-  QueryBuilder<StatEntities, StatEntities, QAfterSortBy> thenBySaveThrowMastered() {
+  QueryBuilder<StatEntities, StatEntities, QAfterSortBy>
+      thenBySaveThrowMastered() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'saveThrowMastered', Sort.asc);
     });
   }
 
-  QueryBuilder<StatEntities, StatEntities, QAfterSortBy> thenBySaveThrowMasteredDesc() {
+  QueryBuilder<StatEntities, StatEntities, QAfterSortBy>
+      thenBySaveThrowMasteredDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'saveThrowMastered', Sort.desc);
     });
@@ -3872,10 +4120,13 @@ extension StatEntitiesQuerySortThenBy on QueryBuilder<StatEntities, StatEntities
   }
 }
 
-extension StatEntitiesQueryWhereDistinct on QueryBuilder<StatEntities, StatEntities, QDistinct> {
-  QueryBuilder<StatEntities, StatEntities, QDistinct> distinctByCharacterName({bool caseSensitive = true}) {
+extension StatEntitiesQueryWhereDistinct
+    on QueryBuilder<StatEntities, StatEntities, QDistinct> {
+  QueryBuilder<StatEntities, StatEntities, QDistinct> distinctByCharacterName(
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'characterName', caseSensitive: caseSensitive);
+      return query.addDistinctBy(r'characterName',
+          caseSensitive: caseSensitive);
     });
   }
 
@@ -3885,7 +4136,8 @@ extension StatEntitiesQueryWhereDistinct on QueryBuilder<StatEntities, StatEntit
     });
   }
 
-  QueryBuilder<StatEntities, StatEntities, QDistinct> distinctBySaveThrowMastered() {
+  QueryBuilder<StatEntities, StatEntities, QDistinct>
+      distinctBySaveThrowMastered() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'saveThrowMastered');
     });
@@ -3910,7 +4162,8 @@ extension StatEntitiesQueryWhereDistinct on QueryBuilder<StatEntities, StatEntit
   }
 }
 
-extension StatEntitiesQueryProperty on QueryBuilder<StatEntities, StatEntities, QQueryProperty> {
+extension StatEntitiesQueryProperty
+    on QueryBuilder<StatEntities, StatEntities, QQueryProperty> {
   QueryBuilder<StatEntities, int, QQueryOperations> idProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'id');
@@ -3929,7 +4182,8 @@ extension StatEntitiesQueryProperty on QueryBuilder<StatEntities, StatEntities, 
     });
   }
 
-  QueryBuilder<StatEntities, bool, QQueryOperations> saveThrowMasteredProperty() {
+  QueryBuilder<StatEntities, bool, QQueryOperations>
+      saveThrowMasteredProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'saveThrowMastered');
     });
@@ -4101,12 +4355,18 @@ WeaponEntities _weaponEntitiesDeserialize(
     bonusAttackDamage: reader.readLong(offsets[1]),
     characterName: reader.readString(offsets[2]),
     description: reader.readString(offsets[3]),
-    dices: reader.readByteList(offsets[4])?.map((e) => _WeaponEntitiesdicesValueEnumMap[e] ?? DiceType.D4).toList() ?? [],
+    dices: reader
+            .readByteList(offsets[4])
+            ?.map((e) => _WeaponEntitiesdicesValueEnumMap[e] ?? DiceType.D4)
+            .toList() ??
+        [],
     distance: reader.readLong(offsets[5]),
     master: reader.readBool(offsets[7]),
     name: reader.readString(offsets[8]),
     typeDamage: reader.readString(offsets[10]),
-    weaponType: _WeaponEntitiesweaponTypeValueEnumMap[reader.readByteOrNull(offsets[11])] ?? WeaponType.MELEE,
+    weaponType: _WeaponEntitiesweaponTypeValueEnumMap[
+            reader.readByteOrNull(offsets[11])] ??
+        WeaponType.MELEE,
   );
   return object;
 }
@@ -4127,7 +4387,11 @@ P _weaponEntitiesDeserializeProp<P>(
     case 3:
       return (reader.readString(offset)) as P;
     case 4:
-      return (reader.readByteList(offset)?.map((e) => _WeaponEntitiesdicesValueEnumMap[e] ?? DiceType.D4).toList() ?? []) as P;
+      return (reader
+              .readByteList(offset)
+              ?.map((e) => _WeaponEntitiesdicesValueEnumMap[e] ?? DiceType.D4)
+              .toList() ??
+          []) as P;
     case 5:
       return (reader.readLong(offset)) as P;
     case 6:
@@ -4141,7 +4405,9 @@ P _weaponEntitiesDeserializeProp<P>(
     case 10:
       return (reader.readString(offset)) as P;
     case 11:
-      return (_WeaponEntitiesweaponTypeValueEnumMap[reader.readByteOrNull(offset)] ?? WeaponType.MELEE) as P;
+      return (_WeaponEntitiesweaponTypeValueEnumMap[
+              reader.readByteOrNull(offset)] ??
+          WeaponType.MELEE) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -4184,7 +4450,8 @@ List<IsarLinkBase<dynamic>> _weaponEntitiesGetLinks(WeaponEntities object) {
   return [];
 }
 
-void _weaponEntitiesAttach(IsarCollection<dynamic> col, Id id, WeaponEntities object) {}
+void _weaponEntitiesAttach(
+    IsarCollection<dynamic> col, Id id, WeaponEntities object) {}
 
 extension WeaponEntitiesByIndex on IsarCollection<WeaponEntities> {
   Future<WeaponEntities?> getByName(String name) {
@@ -4235,12 +4502,14 @@ extension WeaponEntitiesByIndex on IsarCollection<WeaponEntities> {
     return putAllByIndex(r'name', objects);
   }
 
-  List<Id> putAllByNameSync(List<WeaponEntities> objects, {bool saveLinks = true}) {
+  List<Id> putAllByNameSync(List<WeaponEntities> objects,
+      {bool saveLinks = true}) {
     return putAllByIndexSync(r'name', objects, saveLinks: saveLinks);
   }
 }
 
-extension WeaponEntitiesQueryWhereSort on QueryBuilder<WeaponEntities, WeaponEntities, QWhere> {
+extension WeaponEntitiesQueryWhereSort
+    on QueryBuilder<WeaponEntities, WeaponEntities, QWhere> {
   QueryBuilder<WeaponEntities, WeaponEntities, QAfterWhere> anyId() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(const IdWhereClause.any());
@@ -4248,8 +4517,10 @@ extension WeaponEntitiesQueryWhereSort on QueryBuilder<WeaponEntities, WeaponEnt
   }
 }
 
-extension WeaponEntitiesQueryWhere on QueryBuilder<WeaponEntities, WeaponEntities, QWhereClause> {
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterWhereClause> idEqualTo(Id id) {
+extension WeaponEntitiesQueryWhere
+    on QueryBuilder<WeaponEntities, WeaponEntities, QWhereClause> {
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterWhereClause> idEqualTo(
+      Id id) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(IdWhereClause.between(
         lower: id,
@@ -4258,7 +4529,8 @@ extension WeaponEntitiesQueryWhere on QueryBuilder<WeaponEntities, WeaponEntitie
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterWhereClause> idNotEqualTo(Id id) {
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterWhereClause> idNotEqualTo(
+      Id id) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
@@ -4280,7 +4552,9 @@ extension WeaponEntitiesQueryWhere on QueryBuilder<WeaponEntities, WeaponEntitie
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterWhereClause> idGreaterThan(Id id, {bool include = false}) {
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterWhereClause> idGreaterThan(
+      Id id,
+      {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         IdWhereClause.greaterThan(lower: id, includeLower: include),
@@ -4288,7 +4562,9 @@ extension WeaponEntitiesQueryWhere on QueryBuilder<WeaponEntities, WeaponEntitie
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterWhereClause> idLessThan(Id id, {bool include = false}) {
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterWhereClause> idLessThan(
+      Id id,
+      {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         IdWhereClause.lessThan(upper: id, includeUpper: include),
@@ -4312,7 +4588,8 @@ extension WeaponEntitiesQueryWhere on QueryBuilder<WeaponEntities, WeaponEntitie
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterWhereClause> nameEqualTo(String name) {
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterWhereClause> nameEqualTo(
+      String name) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(IndexWhereClause.equalTo(
         indexName: r'name',
@@ -4321,7 +4598,8 @@ extension WeaponEntitiesQueryWhere on QueryBuilder<WeaponEntities, WeaponEntitie
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterWhereClause> nameNotEqualTo(String name) {
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterWhereClause>
+      nameNotEqualTo(String name) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
@@ -4356,8 +4634,10 @@ extension WeaponEntitiesQueryWhere on QueryBuilder<WeaponEntities, WeaponEntitie
   }
 }
 
-extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntities, QFilterCondition> {
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> bonusAttackChanceEqualTo(int value) {
+extension WeaponEntitiesQueryFilter
+    on QueryBuilder<WeaponEntities, WeaponEntities, QFilterCondition> {
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      bonusAttackChanceEqualTo(int value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'bonusAttackChance',
@@ -4366,7 +4646,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> bonusAttackChanceGreaterThan(
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      bonusAttackChanceGreaterThan(
     int value, {
     bool include = false,
   }) {
@@ -4379,7 +4660,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> bonusAttackChanceLessThan(
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      bonusAttackChanceLessThan(
     int value, {
     bool include = false,
   }) {
@@ -4392,7 +4674,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> bonusAttackChanceBetween(
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      bonusAttackChanceBetween(
     int lower,
     int upper, {
     bool includeLower = true,
@@ -4409,7 +4692,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> bonusAttackDamageEqualTo(int value) {
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      bonusAttackDamageEqualTo(int value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'bonusAttackDamage',
@@ -4418,7 +4702,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> bonusAttackDamageGreaterThan(
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      bonusAttackDamageGreaterThan(
     int value, {
     bool include = false,
   }) {
@@ -4431,7 +4716,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> bonusAttackDamageLessThan(
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      bonusAttackDamageLessThan(
     int value, {
     bool include = false,
   }) {
@@ -4444,7 +4730,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> bonusAttackDamageBetween(
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      bonusAttackDamageBetween(
     int lower,
     int upper, {
     bool includeLower = true,
@@ -4461,7 +4748,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> characterNameEqualTo(
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      characterNameEqualTo(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -4474,7 +4762,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> characterNameGreaterThan(
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      characterNameGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -4489,7 +4778,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> characterNameLessThan(
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      characterNameLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -4504,7 +4794,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> characterNameBetween(
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      characterNameBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -4523,7 +4814,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> characterNameStartsWith(
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      characterNameStartsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -4536,7 +4828,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> characterNameEndsWith(
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      characterNameEndsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -4549,7 +4842,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> characterNameContains(String value, {bool caseSensitive = true}) {
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      characterNameContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
         property: r'characterName',
@@ -4559,7 +4853,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> characterNameMatches(String pattern, {bool caseSensitive = true}) {
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      characterNameMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.matches(
         property: r'characterName',
@@ -4569,7 +4864,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> characterNameIsEmpty() {
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      characterNameIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'characterName',
@@ -4578,7 +4874,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> characterNameIsNotEmpty() {
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      characterNameIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'characterName',
@@ -4587,7 +4884,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> descriptionEqualTo(
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      descriptionEqualTo(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -4600,7 +4898,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> descriptionGreaterThan(
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      descriptionGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -4615,7 +4914,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> descriptionLessThan(
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      descriptionLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -4630,7 +4930,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> descriptionBetween(
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      descriptionBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -4649,7 +4950,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> descriptionStartsWith(
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      descriptionStartsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -4662,7 +4964,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> descriptionEndsWith(
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      descriptionEndsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -4675,7 +4978,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> descriptionContains(String value, {bool caseSensitive = true}) {
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      descriptionContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
         property: r'description',
@@ -4685,7 +4989,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> descriptionMatches(String pattern, {bool caseSensitive = true}) {
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      descriptionMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.matches(
         property: r'description',
@@ -4695,7 +5000,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> descriptionIsEmpty() {
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      descriptionIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'description',
@@ -4704,7 +5010,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> descriptionIsNotEmpty() {
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      descriptionIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'description',
@@ -4713,7 +5020,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> dicesElementEqualTo(DiceType value) {
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      dicesElementEqualTo(DiceType value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'dices',
@@ -4722,7 +5030,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> dicesElementGreaterThan(
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      dicesElementGreaterThan(
     DiceType value, {
     bool include = false,
   }) {
@@ -4735,7 +5044,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> dicesElementLessThan(
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      dicesElementLessThan(
     DiceType value, {
     bool include = false,
   }) {
@@ -4748,7 +5058,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> dicesElementBetween(
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      dicesElementBetween(
     DiceType lower,
     DiceType upper, {
     bool includeLower = true,
@@ -4765,7 +5076,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> dicesLengthEqualTo(int length) {
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      dicesLengthEqualTo(int length) {
     return QueryBuilder.apply(this, (query) {
       return query.listLength(
         r'dices',
@@ -4777,7 +5089,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> dicesIsEmpty() {
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      dicesIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.listLength(
         r'dices',
@@ -4789,7 +5102,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> dicesIsNotEmpty() {
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      dicesIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.listLength(
         r'dices',
@@ -4801,7 +5115,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> dicesLengthLessThan(
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      dicesLengthLessThan(
     int length, {
     bool include = false,
   }) {
@@ -4816,7 +5131,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> dicesLengthGreaterThan(
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      dicesLengthGreaterThan(
     int length, {
     bool include = false,
   }) {
@@ -4831,7 +5147,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> dicesLengthBetween(
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      dicesLengthBetween(
     int lower,
     int upper, {
     bool includeLower = true,
@@ -4848,7 +5165,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> distanceEqualTo(int value) {
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      distanceEqualTo(int value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'distance',
@@ -4857,7 +5175,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> distanceGreaterThan(
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      distanceGreaterThan(
     int value, {
     bool include = false,
   }) {
@@ -4870,7 +5189,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> distanceLessThan(
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      distanceLessThan(
     int value, {
     bool include = false,
   }) {
@@ -4883,7 +5203,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> distanceBetween(
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      distanceBetween(
     int lower,
     int upper, {
     bool includeLower = true,
@@ -4900,7 +5221,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> hashCodeEqualTo(int value) {
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      hashCodeEqualTo(int value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'hashCode',
@@ -4909,7 +5231,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> hashCodeGreaterThan(
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      hashCodeGreaterThan(
     int value, {
     bool include = false,
   }) {
@@ -4922,7 +5245,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> hashCodeLessThan(
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      hashCodeLessThan(
     int value, {
     bool include = false,
   }) {
@@ -4935,7 +5259,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> hashCodeBetween(
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      hashCodeBetween(
     int lower,
     int upper, {
     bool includeLower = true,
@@ -4952,7 +5277,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> idEqualTo(Id value) {
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> idEqualTo(
+      Id value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'id',
@@ -4961,7 +5287,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> idGreaterThan(
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      idGreaterThan(
     Id value, {
     bool include = false,
   }) {
@@ -4974,7 +5301,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> idLessThan(
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      idLessThan(
     Id value, {
     bool include = false,
   }) {
@@ -5004,7 +5332,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> masterEqualTo(bool value) {
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      masterEqualTo(bool value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'master',
@@ -5013,7 +5342,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> nameEqualTo(
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      nameEqualTo(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -5026,7 +5356,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> nameGreaterThan(
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      nameGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -5041,7 +5372,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> nameLessThan(
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      nameLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -5056,7 +5388,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> nameBetween(
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      nameBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -5075,7 +5408,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> nameStartsWith(
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      nameStartsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -5088,7 +5422,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> nameEndsWith(
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      nameEndsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -5101,7 +5436,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> nameContains(String value, {bool caseSensitive = true}) {
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      nameContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
         property: r'name',
@@ -5111,7 +5447,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> nameMatches(String pattern, {bool caseSensitive = true}) {
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      nameMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.matches(
         property: r'name',
@@ -5121,7 +5458,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> nameIsEmpty() {
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      nameIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'name',
@@ -5130,7 +5468,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> nameIsNotEmpty() {
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      nameIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'name',
@@ -5139,7 +5478,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> stringifyIsNull() {
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      stringifyIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
         property: r'stringify',
@@ -5147,7 +5487,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> stringifyIsNotNull() {
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      stringifyIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNotNull(
         property: r'stringify',
@@ -5155,7 +5496,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> stringifyEqualTo(bool? value) {
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      stringifyEqualTo(bool? value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'stringify',
@@ -5164,7 +5506,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> typeDamageEqualTo(
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      typeDamageEqualTo(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -5177,7 +5520,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> typeDamageGreaterThan(
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      typeDamageGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -5192,7 +5536,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> typeDamageLessThan(
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      typeDamageLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -5207,7 +5552,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> typeDamageBetween(
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      typeDamageBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -5226,7 +5572,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> typeDamageStartsWith(
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      typeDamageStartsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -5239,7 +5586,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> typeDamageEndsWith(
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      typeDamageEndsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -5252,7 +5600,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> typeDamageContains(String value, {bool caseSensitive = true}) {
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      typeDamageContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
         property: r'typeDamage',
@@ -5262,7 +5611,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> typeDamageMatches(String pattern, {bool caseSensitive = true}) {
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      typeDamageMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.matches(
         property: r'typeDamage',
@@ -5272,7 +5622,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> typeDamageIsEmpty() {
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      typeDamageIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'typeDamage',
@@ -5281,7 +5632,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> typeDamageIsNotEmpty() {
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      typeDamageIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'typeDamage',
@@ -5290,7 +5642,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> weaponTypeEqualTo(WeaponType value) {
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      weaponTypeEqualTo(WeaponType value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'weaponType',
@@ -5299,7 +5652,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> weaponTypeGreaterThan(
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      weaponTypeGreaterThan(
     WeaponType value, {
     bool include = false,
   }) {
@@ -5312,7 +5666,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> weaponTypeLessThan(
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      weaponTypeLessThan(
     WeaponType value, {
     bool include = false,
   }) {
@@ -5325,7 +5680,8 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition> weaponTypeBetween(
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterFilterCondition>
+      weaponTypeBetween(
     WeaponType lower,
     WeaponType upper, {
     bool includeLower = true,
@@ -5343,54 +5699,65 @@ extension WeaponEntitiesQueryFilter on QueryBuilder<WeaponEntities, WeaponEntiti
   }
 }
 
-extension WeaponEntitiesQueryObject on QueryBuilder<WeaponEntities, WeaponEntities, QFilterCondition> {}
+extension WeaponEntitiesQueryObject
+    on QueryBuilder<WeaponEntities, WeaponEntities, QFilterCondition> {}
 
-extension WeaponEntitiesQueryLinks on QueryBuilder<WeaponEntities, WeaponEntities, QFilterCondition> {}
+extension WeaponEntitiesQueryLinks
+    on QueryBuilder<WeaponEntities, WeaponEntities, QFilterCondition> {}
 
-extension WeaponEntitiesQuerySortBy on QueryBuilder<WeaponEntities, WeaponEntities, QSortBy> {
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy> sortByBonusAttackChance() {
+extension WeaponEntitiesQuerySortBy
+    on QueryBuilder<WeaponEntities, WeaponEntities, QSortBy> {
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy>
+      sortByBonusAttackChance() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'bonusAttackChance', Sort.asc);
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy> sortByBonusAttackChanceDesc() {
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy>
+      sortByBonusAttackChanceDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'bonusAttackChance', Sort.desc);
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy> sortByBonusAttackDamage() {
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy>
+      sortByBonusAttackDamage() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'bonusAttackDamage', Sort.asc);
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy> sortByBonusAttackDamageDesc() {
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy>
+      sortByBonusAttackDamageDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'bonusAttackDamage', Sort.desc);
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy> sortByCharacterName() {
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy>
+      sortByCharacterName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'characterName', Sort.asc);
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy> sortByCharacterNameDesc() {
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy>
+      sortByCharacterNameDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'characterName', Sort.desc);
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy> sortByDescription() {
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy>
+      sortByDescription() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'description', Sort.asc);
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy> sortByDescriptionDesc() {
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy>
+      sortByDescriptionDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'description', Sort.desc);
     });
@@ -5402,7 +5769,8 @@ extension WeaponEntitiesQuerySortBy on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy> sortByDistanceDesc() {
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy>
+      sortByDistanceDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'distance', Sort.desc);
     });
@@ -5414,7 +5782,8 @@ extension WeaponEntitiesQuerySortBy on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy> sortByHashCodeDesc() {
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy>
+      sortByHashCodeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'hashCode', Sort.desc);
     });
@@ -5426,7 +5795,8 @@ extension WeaponEntitiesQuerySortBy on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy> sortByMasterDesc() {
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy>
+      sortByMasterDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'master', Sort.desc);
     });
@@ -5450,81 +5820,95 @@ extension WeaponEntitiesQuerySortBy on QueryBuilder<WeaponEntities, WeaponEntiti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy> sortByStringifyDesc() {
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy>
+      sortByStringifyDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'stringify', Sort.desc);
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy> sortByTypeDamage() {
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy>
+      sortByTypeDamage() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'typeDamage', Sort.asc);
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy> sortByTypeDamageDesc() {
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy>
+      sortByTypeDamageDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'typeDamage', Sort.desc);
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy> sortByWeaponType() {
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy>
+      sortByWeaponType() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'weaponType', Sort.asc);
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy> sortByWeaponTypeDesc() {
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy>
+      sortByWeaponTypeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'weaponType', Sort.desc);
     });
   }
 }
 
-extension WeaponEntitiesQuerySortThenBy on QueryBuilder<WeaponEntities, WeaponEntities, QSortThenBy> {
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy> thenByBonusAttackChance() {
+extension WeaponEntitiesQuerySortThenBy
+    on QueryBuilder<WeaponEntities, WeaponEntities, QSortThenBy> {
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy>
+      thenByBonusAttackChance() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'bonusAttackChance', Sort.asc);
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy> thenByBonusAttackChanceDesc() {
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy>
+      thenByBonusAttackChanceDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'bonusAttackChance', Sort.desc);
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy> thenByBonusAttackDamage() {
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy>
+      thenByBonusAttackDamage() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'bonusAttackDamage', Sort.asc);
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy> thenByBonusAttackDamageDesc() {
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy>
+      thenByBonusAttackDamageDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'bonusAttackDamage', Sort.desc);
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy> thenByCharacterName() {
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy>
+      thenByCharacterName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'characterName', Sort.asc);
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy> thenByCharacterNameDesc() {
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy>
+      thenByCharacterNameDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'characterName', Sort.desc);
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy> thenByDescription() {
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy>
+      thenByDescription() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'description', Sort.asc);
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy> thenByDescriptionDesc() {
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy>
+      thenByDescriptionDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'description', Sort.desc);
     });
@@ -5536,7 +5920,8 @@ extension WeaponEntitiesQuerySortThenBy on QueryBuilder<WeaponEntities, WeaponEn
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy> thenByDistanceDesc() {
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy>
+      thenByDistanceDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'distance', Sort.desc);
     });
@@ -5548,7 +5933,8 @@ extension WeaponEntitiesQuerySortThenBy on QueryBuilder<WeaponEntities, WeaponEn
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy> thenByHashCodeDesc() {
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy>
+      thenByHashCodeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'hashCode', Sort.desc);
     });
@@ -5572,7 +5958,8 @@ extension WeaponEntitiesQuerySortThenBy on QueryBuilder<WeaponEntities, WeaponEn
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy> thenByMasterDesc() {
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy>
+      thenByMasterDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'master', Sort.desc);
     });
@@ -5596,57 +5983,68 @@ extension WeaponEntitiesQuerySortThenBy on QueryBuilder<WeaponEntities, WeaponEn
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy> thenByStringifyDesc() {
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy>
+      thenByStringifyDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'stringify', Sort.desc);
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy> thenByTypeDamage() {
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy>
+      thenByTypeDamage() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'typeDamage', Sort.asc);
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy> thenByTypeDamageDesc() {
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy>
+      thenByTypeDamageDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'typeDamage', Sort.desc);
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy> thenByWeaponType() {
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy>
+      thenByWeaponType() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'weaponType', Sort.asc);
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy> thenByWeaponTypeDesc() {
+  QueryBuilder<WeaponEntities, WeaponEntities, QAfterSortBy>
+      thenByWeaponTypeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'weaponType', Sort.desc);
     });
   }
 }
 
-extension WeaponEntitiesQueryWhereDistinct on QueryBuilder<WeaponEntities, WeaponEntities, QDistinct> {
-  QueryBuilder<WeaponEntities, WeaponEntities, QDistinct> distinctByBonusAttackChance() {
+extension WeaponEntitiesQueryWhereDistinct
+    on QueryBuilder<WeaponEntities, WeaponEntities, QDistinct> {
+  QueryBuilder<WeaponEntities, WeaponEntities, QDistinct>
+      distinctByBonusAttackChance() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'bonusAttackChance');
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QDistinct> distinctByBonusAttackDamage() {
+  QueryBuilder<WeaponEntities, WeaponEntities, QDistinct>
+      distinctByBonusAttackDamage() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'bonusAttackDamage');
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QDistinct> distinctByCharacterName({bool caseSensitive = true}) {
+  QueryBuilder<WeaponEntities, WeaponEntities, QDistinct>
+      distinctByCharacterName({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'characterName', caseSensitive: caseSensitive);
+      return query.addDistinctBy(r'characterName',
+          caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QDistinct> distinctByDescription({bool caseSensitive = true}) {
+  QueryBuilder<WeaponEntities, WeaponEntities, QDistinct> distinctByDescription(
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'description', caseSensitive: caseSensitive);
     });
@@ -5676,51 +6074,59 @@ extension WeaponEntitiesQueryWhereDistinct on QueryBuilder<WeaponEntities, Weapo
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QDistinct> distinctByName({bool caseSensitive = true}) {
+  QueryBuilder<WeaponEntities, WeaponEntities, QDistinct> distinctByName(
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'name', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QDistinct> distinctByStringify() {
+  QueryBuilder<WeaponEntities, WeaponEntities, QDistinct>
+      distinctByStringify() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'stringify');
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QDistinct> distinctByTypeDamage({bool caseSensitive = true}) {
+  QueryBuilder<WeaponEntities, WeaponEntities, QDistinct> distinctByTypeDamage(
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'typeDamage', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponEntities, QDistinct> distinctByWeaponType() {
+  QueryBuilder<WeaponEntities, WeaponEntities, QDistinct>
+      distinctByWeaponType() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'weaponType');
     });
   }
 }
 
-extension WeaponEntitiesQueryProperty on QueryBuilder<WeaponEntities, WeaponEntities, QQueryProperty> {
+extension WeaponEntitiesQueryProperty
+    on QueryBuilder<WeaponEntities, WeaponEntities, QQueryProperty> {
   QueryBuilder<WeaponEntities, int, QQueryOperations> idProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'id');
     });
   }
 
-  QueryBuilder<WeaponEntities, int, QQueryOperations> bonusAttackChanceProperty() {
+  QueryBuilder<WeaponEntities, int, QQueryOperations>
+      bonusAttackChanceProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'bonusAttackChance');
     });
   }
 
-  QueryBuilder<WeaponEntities, int, QQueryOperations> bonusAttackDamageProperty() {
+  QueryBuilder<WeaponEntities, int, QQueryOperations>
+      bonusAttackDamageProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'bonusAttackDamage');
     });
   }
 
-  QueryBuilder<WeaponEntities, String, QQueryOperations> characterNameProperty() {
+  QueryBuilder<WeaponEntities, String, QQueryOperations>
+      characterNameProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'characterName');
     });
@@ -5732,7 +6138,8 @@ extension WeaponEntitiesQueryProperty on QueryBuilder<WeaponEntities, WeaponEnti
     });
   }
 
-  QueryBuilder<WeaponEntities, List<DiceType>, QQueryOperations> dicesProperty() {
+  QueryBuilder<WeaponEntities, List<DiceType>, QQueryOperations>
+      dicesProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'dices');
     });
@@ -5774,7 +6181,8 @@ extension WeaponEntitiesQueryProperty on QueryBuilder<WeaponEntities, WeaponEnti
     });
   }
 
-  QueryBuilder<WeaponEntities, WeaponType, QQueryOperations> weaponTypeProperty() {
+  QueryBuilder<WeaponEntities, WeaponType, QQueryOperations>
+      weaponTypeProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'weaponType');
     });
@@ -5785,7 +6193,8 @@ extension WeaponEntitiesQueryProperty on QueryBuilder<WeaponEntities, WeaponEnti
 // ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters
 
 extension GetCompetenceEntitiesCollection on Isar {
-  IsarCollection<CompetenceEntities> get competenceEntities => this.collection();
+  IsarCollection<CompetenceEntities> get competenceEntities =>
+      this.collection();
 }
 
 const CompetenceEntitiesSchema = CollectionSchema(
@@ -5870,7 +6279,9 @@ CompetenceEntities _competenceEntitiesDeserialize(
 ) {
   final object = CompetenceEntities(
     characterName: reader.readString(offsets[0]),
-    competenceType: _CompetenceEntitiescompetenceTypeValueEnumMap[reader.readByteOrNull(offsets[1])] ?? CompetenceType.ACROBATICS,
+    competenceType: _CompetenceEntitiescompetenceTypeValueEnumMap[
+            reader.readByteOrNull(offsets[1])] ??
+        CompetenceType.ACROBATICS,
     competenced: reader.readBool(offsets[2]),
     mastered: reader.readBool(offsets[4]),
   );
@@ -5887,7 +6298,9 @@ P _competenceEntitiesDeserializeProp<P>(
     case 0:
       return (reader.readString(offset)) as P;
     case 1:
-      return (_CompetenceEntitiescompetenceTypeValueEnumMap[reader.readByteOrNull(offset)] ?? CompetenceType.ACROBATICS) as P;
+      return (_CompetenceEntitiescompetenceTypeValueEnumMap[
+              reader.readByteOrNull(offset)] ??
+          CompetenceType.ACROBATICS) as P;
     case 2:
       return (reader.readBool(offset)) as P;
     case 3:
@@ -5946,13 +6359,16 @@ Id _competenceEntitiesGetId(CompetenceEntities object) {
   return object.id;
 }
 
-List<IsarLinkBase<dynamic>> _competenceEntitiesGetLinks(CompetenceEntities object) {
+List<IsarLinkBase<dynamic>> _competenceEntitiesGetLinks(
+    CompetenceEntities object) {
   return [];
 }
 
-void _competenceEntitiesAttach(IsarCollection<dynamic> col, Id id, CompetenceEntities object) {}
+void _competenceEntitiesAttach(
+    IsarCollection<dynamic> col, Id id, CompetenceEntities object) {}
 
-extension CompetenceEntitiesQueryWhereSort on QueryBuilder<CompetenceEntities, CompetenceEntities, QWhere> {
+extension CompetenceEntitiesQueryWhereSort
+    on QueryBuilder<CompetenceEntities, CompetenceEntities, QWhere> {
   QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterWhere> anyId() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(const IdWhereClause.any());
@@ -5960,8 +6376,10 @@ extension CompetenceEntitiesQueryWhereSort on QueryBuilder<CompetenceEntities, C
   }
 }
 
-extension CompetenceEntitiesQueryWhere on QueryBuilder<CompetenceEntities, CompetenceEntities, QWhereClause> {
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterWhereClause> idEqualTo(Id id) {
+extension CompetenceEntitiesQueryWhere
+    on QueryBuilder<CompetenceEntities, CompetenceEntities, QWhereClause> {
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterWhereClause>
+      idEqualTo(Id id) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(IdWhereClause.between(
         lower: id,
@@ -5970,7 +6388,8 @@ extension CompetenceEntitiesQueryWhere on QueryBuilder<CompetenceEntities, Compe
     });
   }
 
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterWhereClause> idNotEqualTo(Id id) {
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterWhereClause>
+      idNotEqualTo(Id id) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
@@ -5992,7 +6411,8 @@ extension CompetenceEntitiesQueryWhere on QueryBuilder<CompetenceEntities, Compe
     });
   }
 
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterWhereClause> idGreaterThan(Id id, {bool include = false}) {
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterWhereClause>
+      idGreaterThan(Id id, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         IdWhereClause.greaterThan(lower: id, includeLower: include),
@@ -6000,7 +6420,8 @@ extension CompetenceEntitiesQueryWhere on QueryBuilder<CompetenceEntities, Compe
     });
   }
 
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterWhereClause> idLessThan(Id id, {bool include = false}) {
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterWhereClause>
+      idLessThan(Id id, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         IdWhereClause.lessThan(upper: id, includeUpper: include),
@@ -6008,7 +6429,8 @@ extension CompetenceEntitiesQueryWhere on QueryBuilder<CompetenceEntities, Compe
     });
   }
 
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterWhereClause> idBetween(
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterWhereClause>
+      idBetween(
     Id lowerId,
     Id upperId, {
     bool includeLower = true,
@@ -6025,8 +6447,10 @@ extension CompetenceEntitiesQueryWhere on QueryBuilder<CompetenceEntities, Compe
   }
 }
 
-extension CompetenceEntitiesQueryFilter on QueryBuilder<CompetenceEntities, CompetenceEntities, QFilterCondition> {
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterFilterCondition> characterNameEqualTo(
+extension CompetenceEntitiesQueryFilter
+    on QueryBuilder<CompetenceEntities, CompetenceEntities, QFilterCondition> {
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterFilterCondition>
+      characterNameEqualTo(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -6039,7 +6463,8 @@ extension CompetenceEntitiesQueryFilter on QueryBuilder<CompetenceEntities, Comp
     });
   }
 
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterFilterCondition> characterNameGreaterThan(
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterFilterCondition>
+      characterNameGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -6054,7 +6479,8 @@ extension CompetenceEntitiesQueryFilter on QueryBuilder<CompetenceEntities, Comp
     });
   }
 
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterFilterCondition> characterNameLessThan(
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterFilterCondition>
+      characterNameLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -6069,7 +6495,8 @@ extension CompetenceEntitiesQueryFilter on QueryBuilder<CompetenceEntities, Comp
     });
   }
 
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterFilterCondition> characterNameBetween(
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterFilterCondition>
+      characterNameBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -6088,7 +6515,8 @@ extension CompetenceEntitiesQueryFilter on QueryBuilder<CompetenceEntities, Comp
     });
   }
 
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterFilterCondition> characterNameStartsWith(
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterFilterCondition>
+      characterNameStartsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -6101,7 +6529,8 @@ extension CompetenceEntitiesQueryFilter on QueryBuilder<CompetenceEntities, Comp
     });
   }
 
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterFilterCondition> characterNameEndsWith(
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterFilterCondition>
+      characterNameEndsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -6114,7 +6543,8 @@ extension CompetenceEntitiesQueryFilter on QueryBuilder<CompetenceEntities, Comp
     });
   }
 
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterFilterCondition> characterNameContains(String value, {bool caseSensitive = true}) {
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterFilterCondition>
+      characterNameContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
         property: r'characterName',
@@ -6124,7 +6554,8 @@ extension CompetenceEntitiesQueryFilter on QueryBuilder<CompetenceEntities, Comp
     });
   }
 
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterFilterCondition> characterNameMatches(String pattern, {bool caseSensitive = true}) {
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterFilterCondition>
+      characterNameMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.matches(
         property: r'characterName',
@@ -6134,7 +6565,8 @@ extension CompetenceEntitiesQueryFilter on QueryBuilder<CompetenceEntities, Comp
     });
   }
 
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterFilterCondition> characterNameIsEmpty() {
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterFilterCondition>
+      characterNameIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'characterName',
@@ -6143,7 +6575,8 @@ extension CompetenceEntitiesQueryFilter on QueryBuilder<CompetenceEntities, Comp
     });
   }
 
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterFilterCondition> characterNameIsNotEmpty() {
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterFilterCondition>
+      characterNameIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'characterName',
@@ -6152,7 +6585,8 @@ extension CompetenceEntitiesQueryFilter on QueryBuilder<CompetenceEntities, Comp
     });
   }
 
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterFilterCondition> competenceTypeEqualTo(CompetenceType value) {
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterFilterCondition>
+      competenceTypeEqualTo(CompetenceType value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'competenceType',
@@ -6161,7 +6595,8 @@ extension CompetenceEntitiesQueryFilter on QueryBuilder<CompetenceEntities, Comp
     });
   }
 
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterFilterCondition> competenceTypeGreaterThan(
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterFilterCondition>
+      competenceTypeGreaterThan(
     CompetenceType value, {
     bool include = false,
   }) {
@@ -6174,7 +6609,8 @@ extension CompetenceEntitiesQueryFilter on QueryBuilder<CompetenceEntities, Comp
     });
   }
 
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterFilterCondition> competenceTypeLessThan(
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterFilterCondition>
+      competenceTypeLessThan(
     CompetenceType value, {
     bool include = false,
   }) {
@@ -6187,7 +6623,8 @@ extension CompetenceEntitiesQueryFilter on QueryBuilder<CompetenceEntities, Comp
     });
   }
 
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterFilterCondition> competenceTypeBetween(
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterFilterCondition>
+      competenceTypeBetween(
     CompetenceType lower,
     CompetenceType upper, {
     bool includeLower = true,
@@ -6204,7 +6641,8 @@ extension CompetenceEntitiesQueryFilter on QueryBuilder<CompetenceEntities, Comp
     });
   }
 
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterFilterCondition> competencedEqualTo(bool value) {
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterFilterCondition>
+      competencedEqualTo(bool value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'competenced',
@@ -6213,7 +6651,8 @@ extension CompetenceEntitiesQueryFilter on QueryBuilder<CompetenceEntities, Comp
     });
   }
 
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterFilterCondition> hashCodeEqualTo(int value) {
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterFilterCondition>
+      hashCodeEqualTo(int value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'hashCode',
@@ -6222,7 +6661,8 @@ extension CompetenceEntitiesQueryFilter on QueryBuilder<CompetenceEntities, Comp
     });
   }
 
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterFilterCondition> hashCodeGreaterThan(
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterFilterCondition>
+      hashCodeGreaterThan(
     int value, {
     bool include = false,
   }) {
@@ -6235,7 +6675,8 @@ extension CompetenceEntitiesQueryFilter on QueryBuilder<CompetenceEntities, Comp
     });
   }
 
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterFilterCondition> hashCodeLessThan(
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterFilterCondition>
+      hashCodeLessThan(
     int value, {
     bool include = false,
   }) {
@@ -6248,7 +6689,8 @@ extension CompetenceEntitiesQueryFilter on QueryBuilder<CompetenceEntities, Comp
     });
   }
 
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterFilterCondition> hashCodeBetween(
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterFilterCondition>
+      hashCodeBetween(
     int lower,
     int upper, {
     bool includeLower = true,
@@ -6265,7 +6707,8 @@ extension CompetenceEntitiesQueryFilter on QueryBuilder<CompetenceEntities, Comp
     });
   }
 
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterFilterCondition> idEqualTo(Id value) {
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterFilterCondition>
+      idEqualTo(Id value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'id',
@@ -6274,7 +6717,8 @@ extension CompetenceEntitiesQueryFilter on QueryBuilder<CompetenceEntities, Comp
     });
   }
 
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterFilterCondition> idGreaterThan(
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterFilterCondition>
+      idGreaterThan(
     Id value, {
     bool include = false,
   }) {
@@ -6287,7 +6731,8 @@ extension CompetenceEntitiesQueryFilter on QueryBuilder<CompetenceEntities, Comp
     });
   }
 
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterFilterCondition> idLessThan(
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterFilterCondition>
+      idLessThan(
     Id value, {
     bool include = false,
   }) {
@@ -6300,7 +6745,8 @@ extension CompetenceEntitiesQueryFilter on QueryBuilder<CompetenceEntities, Comp
     });
   }
 
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterFilterCondition> idBetween(
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterFilterCondition>
+      idBetween(
     Id lower,
     Id upper, {
     bool includeLower = true,
@@ -6317,7 +6763,8 @@ extension CompetenceEntitiesQueryFilter on QueryBuilder<CompetenceEntities, Comp
     });
   }
 
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterFilterCondition> masteredEqualTo(bool value) {
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterFilterCondition>
+      masteredEqualTo(bool value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'mastered',
@@ -6326,7 +6773,8 @@ extension CompetenceEntitiesQueryFilter on QueryBuilder<CompetenceEntities, Comp
     });
   }
 
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterFilterCondition> stringifyIsNull() {
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterFilterCondition>
+      stringifyIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
         property: r'stringify',
@@ -6334,7 +6782,8 @@ extension CompetenceEntitiesQueryFilter on QueryBuilder<CompetenceEntities, Comp
     });
   }
 
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterFilterCondition> stringifyIsNotNull() {
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterFilterCondition>
+      stringifyIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNotNull(
         property: r'stringify',
@@ -6342,7 +6791,8 @@ extension CompetenceEntitiesQueryFilter on QueryBuilder<CompetenceEntities, Comp
     });
   }
 
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterFilterCondition> stringifyEqualTo(bool? value) {
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterFilterCondition>
+      stringifyEqualTo(bool? value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'stringify',
@@ -6352,228 +6802,270 @@ extension CompetenceEntitiesQueryFilter on QueryBuilder<CompetenceEntities, Comp
   }
 }
 
-extension CompetenceEntitiesQueryObject on QueryBuilder<CompetenceEntities, CompetenceEntities, QFilterCondition> {}
+extension CompetenceEntitiesQueryObject
+    on QueryBuilder<CompetenceEntities, CompetenceEntities, QFilterCondition> {}
 
-extension CompetenceEntitiesQueryLinks on QueryBuilder<CompetenceEntities, CompetenceEntities, QFilterCondition> {}
+extension CompetenceEntitiesQueryLinks
+    on QueryBuilder<CompetenceEntities, CompetenceEntities, QFilterCondition> {}
 
-extension CompetenceEntitiesQuerySortBy on QueryBuilder<CompetenceEntities, CompetenceEntities, QSortBy> {
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterSortBy> sortByCharacterName() {
+extension CompetenceEntitiesQuerySortBy
+    on QueryBuilder<CompetenceEntities, CompetenceEntities, QSortBy> {
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterSortBy>
+      sortByCharacterName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'characterName', Sort.asc);
     });
   }
 
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterSortBy> sortByCharacterNameDesc() {
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterSortBy>
+      sortByCharacterNameDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'characterName', Sort.desc);
     });
   }
 
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterSortBy> sortByCompetenceType() {
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterSortBy>
+      sortByCompetenceType() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'competenceType', Sort.asc);
     });
   }
 
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterSortBy> sortByCompetenceTypeDesc() {
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterSortBy>
+      sortByCompetenceTypeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'competenceType', Sort.desc);
     });
   }
 
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterSortBy> sortByCompetenced() {
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterSortBy>
+      sortByCompetenced() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'competenced', Sort.asc);
     });
   }
 
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterSortBy> sortByCompetencedDesc() {
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterSortBy>
+      sortByCompetencedDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'competenced', Sort.desc);
     });
   }
 
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterSortBy> sortByHashCode() {
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterSortBy>
+      sortByHashCode() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'hashCode', Sort.asc);
     });
   }
 
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterSortBy> sortByHashCodeDesc() {
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterSortBy>
+      sortByHashCodeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'hashCode', Sort.desc);
     });
   }
 
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterSortBy> sortByMastered() {
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterSortBy>
+      sortByMastered() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'mastered', Sort.asc);
     });
   }
 
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterSortBy> sortByMasteredDesc() {
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterSortBy>
+      sortByMasteredDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'mastered', Sort.desc);
     });
   }
 
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterSortBy> sortByStringify() {
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterSortBy>
+      sortByStringify() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'stringify', Sort.asc);
     });
   }
 
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterSortBy> sortByStringifyDesc() {
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterSortBy>
+      sortByStringifyDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'stringify', Sort.desc);
     });
   }
 }
 
-extension CompetenceEntitiesQuerySortThenBy on QueryBuilder<CompetenceEntities, CompetenceEntities, QSortThenBy> {
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterSortBy> thenByCharacterName() {
+extension CompetenceEntitiesQuerySortThenBy
+    on QueryBuilder<CompetenceEntities, CompetenceEntities, QSortThenBy> {
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterSortBy>
+      thenByCharacterName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'characterName', Sort.asc);
     });
   }
 
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterSortBy> thenByCharacterNameDesc() {
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterSortBy>
+      thenByCharacterNameDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'characterName', Sort.desc);
     });
   }
 
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterSortBy> thenByCompetenceType() {
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterSortBy>
+      thenByCompetenceType() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'competenceType', Sort.asc);
     });
   }
 
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterSortBy> thenByCompetenceTypeDesc() {
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterSortBy>
+      thenByCompetenceTypeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'competenceType', Sort.desc);
     });
   }
 
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterSortBy> thenByCompetenced() {
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterSortBy>
+      thenByCompetenced() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'competenced', Sort.asc);
     });
   }
 
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterSortBy> thenByCompetencedDesc() {
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterSortBy>
+      thenByCompetencedDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'competenced', Sort.desc);
     });
   }
 
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterSortBy> thenByHashCode() {
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterSortBy>
+      thenByHashCode() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'hashCode', Sort.asc);
     });
   }
 
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterSortBy> thenByHashCodeDesc() {
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterSortBy>
+      thenByHashCodeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'hashCode', Sort.desc);
     });
   }
 
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterSortBy> thenById() {
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterSortBy>
+      thenById() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.asc);
     });
   }
 
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterSortBy> thenByIdDesc() {
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterSortBy>
+      thenByIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.desc);
     });
   }
 
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterSortBy> thenByMastered() {
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterSortBy>
+      thenByMastered() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'mastered', Sort.asc);
     });
   }
 
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterSortBy> thenByMasteredDesc() {
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterSortBy>
+      thenByMasteredDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'mastered', Sort.desc);
     });
   }
 
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterSortBy> thenByStringify() {
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterSortBy>
+      thenByStringify() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'stringify', Sort.asc);
     });
   }
 
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterSortBy> thenByStringifyDesc() {
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QAfterSortBy>
+      thenByStringifyDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'stringify', Sort.desc);
     });
   }
 }
 
-extension CompetenceEntitiesQueryWhereDistinct on QueryBuilder<CompetenceEntities, CompetenceEntities, QDistinct> {
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QDistinct> distinctByCharacterName({bool caseSensitive = true}) {
+extension CompetenceEntitiesQueryWhereDistinct
+    on QueryBuilder<CompetenceEntities, CompetenceEntities, QDistinct> {
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QDistinct>
+      distinctByCharacterName({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'characterName', caseSensitive: caseSensitive);
+      return query.addDistinctBy(r'characterName',
+          caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QDistinct> distinctByCompetenceType() {
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QDistinct>
+      distinctByCompetenceType() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'competenceType');
     });
   }
 
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QDistinct> distinctByCompetenced() {
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QDistinct>
+      distinctByCompetenced() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'competenced');
     });
   }
 
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QDistinct> distinctByHashCode() {
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QDistinct>
+      distinctByHashCode() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'hashCode');
     });
   }
 
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QDistinct> distinctByMastered() {
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QDistinct>
+      distinctByMastered() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'mastered');
     });
   }
 
-  QueryBuilder<CompetenceEntities, CompetenceEntities, QDistinct> distinctByStringify() {
+  QueryBuilder<CompetenceEntities, CompetenceEntities, QDistinct>
+      distinctByStringify() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'stringify');
     });
   }
 }
 
-extension CompetenceEntitiesQueryProperty on QueryBuilder<CompetenceEntities, CompetenceEntities, QQueryProperty> {
+extension CompetenceEntitiesQueryProperty
+    on QueryBuilder<CompetenceEntities, CompetenceEntities, QQueryProperty> {
   QueryBuilder<CompetenceEntities, int, QQueryOperations> idProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'id');
     });
   }
 
-  QueryBuilder<CompetenceEntities, String, QQueryOperations> characterNameProperty() {
+  QueryBuilder<CompetenceEntities, String, QQueryOperations>
+      characterNameProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'characterName');
     });
   }
 
-  QueryBuilder<CompetenceEntities, CompetenceType, QQueryOperations> competenceTypeProperty() {
+  QueryBuilder<CompetenceEntities, CompetenceType, QQueryOperations>
+      competenceTypeProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'competenceType');
     });
   }
 
-  QueryBuilder<CompetenceEntities, bool, QQueryOperations> competencedProperty() {
+  QueryBuilder<CompetenceEntities, bool, QQueryOperations>
+      competencedProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'competenced');
     });
@@ -6591,7 +7083,8 @@ extension CompetenceEntitiesQueryProperty on QueryBuilder<CompetenceEntities, Co
     });
   }
 
-  QueryBuilder<CompetenceEntities, bool?, QQueryOperations> stringifyProperty() {
+  QueryBuilder<CompetenceEntities, bool?, QQueryOperations>
+      stringifyProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'stringify');
     });
@@ -6690,7 +7183,9 @@ ItemEntities _itemEntitiesDeserialize(
   final object = ItemEntities(
     characterName: reader.readString(offsets[0]),
     description: reader.readString(offsets[1]),
-    itemType: _ItemEntitiesitemTypeValueEnumMap[reader.readByteOrNull(offsets[3])] ?? ItemType.WEAPON,
+    itemType:
+        _ItemEntitiesitemTypeValueEnumMap[reader.readByteOrNull(offsets[3])] ??
+            ItemType.WEAPON,
     name: reader.readString(offsets[4]),
   );
   return object;
@@ -6710,7 +7205,9 @@ P _itemEntitiesDeserializeProp<P>(
     case 2:
       return (reader.readLong(offset)) as P;
     case 3:
-      return (_ItemEntitiesitemTypeValueEnumMap[reader.readByteOrNull(offset)] ?? ItemType.WEAPON) as P;
+      return (_ItemEntitiesitemTypeValueEnumMap[
+              reader.readByteOrNull(offset)] ??
+          ItemType.WEAPON) as P;
     case 4:
       return (reader.readString(offset)) as P;
     case 5:
@@ -6745,9 +7242,11 @@ List<IsarLinkBase<dynamic>> _itemEntitiesGetLinks(ItemEntities object) {
   return [];
 }
 
-void _itemEntitiesAttach(IsarCollection<dynamic> col, Id id, ItemEntities object) {}
+void _itemEntitiesAttach(
+    IsarCollection<dynamic> col, Id id, ItemEntities object) {}
 
-extension ItemEntitiesQueryWhereSort on QueryBuilder<ItemEntities, ItemEntities, QWhere> {
+extension ItemEntitiesQueryWhereSort
+    on QueryBuilder<ItemEntities, ItemEntities, QWhere> {
   QueryBuilder<ItemEntities, ItemEntities, QAfterWhere> anyId() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(const IdWhereClause.any());
@@ -6755,7 +7254,8 @@ extension ItemEntitiesQueryWhereSort on QueryBuilder<ItemEntities, ItemEntities,
   }
 }
 
-extension ItemEntitiesQueryWhere on QueryBuilder<ItemEntities, ItemEntities, QWhereClause> {
+extension ItemEntitiesQueryWhere
+    on QueryBuilder<ItemEntities, ItemEntities, QWhereClause> {
   QueryBuilder<ItemEntities, ItemEntities, QAfterWhereClause> idEqualTo(Id id) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(IdWhereClause.between(
@@ -6765,7 +7265,8 @@ extension ItemEntitiesQueryWhere on QueryBuilder<ItemEntities, ItemEntities, QWh
     });
   }
 
-  QueryBuilder<ItemEntities, ItemEntities, QAfterWhereClause> idNotEqualTo(Id id) {
+  QueryBuilder<ItemEntities, ItemEntities, QAfterWhereClause> idNotEqualTo(
+      Id id) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
@@ -6787,7 +7288,9 @@ extension ItemEntitiesQueryWhere on QueryBuilder<ItemEntities, ItemEntities, QWh
     });
   }
 
-  QueryBuilder<ItemEntities, ItemEntities, QAfterWhereClause> idGreaterThan(Id id, {bool include = false}) {
+  QueryBuilder<ItemEntities, ItemEntities, QAfterWhereClause> idGreaterThan(
+      Id id,
+      {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         IdWhereClause.greaterThan(lower: id, includeLower: include),
@@ -6795,7 +7298,8 @@ extension ItemEntitiesQueryWhere on QueryBuilder<ItemEntities, ItemEntities, QWh
     });
   }
 
-  QueryBuilder<ItemEntities, ItemEntities, QAfterWhereClause> idLessThan(Id id, {bool include = false}) {
+  QueryBuilder<ItemEntities, ItemEntities, QAfterWhereClause> idLessThan(Id id,
+      {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         IdWhereClause.lessThan(upper: id, includeUpper: include),
@@ -6820,8 +7324,10 @@ extension ItemEntitiesQueryWhere on QueryBuilder<ItemEntities, ItemEntities, QWh
   }
 }
 
-extension ItemEntitiesQueryFilter on QueryBuilder<ItemEntities, ItemEntities, QFilterCondition> {
-  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition> characterNameEqualTo(
+extension ItemEntitiesQueryFilter
+    on QueryBuilder<ItemEntities, ItemEntities, QFilterCondition> {
+  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition>
+      characterNameEqualTo(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -6834,7 +7340,8 @@ extension ItemEntitiesQueryFilter on QueryBuilder<ItemEntities, ItemEntities, QF
     });
   }
 
-  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition> characterNameGreaterThan(
+  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition>
+      characterNameGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -6849,7 +7356,8 @@ extension ItemEntitiesQueryFilter on QueryBuilder<ItemEntities, ItemEntities, QF
     });
   }
 
-  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition> characterNameLessThan(
+  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition>
+      characterNameLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -6864,7 +7372,8 @@ extension ItemEntitiesQueryFilter on QueryBuilder<ItemEntities, ItemEntities, QF
     });
   }
 
-  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition> characterNameBetween(
+  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition>
+      characterNameBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -6883,7 +7392,8 @@ extension ItemEntitiesQueryFilter on QueryBuilder<ItemEntities, ItemEntities, QF
     });
   }
 
-  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition> characterNameStartsWith(
+  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition>
+      characterNameStartsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -6896,7 +7406,8 @@ extension ItemEntitiesQueryFilter on QueryBuilder<ItemEntities, ItemEntities, QF
     });
   }
 
-  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition> characterNameEndsWith(
+  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition>
+      characterNameEndsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -6909,7 +7420,8 @@ extension ItemEntitiesQueryFilter on QueryBuilder<ItemEntities, ItemEntities, QF
     });
   }
 
-  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition> characterNameContains(String value, {bool caseSensitive = true}) {
+  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition>
+      characterNameContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
         property: r'characterName',
@@ -6919,7 +7431,8 @@ extension ItemEntitiesQueryFilter on QueryBuilder<ItemEntities, ItemEntities, QF
     });
   }
 
-  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition> characterNameMatches(String pattern, {bool caseSensitive = true}) {
+  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition>
+      characterNameMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.matches(
         property: r'characterName',
@@ -6929,7 +7442,8 @@ extension ItemEntitiesQueryFilter on QueryBuilder<ItemEntities, ItemEntities, QF
     });
   }
 
-  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition> characterNameIsEmpty() {
+  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition>
+      characterNameIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'characterName',
@@ -6938,7 +7452,8 @@ extension ItemEntitiesQueryFilter on QueryBuilder<ItemEntities, ItemEntities, QF
     });
   }
 
-  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition> characterNameIsNotEmpty() {
+  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition>
+      characterNameIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'characterName',
@@ -6947,7 +7462,8 @@ extension ItemEntitiesQueryFilter on QueryBuilder<ItemEntities, ItemEntities, QF
     });
   }
 
-  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition> descriptionEqualTo(
+  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition>
+      descriptionEqualTo(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -6960,7 +7476,8 @@ extension ItemEntitiesQueryFilter on QueryBuilder<ItemEntities, ItemEntities, QF
     });
   }
 
-  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition> descriptionGreaterThan(
+  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition>
+      descriptionGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -6975,7 +7492,8 @@ extension ItemEntitiesQueryFilter on QueryBuilder<ItemEntities, ItemEntities, QF
     });
   }
 
-  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition> descriptionLessThan(
+  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition>
+      descriptionLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -6990,7 +7508,8 @@ extension ItemEntitiesQueryFilter on QueryBuilder<ItemEntities, ItemEntities, QF
     });
   }
 
-  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition> descriptionBetween(
+  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition>
+      descriptionBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -7009,7 +7528,8 @@ extension ItemEntitiesQueryFilter on QueryBuilder<ItemEntities, ItemEntities, QF
     });
   }
 
-  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition> descriptionStartsWith(
+  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition>
+      descriptionStartsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -7022,7 +7542,8 @@ extension ItemEntitiesQueryFilter on QueryBuilder<ItemEntities, ItemEntities, QF
     });
   }
 
-  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition> descriptionEndsWith(
+  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition>
+      descriptionEndsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -7035,7 +7556,8 @@ extension ItemEntitiesQueryFilter on QueryBuilder<ItemEntities, ItemEntities, QF
     });
   }
 
-  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition> descriptionContains(String value, {bool caseSensitive = true}) {
+  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition>
+      descriptionContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
         property: r'description',
@@ -7045,7 +7567,8 @@ extension ItemEntitiesQueryFilter on QueryBuilder<ItemEntities, ItemEntities, QF
     });
   }
 
-  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition> descriptionMatches(String pattern, {bool caseSensitive = true}) {
+  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition>
+      descriptionMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.matches(
         property: r'description',
@@ -7055,7 +7578,8 @@ extension ItemEntitiesQueryFilter on QueryBuilder<ItemEntities, ItemEntities, QF
     });
   }
 
-  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition> descriptionIsEmpty() {
+  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition>
+      descriptionIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'description',
@@ -7064,7 +7588,8 @@ extension ItemEntitiesQueryFilter on QueryBuilder<ItemEntities, ItemEntities, QF
     });
   }
 
-  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition> descriptionIsNotEmpty() {
+  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition>
+      descriptionIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'description',
@@ -7073,7 +7598,8 @@ extension ItemEntitiesQueryFilter on QueryBuilder<ItemEntities, ItemEntities, QF
     });
   }
 
-  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition> hashCodeEqualTo(int value) {
+  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition>
+      hashCodeEqualTo(int value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'hashCode',
@@ -7082,7 +7608,8 @@ extension ItemEntitiesQueryFilter on QueryBuilder<ItemEntities, ItemEntities, QF
     });
   }
 
-  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition> hashCodeGreaterThan(
+  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition>
+      hashCodeGreaterThan(
     int value, {
     bool include = false,
   }) {
@@ -7095,7 +7622,8 @@ extension ItemEntitiesQueryFilter on QueryBuilder<ItemEntities, ItemEntities, QF
     });
   }
 
-  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition> hashCodeLessThan(
+  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition>
+      hashCodeLessThan(
     int value, {
     bool include = false,
   }) {
@@ -7108,7 +7636,8 @@ extension ItemEntitiesQueryFilter on QueryBuilder<ItemEntities, ItemEntities, QF
     });
   }
 
-  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition> hashCodeBetween(
+  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition>
+      hashCodeBetween(
     int lower,
     int upper, {
     bool includeLower = true,
@@ -7125,7 +7654,8 @@ extension ItemEntitiesQueryFilter on QueryBuilder<ItemEntities, ItemEntities, QF
     });
   }
 
-  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition> idEqualTo(Id value) {
+  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition> idEqualTo(
+      Id value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'id',
@@ -7177,7 +7707,8 @@ extension ItemEntitiesQueryFilter on QueryBuilder<ItemEntities, ItemEntities, QF
     });
   }
 
-  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition> itemTypeEqualTo(ItemType value) {
+  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition>
+      itemTypeEqualTo(ItemType value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'itemType',
@@ -7186,7 +7717,8 @@ extension ItemEntitiesQueryFilter on QueryBuilder<ItemEntities, ItemEntities, QF
     });
   }
 
-  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition> itemTypeGreaterThan(
+  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition>
+      itemTypeGreaterThan(
     ItemType value, {
     bool include = false,
   }) {
@@ -7199,7 +7731,8 @@ extension ItemEntitiesQueryFilter on QueryBuilder<ItemEntities, ItemEntities, QF
     });
   }
 
-  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition> itemTypeLessThan(
+  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition>
+      itemTypeLessThan(
     ItemType value, {
     bool include = false,
   }) {
@@ -7212,7 +7745,8 @@ extension ItemEntitiesQueryFilter on QueryBuilder<ItemEntities, ItemEntities, QF
     });
   }
 
-  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition> itemTypeBetween(
+  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition>
+      itemTypeBetween(
     ItemType lower,
     ItemType upper, {
     bool includeLower = true,
@@ -7242,7 +7776,8 @@ extension ItemEntitiesQueryFilter on QueryBuilder<ItemEntities, ItemEntities, QF
     });
   }
 
-  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition> nameGreaterThan(
+  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition>
+      nameGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -7291,7 +7826,8 @@ extension ItemEntitiesQueryFilter on QueryBuilder<ItemEntities, ItemEntities, QF
     });
   }
 
-  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition> nameStartsWith(
+  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition>
+      nameStartsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -7317,7 +7853,9 @@ extension ItemEntitiesQueryFilter on QueryBuilder<ItemEntities, ItemEntities, QF
     });
   }
 
-  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition> nameContains(String value, {bool caseSensitive = true}) {
+  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition> nameContains(
+      String value,
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
         property: r'name',
@@ -7327,7 +7865,9 @@ extension ItemEntitiesQueryFilter on QueryBuilder<ItemEntities, ItemEntities, QF
     });
   }
 
-  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition> nameMatches(String pattern, {bool caseSensitive = true}) {
+  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition> nameMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.matches(
         property: r'name',
@@ -7337,7 +7877,8 @@ extension ItemEntitiesQueryFilter on QueryBuilder<ItemEntities, ItemEntities, QF
     });
   }
 
-  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition> nameIsEmpty() {
+  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition>
+      nameIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'name',
@@ -7346,7 +7887,8 @@ extension ItemEntitiesQueryFilter on QueryBuilder<ItemEntities, ItemEntities, QF
     });
   }
 
-  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition> nameIsNotEmpty() {
+  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition>
+      nameIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'name',
@@ -7355,7 +7897,8 @@ extension ItemEntitiesQueryFilter on QueryBuilder<ItemEntities, ItemEntities, QF
     });
   }
 
-  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition> stringifyIsNull() {
+  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition>
+      stringifyIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
         property: r'stringify',
@@ -7363,7 +7906,8 @@ extension ItemEntitiesQueryFilter on QueryBuilder<ItemEntities, ItemEntities, QF
     });
   }
 
-  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition> stringifyIsNotNull() {
+  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition>
+      stringifyIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNotNull(
         property: r'stringify',
@@ -7371,7 +7915,8 @@ extension ItemEntitiesQueryFilter on QueryBuilder<ItemEntities, ItemEntities, QF
     });
   }
 
-  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition> stringifyEqualTo(bool? value) {
+  QueryBuilder<ItemEntities, ItemEntities, QAfterFilterCondition>
+      stringifyEqualTo(bool? value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'stringify',
@@ -7381,18 +7926,22 @@ extension ItemEntitiesQueryFilter on QueryBuilder<ItemEntities, ItemEntities, QF
   }
 }
 
-extension ItemEntitiesQueryObject on QueryBuilder<ItemEntities, ItemEntities, QFilterCondition> {}
+extension ItemEntitiesQueryObject
+    on QueryBuilder<ItemEntities, ItemEntities, QFilterCondition> {}
 
-extension ItemEntitiesQueryLinks on QueryBuilder<ItemEntities, ItemEntities, QFilterCondition> {}
+extension ItemEntitiesQueryLinks
+    on QueryBuilder<ItemEntities, ItemEntities, QFilterCondition> {}
 
-extension ItemEntitiesQuerySortBy on QueryBuilder<ItemEntities, ItemEntities, QSortBy> {
+extension ItemEntitiesQuerySortBy
+    on QueryBuilder<ItemEntities, ItemEntities, QSortBy> {
   QueryBuilder<ItemEntities, ItemEntities, QAfterSortBy> sortByCharacterName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'characterName', Sort.asc);
     });
   }
 
-  QueryBuilder<ItemEntities, ItemEntities, QAfterSortBy> sortByCharacterNameDesc() {
+  QueryBuilder<ItemEntities, ItemEntities, QAfterSortBy>
+      sortByCharacterNameDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'characterName', Sort.desc);
     });
@@ -7404,7 +7953,8 @@ extension ItemEntitiesQuerySortBy on QueryBuilder<ItemEntities, ItemEntities, QS
     });
   }
 
-  QueryBuilder<ItemEntities, ItemEntities, QAfterSortBy> sortByDescriptionDesc() {
+  QueryBuilder<ItemEntities, ItemEntities, QAfterSortBy>
+      sortByDescriptionDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'description', Sort.desc);
     });
@@ -7459,14 +8009,16 @@ extension ItemEntitiesQuerySortBy on QueryBuilder<ItemEntities, ItemEntities, QS
   }
 }
 
-extension ItemEntitiesQuerySortThenBy on QueryBuilder<ItemEntities, ItemEntities, QSortThenBy> {
+extension ItemEntitiesQuerySortThenBy
+    on QueryBuilder<ItemEntities, ItemEntities, QSortThenBy> {
   QueryBuilder<ItemEntities, ItemEntities, QAfterSortBy> thenByCharacterName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'characterName', Sort.asc);
     });
   }
 
-  QueryBuilder<ItemEntities, ItemEntities, QAfterSortBy> thenByCharacterNameDesc() {
+  QueryBuilder<ItemEntities, ItemEntities, QAfterSortBy>
+      thenByCharacterNameDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'characterName', Sort.desc);
     });
@@ -7478,7 +8030,8 @@ extension ItemEntitiesQuerySortThenBy on QueryBuilder<ItemEntities, ItemEntities
     });
   }
 
-  QueryBuilder<ItemEntities, ItemEntities, QAfterSortBy> thenByDescriptionDesc() {
+  QueryBuilder<ItemEntities, ItemEntities, QAfterSortBy>
+      thenByDescriptionDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'description', Sort.desc);
     });
@@ -7545,14 +8098,18 @@ extension ItemEntitiesQuerySortThenBy on QueryBuilder<ItemEntities, ItemEntities
   }
 }
 
-extension ItemEntitiesQueryWhereDistinct on QueryBuilder<ItemEntities, ItemEntities, QDistinct> {
-  QueryBuilder<ItemEntities, ItemEntities, QDistinct> distinctByCharacterName({bool caseSensitive = true}) {
+extension ItemEntitiesQueryWhereDistinct
+    on QueryBuilder<ItemEntities, ItemEntities, QDistinct> {
+  QueryBuilder<ItemEntities, ItemEntities, QDistinct> distinctByCharacterName(
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'characterName', caseSensitive: caseSensitive);
+      return query.addDistinctBy(r'characterName',
+          caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<ItemEntities, ItemEntities, QDistinct> distinctByDescription({bool caseSensitive = true}) {
+  QueryBuilder<ItemEntities, ItemEntities, QDistinct> distinctByDescription(
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'description', caseSensitive: caseSensitive);
     });
@@ -7570,7 +8127,8 @@ extension ItemEntitiesQueryWhereDistinct on QueryBuilder<ItemEntities, ItemEntit
     });
   }
 
-  QueryBuilder<ItemEntities, ItemEntities, QDistinct> distinctByName({bool caseSensitive = true}) {
+  QueryBuilder<ItemEntities, ItemEntities, QDistinct> distinctByName(
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'name', caseSensitive: caseSensitive);
     });
@@ -7583,7 +8141,8 @@ extension ItemEntitiesQueryWhereDistinct on QueryBuilder<ItemEntities, ItemEntit
   }
 }
 
-extension ItemEntitiesQueryProperty on QueryBuilder<ItemEntities, ItemEntities, QQueryProperty> {
+extension ItemEntitiesQueryProperty
+    on QueryBuilder<ItemEntities, ItemEntities, QQueryProperty> {
   QueryBuilder<ItemEntities, int, QQueryOperations> idProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'id');
@@ -7706,7 +8265,8 @@ void _gameClassEntitiesSerialize(
   writer.writeLong(offsets[1], object.classLevel);
   writer.writeByte(offsets[2], object.gameClassType.index);
   writer.writeLong(offsets[3], object.hashCode);
-  writer.writeByteList(offsets[4], object.hitDices.map((e) => e.index).toList());
+  writer.writeByteList(
+      offsets[4], object.hitDices.map((e) => e.index).toList());
   writer.writeBool(offsets[5], object.stringify);
 }
 
@@ -7719,8 +8279,15 @@ GameClassEntities _gameClassEntitiesDeserialize(
   final object = GameClassEntities(
     characterName: reader.readString(offsets[0]),
     classLevel: reader.readLong(offsets[1]),
-    gameClassType: _GameClassEntitiesgameClassTypeValueEnumMap[reader.readByteOrNull(offsets[2])] ?? GameClassType.ARTIFICIER,
-    hitDices: reader.readByteList(offsets[4])?.map((e) => _GameClassEntitieshitDicesValueEnumMap[e] ?? DiceType.D4).toList() ?? [],
+    gameClassType: _GameClassEntitiesgameClassTypeValueEnumMap[
+            reader.readByteOrNull(offsets[2])] ??
+        GameClassType.ARTIFICIER,
+    hitDices: reader
+            .readByteList(offsets[4])
+            ?.map(
+                (e) => _GameClassEntitieshitDicesValueEnumMap[e] ?? DiceType.D4)
+            .toList() ??
+        [],
   );
   return object;
 }
@@ -7737,11 +8304,18 @@ P _gameClassEntitiesDeserializeProp<P>(
     case 1:
       return (reader.readLong(offset)) as P;
     case 2:
-      return (_GameClassEntitiesgameClassTypeValueEnumMap[reader.readByteOrNull(offset)] ?? GameClassType.ARTIFICIER) as P;
+      return (_GameClassEntitiesgameClassTypeValueEnumMap[
+              reader.readByteOrNull(offset)] ??
+          GameClassType.ARTIFICIER) as P;
     case 3:
       return (reader.readLong(offset)) as P;
     case 4:
-      return (reader.readByteList(offset)?.map((e) => _GameClassEntitieshitDicesValueEnumMap[e] ?? DiceType.D4).toList() ?? []) as P;
+      return (reader
+              .readByteList(offset)
+              ?.map((e) =>
+                  _GameClassEntitieshitDicesValueEnumMap[e] ?? DiceType.D4)
+              .toList() ??
+          []) as P;
     case 5:
       return (reader.readBoolOrNull(offset)) as P;
     default:
@@ -7802,13 +8376,16 @@ Id _gameClassEntitiesGetId(GameClassEntities object) {
   return object.id;
 }
 
-List<IsarLinkBase<dynamic>> _gameClassEntitiesGetLinks(GameClassEntities object) {
+List<IsarLinkBase<dynamic>> _gameClassEntitiesGetLinks(
+    GameClassEntities object) {
   return [];
 }
 
-void _gameClassEntitiesAttach(IsarCollection<dynamic> col, Id id, GameClassEntities object) {}
+void _gameClassEntitiesAttach(
+    IsarCollection<dynamic> col, Id id, GameClassEntities object) {}
 
-extension GameClassEntitiesQueryWhereSort on QueryBuilder<GameClassEntities, GameClassEntities, QWhere> {
+extension GameClassEntitiesQueryWhereSort
+    on QueryBuilder<GameClassEntities, GameClassEntities, QWhere> {
   QueryBuilder<GameClassEntities, GameClassEntities, QAfterWhere> anyId() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(const IdWhereClause.any());
@@ -7816,8 +8393,10 @@ extension GameClassEntitiesQueryWhereSort on QueryBuilder<GameClassEntities, Gam
   }
 }
 
-extension GameClassEntitiesQueryWhere on QueryBuilder<GameClassEntities, GameClassEntities, QWhereClause> {
-  QueryBuilder<GameClassEntities, GameClassEntities, QAfterWhereClause> idEqualTo(Id id) {
+extension GameClassEntitiesQueryWhere
+    on QueryBuilder<GameClassEntities, GameClassEntities, QWhereClause> {
+  QueryBuilder<GameClassEntities, GameClassEntities, QAfterWhereClause>
+      idEqualTo(Id id) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(IdWhereClause.between(
         lower: id,
@@ -7826,7 +8405,8 @@ extension GameClassEntitiesQueryWhere on QueryBuilder<GameClassEntities, GameCla
     });
   }
 
-  QueryBuilder<GameClassEntities, GameClassEntities, QAfterWhereClause> idNotEqualTo(Id id) {
+  QueryBuilder<GameClassEntities, GameClassEntities, QAfterWhereClause>
+      idNotEqualTo(Id id) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
@@ -7848,7 +8428,8 @@ extension GameClassEntitiesQueryWhere on QueryBuilder<GameClassEntities, GameCla
     });
   }
 
-  QueryBuilder<GameClassEntities, GameClassEntities, QAfterWhereClause> idGreaterThan(Id id, {bool include = false}) {
+  QueryBuilder<GameClassEntities, GameClassEntities, QAfterWhereClause>
+      idGreaterThan(Id id, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         IdWhereClause.greaterThan(lower: id, includeLower: include),
@@ -7856,7 +8437,8 @@ extension GameClassEntitiesQueryWhere on QueryBuilder<GameClassEntities, GameCla
     });
   }
 
-  QueryBuilder<GameClassEntities, GameClassEntities, QAfterWhereClause> idLessThan(Id id, {bool include = false}) {
+  QueryBuilder<GameClassEntities, GameClassEntities, QAfterWhereClause>
+      idLessThan(Id id, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         IdWhereClause.lessThan(upper: id, includeUpper: include),
@@ -7864,7 +8446,8 @@ extension GameClassEntitiesQueryWhere on QueryBuilder<GameClassEntities, GameCla
     });
   }
 
-  QueryBuilder<GameClassEntities, GameClassEntities, QAfterWhereClause> idBetween(
+  QueryBuilder<GameClassEntities, GameClassEntities, QAfterWhereClause>
+      idBetween(
     Id lowerId,
     Id upperId, {
     bool includeLower = true,
@@ -7881,8 +8464,10 @@ extension GameClassEntitiesQueryWhere on QueryBuilder<GameClassEntities, GameCla
   }
 }
 
-extension GameClassEntitiesQueryFilter on QueryBuilder<GameClassEntities, GameClassEntities, QFilterCondition> {
-  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition> characterNameEqualTo(
+extension GameClassEntitiesQueryFilter
+    on QueryBuilder<GameClassEntities, GameClassEntities, QFilterCondition> {
+  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition>
+      characterNameEqualTo(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -7895,7 +8480,8 @@ extension GameClassEntitiesQueryFilter on QueryBuilder<GameClassEntities, GameCl
     });
   }
 
-  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition> characterNameGreaterThan(
+  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition>
+      characterNameGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -7910,7 +8496,8 @@ extension GameClassEntitiesQueryFilter on QueryBuilder<GameClassEntities, GameCl
     });
   }
 
-  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition> characterNameLessThan(
+  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition>
+      characterNameLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -7925,7 +8512,8 @@ extension GameClassEntitiesQueryFilter on QueryBuilder<GameClassEntities, GameCl
     });
   }
 
-  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition> characterNameBetween(
+  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition>
+      characterNameBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -7944,7 +8532,8 @@ extension GameClassEntitiesQueryFilter on QueryBuilder<GameClassEntities, GameCl
     });
   }
 
-  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition> characterNameStartsWith(
+  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition>
+      characterNameStartsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -7957,7 +8546,8 @@ extension GameClassEntitiesQueryFilter on QueryBuilder<GameClassEntities, GameCl
     });
   }
 
-  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition> characterNameEndsWith(
+  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition>
+      characterNameEndsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -7970,7 +8560,8 @@ extension GameClassEntitiesQueryFilter on QueryBuilder<GameClassEntities, GameCl
     });
   }
 
-  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition> characterNameContains(String value, {bool caseSensitive = true}) {
+  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition>
+      characterNameContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
         property: r'characterName',
@@ -7980,7 +8571,8 @@ extension GameClassEntitiesQueryFilter on QueryBuilder<GameClassEntities, GameCl
     });
   }
 
-  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition> characterNameMatches(String pattern, {bool caseSensitive = true}) {
+  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition>
+      characterNameMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.matches(
         property: r'characterName',
@@ -7990,7 +8582,8 @@ extension GameClassEntitiesQueryFilter on QueryBuilder<GameClassEntities, GameCl
     });
   }
 
-  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition> characterNameIsEmpty() {
+  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition>
+      characterNameIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'characterName',
@@ -7999,7 +8592,8 @@ extension GameClassEntitiesQueryFilter on QueryBuilder<GameClassEntities, GameCl
     });
   }
 
-  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition> characterNameIsNotEmpty() {
+  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition>
+      characterNameIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'characterName',
@@ -8008,7 +8602,8 @@ extension GameClassEntitiesQueryFilter on QueryBuilder<GameClassEntities, GameCl
     });
   }
 
-  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition> classLevelEqualTo(int value) {
+  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition>
+      classLevelEqualTo(int value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'classLevel',
@@ -8017,7 +8612,8 @@ extension GameClassEntitiesQueryFilter on QueryBuilder<GameClassEntities, GameCl
     });
   }
 
-  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition> classLevelGreaterThan(
+  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition>
+      classLevelGreaterThan(
     int value, {
     bool include = false,
   }) {
@@ -8030,7 +8626,8 @@ extension GameClassEntitiesQueryFilter on QueryBuilder<GameClassEntities, GameCl
     });
   }
 
-  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition> classLevelLessThan(
+  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition>
+      classLevelLessThan(
     int value, {
     bool include = false,
   }) {
@@ -8043,7 +8640,8 @@ extension GameClassEntitiesQueryFilter on QueryBuilder<GameClassEntities, GameCl
     });
   }
 
-  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition> classLevelBetween(
+  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition>
+      classLevelBetween(
     int lower,
     int upper, {
     bool includeLower = true,
@@ -8060,7 +8658,8 @@ extension GameClassEntitiesQueryFilter on QueryBuilder<GameClassEntities, GameCl
     });
   }
 
-  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition> gameClassTypeEqualTo(GameClassType value) {
+  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition>
+      gameClassTypeEqualTo(GameClassType value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'gameClassType',
@@ -8069,7 +8668,8 @@ extension GameClassEntitiesQueryFilter on QueryBuilder<GameClassEntities, GameCl
     });
   }
 
-  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition> gameClassTypeGreaterThan(
+  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition>
+      gameClassTypeGreaterThan(
     GameClassType value, {
     bool include = false,
   }) {
@@ -8082,7 +8682,8 @@ extension GameClassEntitiesQueryFilter on QueryBuilder<GameClassEntities, GameCl
     });
   }
 
-  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition> gameClassTypeLessThan(
+  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition>
+      gameClassTypeLessThan(
     GameClassType value, {
     bool include = false,
   }) {
@@ -8095,7 +8696,8 @@ extension GameClassEntitiesQueryFilter on QueryBuilder<GameClassEntities, GameCl
     });
   }
 
-  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition> gameClassTypeBetween(
+  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition>
+      gameClassTypeBetween(
     GameClassType lower,
     GameClassType upper, {
     bool includeLower = true,
@@ -8112,7 +8714,8 @@ extension GameClassEntitiesQueryFilter on QueryBuilder<GameClassEntities, GameCl
     });
   }
 
-  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition> hashCodeEqualTo(int value) {
+  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition>
+      hashCodeEqualTo(int value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'hashCode',
@@ -8121,7 +8724,8 @@ extension GameClassEntitiesQueryFilter on QueryBuilder<GameClassEntities, GameCl
     });
   }
 
-  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition> hashCodeGreaterThan(
+  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition>
+      hashCodeGreaterThan(
     int value, {
     bool include = false,
   }) {
@@ -8134,7 +8738,8 @@ extension GameClassEntitiesQueryFilter on QueryBuilder<GameClassEntities, GameCl
     });
   }
 
-  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition> hashCodeLessThan(
+  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition>
+      hashCodeLessThan(
     int value, {
     bool include = false,
   }) {
@@ -8147,7 +8752,8 @@ extension GameClassEntitiesQueryFilter on QueryBuilder<GameClassEntities, GameCl
     });
   }
 
-  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition> hashCodeBetween(
+  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition>
+      hashCodeBetween(
     int lower,
     int upper, {
     bool includeLower = true,
@@ -8164,7 +8770,8 @@ extension GameClassEntitiesQueryFilter on QueryBuilder<GameClassEntities, GameCl
     });
   }
 
-  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition> hitDicesElementEqualTo(DiceType value) {
+  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition>
+      hitDicesElementEqualTo(DiceType value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'hitDices',
@@ -8173,7 +8780,8 @@ extension GameClassEntitiesQueryFilter on QueryBuilder<GameClassEntities, GameCl
     });
   }
 
-  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition> hitDicesElementGreaterThan(
+  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition>
+      hitDicesElementGreaterThan(
     DiceType value, {
     bool include = false,
   }) {
@@ -8186,7 +8794,8 @@ extension GameClassEntitiesQueryFilter on QueryBuilder<GameClassEntities, GameCl
     });
   }
 
-  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition> hitDicesElementLessThan(
+  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition>
+      hitDicesElementLessThan(
     DiceType value, {
     bool include = false,
   }) {
@@ -8199,7 +8808,8 @@ extension GameClassEntitiesQueryFilter on QueryBuilder<GameClassEntities, GameCl
     });
   }
 
-  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition> hitDicesElementBetween(
+  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition>
+      hitDicesElementBetween(
     DiceType lower,
     DiceType upper, {
     bool includeLower = true,
@@ -8216,7 +8826,8 @@ extension GameClassEntitiesQueryFilter on QueryBuilder<GameClassEntities, GameCl
     });
   }
 
-  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition> hitDicesLengthEqualTo(int length) {
+  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition>
+      hitDicesLengthEqualTo(int length) {
     return QueryBuilder.apply(this, (query) {
       return query.listLength(
         r'hitDices',
@@ -8228,7 +8839,8 @@ extension GameClassEntitiesQueryFilter on QueryBuilder<GameClassEntities, GameCl
     });
   }
 
-  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition> hitDicesIsEmpty() {
+  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition>
+      hitDicesIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.listLength(
         r'hitDices',
@@ -8240,7 +8852,8 @@ extension GameClassEntitiesQueryFilter on QueryBuilder<GameClassEntities, GameCl
     });
   }
 
-  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition> hitDicesIsNotEmpty() {
+  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition>
+      hitDicesIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.listLength(
         r'hitDices',
@@ -8252,7 +8865,8 @@ extension GameClassEntitiesQueryFilter on QueryBuilder<GameClassEntities, GameCl
     });
   }
 
-  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition> hitDicesLengthLessThan(
+  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition>
+      hitDicesLengthLessThan(
     int length, {
     bool include = false,
   }) {
@@ -8267,7 +8881,8 @@ extension GameClassEntitiesQueryFilter on QueryBuilder<GameClassEntities, GameCl
     });
   }
 
-  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition> hitDicesLengthGreaterThan(
+  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition>
+      hitDicesLengthGreaterThan(
     int length, {
     bool include = false,
   }) {
@@ -8282,7 +8897,8 @@ extension GameClassEntitiesQueryFilter on QueryBuilder<GameClassEntities, GameCl
     });
   }
 
-  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition> hitDicesLengthBetween(
+  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition>
+      hitDicesLengthBetween(
     int lower,
     int upper, {
     bool includeLower = true,
@@ -8299,7 +8915,8 @@ extension GameClassEntitiesQueryFilter on QueryBuilder<GameClassEntities, GameCl
     });
   }
 
-  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition> idEqualTo(Id value) {
+  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition>
+      idEqualTo(Id value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'id',
@@ -8308,7 +8925,8 @@ extension GameClassEntitiesQueryFilter on QueryBuilder<GameClassEntities, GameCl
     });
   }
 
-  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition> idGreaterThan(
+  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition>
+      idGreaterThan(
     Id value, {
     bool include = false,
   }) {
@@ -8321,7 +8939,8 @@ extension GameClassEntitiesQueryFilter on QueryBuilder<GameClassEntities, GameCl
     });
   }
 
-  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition> idLessThan(
+  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition>
+      idLessThan(
     Id value, {
     bool include = false,
   }) {
@@ -8334,7 +8953,8 @@ extension GameClassEntitiesQueryFilter on QueryBuilder<GameClassEntities, GameCl
     });
   }
 
-  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition> idBetween(
+  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition>
+      idBetween(
     Id lower,
     Id upper, {
     bool includeLower = true,
@@ -8351,7 +8971,8 @@ extension GameClassEntitiesQueryFilter on QueryBuilder<GameClassEntities, GameCl
     });
   }
 
-  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition> stringifyIsNull() {
+  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition>
+      stringifyIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
         property: r'stringify',
@@ -8359,7 +8980,8 @@ extension GameClassEntitiesQueryFilter on QueryBuilder<GameClassEntities, GameCl
     });
   }
 
-  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition> stringifyIsNotNull() {
+  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition>
+      stringifyIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNotNull(
         property: r'stringify',
@@ -8367,7 +8989,8 @@ extension GameClassEntitiesQueryFilter on QueryBuilder<GameClassEntities, GameCl
     });
   }
 
-  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition> stringifyEqualTo(bool? value) {
+  QueryBuilder<GameClassEntities, GameClassEntities, QAfterFilterCondition>
+      stringifyEqualTo(bool? value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'stringify',
@@ -8377,116 +9000,138 @@ extension GameClassEntitiesQueryFilter on QueryBuilder<GameClassEntities, GameCl
   }
 }
 
-extension GameClassEntitiesQueryObject on QueryBuilder<GameClassEntities, GameClassEntities, QFilterCondition> {}
+extension GameClassEntitiesQueryObject
+    on QueryBuilder<GameClassEntities, GameClassEntities, QFilterCondition> {}
 
-extension GameClassEntitiesQueryLinks on QueryBuilder<GameClassEntities, GameClassEntities, QFilterCondition> {}
+extension GameClassEntitiesQueryLinks
+    on QueryBuilder<GameClassEntities, GameClassEntities, QFilterCondition> {}
 
-extension GameClassEntitiesQuerySortBy on QueryBuilder<GameClassEntities, GameClassEntities, QSortBy> {
-  QueryBuilder<GameClassEntities, GameClassEntities, QAfterSortBy> sortByCharacterName() {
+extension GameClassEntitiesQuerySortBy
+    on QueryBuilder<GameClassEntities, GameClassEntities, QSortBy> {
+  QueryBuilder<GameClassEntities, GameClassEntities, QAfterSortBy>
+      sortByCharacterName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'characterName', Sort.asc);
     });
   }
 
-  QueryBuilder<GameClassEntities, GameClassEntities, QAfterSortBy> sortByCharacterNameDesc() {
+  QueryBuilder<GameClassEntities, GameClassEntities, QAfterSortBy>
+      sortByCharacterNameDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'characterName', Sort.desc);
     });
   }
 
-  QueryBuilder<GameClassEntities, GameClassEntities, QAfterSortBy> sortByClassLevel() {
+  QueryBuilder<GameClassEntities, GameClassEntities, QAfterSortBy>
+      sortByClassLevel() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'classLevel', Sort.asc);
     });
   }
 
-  QueryBuilder<GameClassEntities, GameClassEntities, QAfterSortBy> sortByClassLevelDesc() {
+  QueryBuilder<GameClassEntities, GameClassEntities, QAfterSortBy>
+      sortByClassLevelDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'classLevel', Sort.desc);
     });
   }
 
-  QueryBuilder<GameClassEntities, GameClassEntities, QAfterSortBy> sortByGameClassType() {
+  QueryBuilder<GameClassEntities, GameClassEntities, QAfterSortBy>
+      sortByGameClassType() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'gameClassType', Sort.asc);
     });
   }
 
-  QueryBuilder<GameClassEntities, GameClassEntities, QAfterSortBy> sortByGameClassTypeDesc() {
+  QueryBuilder<GameClassEntities, GameClassEntities, QAfterSortBy>
+      sortByGameClassTypeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'gameClassType', Sort.desc);
     });
   }
 
-  QueryBuilder<GameClassEntities, GameClassEntities, QAfterSortBy> sortByHashCode() {
+  QueryBuilder<GameClassEntities, GameClassEntities, QAfterSortBy>
+      sortByHashCode() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'hashCode', Sort.asc);
     });
   }
 
-  QueryBuilder<GameClassEntities, GameClassEntities, QAfterSortBy> sortByHashCodeDesc() {
+  QueryBuilder<GameClassEntities, GameClassEntities, QAfterSortBy>
+      sortByHashCodeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'hashCode', Sort.desc);
     });
   }
 
-  QueryBuilder<GameClassEntities, GameClassEntities, QAfterSortBy> sortByStringify() {
+  QueryBuilder<GameClassEntities, GameClassEntities, QAfterSortBy>
+      sortByStringify() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'stringify', Sort.asc);
     });
   }
 
-  QueryBuilder<GameClassEntities, GameClassEntities, QAfterSortBy> sortByStringifyDesc() {
+  QueryBuilder<GameClassEntities, GameClassEntities, QAfterSortBy>
+      sortByStringifyDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'stringify', Sort.desc);
     });
   }
 }
 
-extension GameClassEntitiesQuerySortThenBy on QueryBuilder<GameClassEntities, GameClassEntities, QSortThenBy> {
-  QueryBuilder<GameClassEntities, GameClassEntities, QAfterSortBy> thenByCharacterName() {
+extension GameClassEntitiesQuerySortThenBy
+    on QueryBuilder<GameClassEntities, GameClassEntities, QSortThenBy> {
+  QueryBuilder<GameClassEntities, GameClassEntities, QAfterSortBy>
+      thenByCharacterName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'characterName', Sort.asc);
     });
   }
 
-  QueryBuilder<GameClassEntities, GameClassEntities, QAfterSortBy> thenByCharacterNameDesc() {
+  QueryBuilder<GameClassEntities, GameClassEntities, QAfterSortBy>
+      thenByCharacterNameDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'characterName', Sort.desc);
     });
   }
 
-  QueryBuilder<GameClassEntities, GameClassEntities, QAfterSortBy> thenByClassLevel() {
+  QueryBuilder<GameClassEntities, GameClassEntities, QAfterSortBy>
+      thenByClassLevel() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'classLevel', Sort.asc);
     });
   }
 
-  QueryBuilder<GameClassEntities, GameClassEntities, QAfterSortBy> thenByClassLevelDesc() {
+  QueryBuilder<GameClassEntities, GameClassEntities, QAfterSortBy>
+      thenByClassLevelDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'classLevel', Sort.desc);
     });
   }
 
-  QueryBuilder<GameClassEntities, GameClassEntities, QAfterSortBy> thenByGameClassType() {
+  QueryBuilder<GameClassEntities, GameClassEntities, QAfterSortBy>
+      thenByGameClassType() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'gameClassType', Sort.asc);
     });
   }
 
-  QueryBuilder<GameClassEntities, GameClassEntities, QAfterSortBy> thenByGameClassTypeDesc() {
+  QueryBuilder<GameClassEntities, GameClassEntities, QAfterSortBy>
+      thenByGameClassTypeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'gameClassType', Sort.desc);
     });
   }
 
-  QueryBuilder<GameClassEntities, GameClassEntities, QAfterSortBy> thenByHashCode() {
+  QueryBuilder<GameClassEntities, GameClassEntities, QAfterSortBy>
+      thenByHashCode() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'hashCode', Sort.asc);
     });
   }
 
-  QueryBuilder<GameClassEntities, GameClassEntities, QAfterSortBy> thenByHashCodeDesc() {
+  QueryBuilder<GameClassEntities, GameClassEntities, QAfterSortBy>
+      thenByHashCodeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'hashCode', Sort.desc);
     });
@@ -8498,71 +9143,84 @@ extension GameClassEntitiesQuerySortThenBy on QueryBuilder<GameClassEntities, Ga
     });
   }
 
-  QueryBuilder<GameClassEntities, GameClassEntities, QAfterSortBy> thenByIdDesc() {
+  QueryBuilder<GameClassEntities, GameClassEntities, QAfterSortBy>
+      thenByIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.desc);
     });
   }
 
-  QueryBuilder<GameClassEntities, GameClassEntities, QAfterSortBy> thenByStringify() {
+  QueryBuilder<GameClassEntities, GameClassEntities, QAfterSortBy>
+      thenByStringify() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'stringify', Sort.asc);
     });
   }
 
-  QueryBuilder<GameClassEntities, GameClassEntities, QAfterSortBy> thenByStringifyDesc() {
+  QueryBuilder<GameClassEntities, GameClassEntities, QAfterSortBy>
+      thenByStringifyDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'stringify', Sort.desc);
     });
   }
 }
 
-extension GameClassEntitiesQueryWhereDistinct on QueryBuilder<GameClassEntities, GameClassEntities, QDistinct> {
-  QueryBuilder<GameClassEntities, GameClassEntities, QDistinct> distinctByCharacterName({bool caseSensitive = true}) {
+extension GameClassEntitiesQueryWhereDistinct
+    on QueryBuilder<GameClassEntities, GameClassEntities, QDistinct> {
+  QueryBuilder<GameClassEntities, GameClassEntities, QDistinct>
+      distinctByCharacterName({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'characterName', caseSensitive: caseSensitive);
+      return query.addDistinctBy(r'characterName',
+          caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<GameClassEntities, GameClassEntities, QDistinct> distinctByClassLevel() {
+  QueryBuilder<GameClassEntities, GameClassEntities, QDistinct>
+      distinctByClassLevel() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'classLevel');
     });
   }
 
-  QueryBuilder<GameClassEntities, GameClassEntities, QDistinct> distinctByGameClassType() {
+  QueryBuilder<GameClassEntities, GameClassEntities, QDistinct>
+      distinctByGameClassType() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'gameClassType');
     });
   }
 
-  QueryBuilder<GameClassEntities, GameClassEntities, QDistinct> distinctByHashCode() {
+  QueryBuilder<GameClassEntities, GameClassEntities, QDistinct>
+      distinctByHashCode() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'hashCode');
     });
   }
 
-  QueryBuilder<GameClassEntities, GameClassEntities, QDistinct> distinctByHitDices() {
+  QueryBuilder<GameClassEntities, GameClassEntities, QDistinct>
+      distinctByHitDices() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'hitDices');
     });
   }
 
-  QueryBuilder<GameClassEntities, GameClassEntities, QDistinct> distinctByStringify() {
+  QueryBuilder<GameClassEntities, GameClassEntities, QDistinct>
+      distinctByStringify() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'stringify');
     });
   }
 }
 
-extension GameClassEntitiesQueryProperty on QueryBuilder<GameClassEntities, GameClassEntities, QQueryProperty> {
+extension GameClassEntitiesQueryProperty
+    on QueryBuilder<GameClassEntities, GameClassEntities, QQueryProperty> {
   QueryBuilder<GameClassEntities, int, QQueryOperations> idProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'id');
     });
   }
 
-  QueryBuilder<GameClassEntities, String, QQueryOperations> characterNameProperty() {
+  QueryBuilder<GameClassEntities, String, QQueryOperations>
+      characterNameProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'characterName');
     });
@@ -8574,7 +9232,8 @@ extension GameClassEntitiesQueryProperty on QueryBuilder<GameClassEntities, Game
     });
   }
 
-  QueryBuilder<GameClassEntities, GameClassType, QQueryOperations> gameClassTypeProperty() {
+  QueryBuilder<GameClassEntities, GameClassType, QQueryOperations>
+      gameClassTypeProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'gameClassType');
     });
@@ -8586,7 +9245,8 @@ extension GameClassEntitiesQueryProperty on QueryBuilder<GameClassEntities, Game
     });
   }
 
-  QueryBuilder<GameClassEntities, List<DiceType>, QQueryOperations> hitDicesProperty() {
+  QueryBuilder<GameClassEntities, List<DiceType>, QQueryOperations>
+      hitDicesProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'hitDices');
     });
@@ -8620,18 +9280,24 @@ const SkillEntitiesSchema = CollectionSchema(
       name: r'description',
       type: IsarType.string,
     ),
-    r'hashCode': PropertySchema(
+    r'gameClassType': PropertySchema(
       id: 2,
+      name: r'gameClassType',
+      type: IsarType.byte,
+      enumMap: _SkillEntitiesgameClassTypeEnumValueMap,
+    ),
+    r'hashCode': PropertySchema(
+      id: 3,
       name: r'hashCode',
       type: IsarType.long,
     ),
     r'name': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'name',
       type: IsarType.string,
     ),
     r'stringify': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'stringify',
       type: IsarType.bool,
     )
@@ -8670,9 +9336,10 @@ void _skillEntitiesSerialize(
 ) {
   writer.writeString(offsets[0], object.characterName);
   writer.writeString(offsets[1], object.description);
-  writer.writeLong(offsets[2], object.hashCode);
-  writer.writeString(offsets[3], object.name);
-  writer.writeBool(offsets[4], object.stringify);
+  writer.writeByte(offsets[2], object.gameClassType.index);
+  writer.writeLong(offsets[3], object.hashCode);
+  writer.writeString(offsets[4], object.name);
+  writer.writeBool(offsets[5], object.stringify);
 }
 
 SkillEntities _skillEntitiesDeserialize(
@@ -8684,7 +9351,10 @@ SkillEntities _skillEntitiesDeserialize(
   final object = SkillEntities(
     characterName: reader.readString(offsets[0]),
     description: reader.readString(offsets[1]),
-    name: reader.readString(offsets[3]),
+    gameClassType: _SkillEntitiesgameClassTypeValueEnumMap[
+            reader.readByteOrNull(offsets[2])] ??
+        GameClassType.ARTIFICIER,
+    name: reader.readString(offsets[4]),
   );
   return object;
 }
@@ -8701,15 +9371,50 @@ P _skillEntitiesDeserializeProp<P>(
     case 1:
       return (reader.readString(offset)) as P;
     case 2:
-      return (reader.readLong(offset)) as P;
+      return (_SkillEntitiesgameClassTypeValueEnumMap[
+              reader.readByteOrNull(offset)] ??
+          GameClassType.ARTIFICIER) as P;
     case 3:
-      return (reader.readString(offset)) as P;
+      return (reader.readLong(offset)) as P;
     case 4:
+      return (reader.readString(offset)) as P;
+    case 5:
       return (reader.readBoolOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
 }
+
+const _SkillEntitiesgameClassTypeEnumValueMap = {
+  'ARTIFICIER': 0,
+  'BARBARIAN': 1,
+  'BARD': 2,
+  'CLERIC': 3,
+  'DRUID': 4,
+  'FIGHTER': 5,
+  'MONK': 6,
+  'PALADIN': 7,
+  'RANGER': 8,
+  'ROGUE': 9,
+  'SORCERER': 10,
+  'WARLOCK': 11,
+  'WIZARD': 12,
+};
+const _SkillEntitiesgameClassTypeValueEnumMap = {
+  0: GameClassType.ARTIFICIER,
+  1: GameClassType.BARBARIAN,
+  2: GameClassType.BARD,
+  3: GameClassType.CLERIC,
+  4: GameClassType.DRUID,
+  5: GameClassType.FIGHTER,
+  6: GameClassType.MONK,
+  7: GameClassType.PALADIN,
+  8: GameClassType.RANGER,
+  9: GameClassType.ROGUE,
+  10: GameClassType.SORCERER,
+  11: GameClassType.WARLOCK,
+  12: GameClassType.WIZARD,
+};
 
 Id _skillEntitiesGetId(SkillEntities object) {
   return object.id;
@@ -8719,9 +9424,11 @@ List<IsarLinkBase<dynamic>> _skillEntitiesGetLinks(SkillEntities object) {
   return [];
 }
 
-void _skillEntitiesAttach(IsarCollection<dynamic> col, Id id, SkillEntities object) {}
+void _skillEntitiesAttach(
+    IsarCollection<dynamic> col, Id id, SkillEntities object) {}
 
-extension SkillEntitiesQueryWhereSort on QueryBuilder<SkillEntities, SkillEntities, QWhere> {
+extension SkillEntitiesQueryWhereSort
+    on QueryBuilder<SkillEntities, SkillEntities, QWhere> {
   QueryBuilder<SkillEntities, SkillEntities, QAfterWhere> anyId() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(const IdWhereClause.any());
@@ -8729,8 +9436,10 @@ extension SkillEntitiesQueryWhereSort on QueryBuilder<SkillEntities, SkillEntiti
   }
 }
 
-extension SkillEntitiesQueryWhere on QueryBuilder<SkillEntities, SkillEntities, QWhereClause> {
-  QueryBuilder<SkillEntities, SkillEntities, QAfterWhereClause> idEqualTo(Id id) {
+extension SkillEntitiesQueryWhere
+    on QueryBuilder<SkillEntities, SkillEntities, QWhereClause> {
+  QueryBuilder<SkillEntities, SkillEntities, QAfterWhereClause> idEqualTo(
+      Id id) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(IdWhereClause.between(
         lower: id,
@@ -8739,7 +9448,8 @@ extension SkillEntitiesQueryWhere on QueryBuilder<SkillEntities, SkillEntities, 
     });
   }
 
-  QueryBuilder<SkillEntities, SkillEntities, QAfterWhereClause> idNotEqualTo(Id id) {
+  QueryBuilder<SkillEntities, SkillEntities, QAfterWhereClause> idNotEqualTo(
+      Id id) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
@@ -8761,7 +9471,9 @@ extension SkillEntitiesQueryWhere on QueryBuilder<SkillEntities, SkillEntities, 
     });
   }
 
-  QueryBuilder<SkillEntities, SkillEntities, QAfterWhereClause> idGreaterThan(Id id, {bool include = false}) {
+  QueryBuilder<SkillEntities, SkillEntities, QAfterWhereClause> idGreaterThan(
+      Id id,
+      {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         IdWhereClause.greaterThan(lower: id, includeLower: include),
@@ -8769,7 +9481,9 @@ extension SkillEntitiesQueryWhere on QueryBuilder<SkillEntities, SkillEntities, 
     });
   }
 
-  QueryBuilder<SkillEntities, SkillEntities, QAfterWhereClause> idLessThan(Id id, {bool include = false}) {
+  QueryBuilder<SkillEntities, SkillEntities, QAfterWhereClause> idLessThan(
+      Id id,
+      {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         IdWhereClause.lessThan(upper: id, includeUpper: include),
@@ -8794,8 +9508,10 @@ extension SkillEntitiesQueryWhere on QueryBuilder<SkillEntities, SkillEntities, 
   }
 }
 
-extension SkillEntitiesQueryFilter on QueryBuilder<SkillEntities, SkillEntities, QFilterCondition> {
-  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition> characterNameEqualTo(
+extension SkillEntitiesQueryFilter
+    on QueryBuilder<SkillEntities, SkillEntities, QFilterCondition> {
+  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition>
+      characterNameEqualTo(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -8808,7 +9524,8 @@ extension SkillEntitiesQueryFilter on QueryBuilder<SkillEntities, SkillEntities,
     });
   }
 
-  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition> characterNameGreaterThan(
+  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition>
+      characterNameGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -8823,7 +9540,8 @@ extension SkillEntitiesQueryFilter on QueryBuilder<SkillEntities, SkillEntities,
     });
   }
 
-  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition> characterNameLessThan(
+  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition>
+      characterNameLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -8838,7 +9556,8 @@ extension SkillEntitiesQueryFilter on QueryBuilder<SkillEntities, SkillEntities,
     });
   }
 
-  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition> characterNameBetween(
+  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition>
+      characterNameBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -8857,7 +9576,8 @@ extension SkillEntitiesQueryFilter on QueryBuilder<SkillEntities, SkillEntities,
     });
   }
 
-  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition> characterNameStartsWith(
+  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition>
+      characterNameStartsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -8870,7 +9590,8 @@ extension SkillEntitiesQueryFilter on QueryBuilder<SkillEntities, SkillEntities,
     });
   }
 
-  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition> characterNameEndsWith(
+  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition>
+      characterNameEndsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -8883,7 +9604,8 @@ extension SkillEntitiesQueryFilter on QueryBuilder<SkillEntities, SkillEntities,
     });
   }
 
-  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition> characterNameContains(String value, {bool caseSensitive = true}) {
+  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition>
+      characterNameContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
         property: r'characterName',
@@ -8893,7 +9615,8 @@ extension SkillEntitiesQueryFilter on QueryBuilder<SkillEntities, SkillEntities,
     });
   }
 
-  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition> characterNameMatches(String pattern, {bool caseSensitive = true}) {
+  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition>
+      characterNameMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.matches(
         property: r'characterName',
@@ -8903,7 +9626,8 @@ extension SkillEntitiesQueryFilter on QueryBuilder<SkillEntities, SkillEntities,
     });
   }
 
-  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition> characterNameIsEmpty() {
+  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition>
+      characterNameIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'characterName',
@@ -8912,7 +9636,8 @@ extension SkillEntitiesQueryFilter on QueryBuilder<SkillEntities, SkillEntities,
     });
   }
 
-  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition> characterNameIsNotEmpty() {
+  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition>
+      characterNameIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'characterName',
@@ -8921,7 +9646,8 @@ extension SkillEntitiesQueryFilter on QueryBuilder<SkillEntities, SkillEntities,
     });
   }
 
-  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition> descriptionEqualTo(
+  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition>
+      descriptionEqualTo(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -8934,7 +9660,8 @@ extension SkillEntitiesQueryFilter on QueryBuilder<SkillEntities, SkillEntities,
     });
   }
 
-  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition> descriptionGreaterThan(
+  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition>
+      descriptionGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -8949,7 +9676,8 @@ extension SkillEntitiesQueryFilter on QueryBuilder<SkillEntities, SkillEntities,
     });
   }
 
-  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition> descriptionLessThan(
+  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition>
+      descriptionLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -8964,7 +9692,8 @@ extension SkillEntitiesQueryFilter on QueryBuilder<SkillEntities, SkillEntities,
     });
   }
 
-  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition> descriptionBetween(
+  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition>
+      descriptionBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -8983,7 +9712,8 @@ extension SkillEntitiesQueryFilter on QueryBuilder<SkillEntities, SkillEntities,
     });
   }
 
-  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition> descriptionStartsWith(
+  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition>
+      descriptionStartsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -8996,7 +9726,8 @@ extension SkillEntitiesQueryFilter on QueryBuilder<SkillEntities, SkillEntities,
     });
   }
 
-  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition> descriptionEndsWith(
+  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition>
+      descriptionEndsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -9009,7 +9740,8 @@ extension SkillEntitiesQueryFilter on QueryBuilder<SkillEntities, SkillEntities,
     });
   }
 
-  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition> descriptionContains(String value, {bool caseSensitive = true}) {
+  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition>
+      descriptionContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
         property: r'description',
@@ -9019,7 +9751,8 @@ extension SkillEntitiesQueryFilter on QueryBuilder<SkillEntities, SkillEntities,
     });
   }
 
-  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition> descriptionMatches(String pattern, {bool caseSensitive = true}) {
+  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition>
+      descriptionMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.matches(
         property: r'description',
@@ -9029,7 +9762,8 @@ extension SkillEntitiesQueryFilter on QueryBuilder<SkillEntities, SkillEntities,
     });
   }
 
-  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition> descriptionIsEmpty() {
+  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition>
+      descriptionIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'description',
@@ -9038,7 +9772,8 @@ extension SkillEntitiesQueryFilter on QueryBuilder<SkillEntities, SkillEntities,
     });
   }
 
-  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition> descriptionIsNotEmpty() {
+  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition>
+      descriptionIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'description',
@@ -9047,7 +9782,64 @@ extension SkillEntitiesQueryFilter on QueryBuilder<SkillEntities, SkillEntities,
     });
   }
 
-  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition> hashCodeEqualTo(int value) {
+  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition>
+      gameClassTypeEqualTo(GameClassType value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'gameClassType',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition>
+      gameClassTypeGreaterThan(
+    GameClassType value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'gameClassType',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition>
+      gameClassTypeLessThan(
+    GameClassType value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'gameClassType',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition>
+      gameClassTypeBetween(
+    GameClassType lower,
+    GameClassType upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'gameClassType',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition>
+      hashCodeEqualTo(int value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'hashCode',
@@ -9056,7 +9848,8 @@ extension SkillEntitiesQueryFilter on QueryBuilder<SkillEntities, SkillEntities,
     });
   }
 
-  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition> hashCodeGreaterThan(
+  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition>
+      hashCodeGreaterThan(
     int value, {
     bool include = false,
   }) {
@@ -9069,7 +9862,8 @@ extension SkillEntitiesQueryFilter on QueryBuilder<SkillEntities, SkillEntities,
     });
   }
 
-  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition> hashCodeLessThan(
+  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition>
+      hashCodeLessThan(
     int value, {
     bool include = false,
   }) {
@@ -9082,7 +9876,8 @@ extension SkillEntitiesQueryFilter on QueryBuilder<SkillEntities, SkillEntities,
     });
   }
 
-  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition> hashCodeBetween(
+  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition>
+      hashCodeBetween(
     int lower,
     int upper, {
     bool includeLower = true,
@@ -9099,7 +9894,8 @@ extension SkillEntitiesQueryFilter on QueryBuilder<SkillEntities, SkillEntities,
     });
   }
 
-  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition> idEqualTo(Id value) {
+  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition> idEqualTo(
+      Id value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'id',
@@ -9108,7 +9904,8 @@ extension SkillEntitiesQueryFilter on QueryBuilder<SkillEntities, SkillEntities,
     });
   }
 
-  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition> idGreaterThan(
+  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition>
+      idGreaterThan(
     Id value, {
     bool include = false,
   }) {
@@ -9164,7 +9961,8 @@ extension SkillEntitiesQueryFilter on QueryBuilder<SkillEntities, SkillEntities,
     });
   }
 
-  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition> nameGreaterThan(
+  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition>
+      nameGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -9179,7 +9977,8 @@ extension SkillEntitiesQueryFilter on QueryBuilder<SkillEntities, SkillEntities,
     });
   }
 
-  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition> nameLessThan(
+  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition>
+      nameLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -9213,7 +10012,8 @@ extension SkillEntitiesQueryFilter on QueryBuilder<SkillEntities, SkillEntities,
     });
   }
 
-  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition> nameStartsWith(
+  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition>
+      nameStartsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -9226,7 +10026,8 @@ extension SkillEntitiesQueryFilter on QueryBuilder<SkillEntities, SkillEntities,
     });
   }
 
-  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition> nameEndsWith(
+  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition>
+      nameEndsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -9239,7 +10040,8 @@ extension SkillEntitiesQueryFilter on QueryBuilder<SkillEntities, SkillEntities,
     });
   }
 
-  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition> nameContains(String value, {bool caseSensitive = true}) {
+  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition>
+      nameContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
         property: r'name',
@@ -9249,7 +10051,9 @@ extension SkillEntitiesQueryFilter on QueryBuilder<SkillEntities, SkillEntities,
     });
   }
 
-  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition> nameMatches(String pattern, {bool caseSensitive = true}) {
+  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition> nameMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.matches(
         property: r'name',
@@ -9259,7 +10063,8 @@ extension SkillEntitiesQueryFilter on QueryBuilder<SkillEntities, SkillEntities,
     });
   }
 
-  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition> nameIsEmpty() {
+  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition>
+      nameIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'name',
@@ -9268,7 +10073,8 @@ extension SkillEntitiesQueryFilter on QueryBuilder<SkillEntities, SkillEntities,
     });
   }
 
-  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition> nameIsNotEmpty() {
+  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition>
+      nameIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'name',
@@ -9277,7 +10083,8 @@ extension SkillEntitiesQueryFilter on QueryBuilder<SkillEntities, SkillEntities,
     });
   }
 
-  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition> stringifyIsNull() {
+  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition>
+      stringifyIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
         property: r'stringify',
@@ -9285,7 +10092,8 @@ extension SkillEntitiesQueryFilter on QueryBuilder<SkillEntities, SkillEntities,
     });
   }
 
-  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition> stringifyIsNotNull() {
+  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition>
+      stringifyIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNotNull(
         property: r'stringify',
@@ -9293,7 +10101,8 @@ extension SkillEntitiesQueryFilter on QueryBuilder<SkillEntities, SkillEntities,
     });
   }
 
-  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition> stringifyEqualTo(bool? value) {
+  QueryBuilder<SkillEntities, SkillEntities, QAfterFilterCondition>
+      stringifyEqualTo(bool? value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'stringify',
@@ -9303,18 +10112,23 @@ extension SkillEntitiesQueryFilter on QueryBuilder<SkillEntities, SkillEntities,
   }
 }
 
-extension SkillEntitiesQueryObject on QueryBuilder<SkillEntities, SkillEntities, QFilterCondition> {}
+extension SkillEntitiesQueryObject
+    on QueryBuilder<SkillEntities, SkillEntities, QFilterCondition> {}
 
-extension SkillEntitiesQueryLinks on QueryBuilder<SkillEntities, SkillEntities, QFilterCondition> {}
+extension SkillEntitiesQueryLinks
+    on QueryBuilder<SkillEntities, SkillEntities, QFilterCondition> {}
 
-extension SkillEntitiesQuerySortBy on QueryBuilder<SkillEntities, SkillEntities, QSortBy> {
-  QueryBuilder<SkillEntities, SkillEntities, QAfterSortBy> sortByCharacterName() {
+extension SkillEntitiesQuerySortBy
+    on QueryBuilder<SkillEntities, SkillEntities, QSortBy> {
+  QueryBuilder<SkillEntities, SkillEntities, QAfterSortBy>
+      sortByCharacterName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'characterName', Sort.asc);
     });
   }
 
-  QueryBuilder<SkillEntities, SkillEntities, QAfterSortBy> sortByCharacterNameDesc() {
+  QueryBuilder<SkillEntities, SkillEntities, QAfterSortBy>
+      sortByCharacterNameDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'characterName', Sort.desc);
     });
@@ -9326,9 +10140,24 @@ extension SkillEntitiesQuerySortBy on QueryBuilder<SkillEntities, SkillEntities,
     });
   }
 
-  QueryBuilder<SkillEntities, SkillEntities, QAfterSortBy> sortByDescriptionDesc() {
+  QueryBuilder<SkillEntities, SkillEntities, QAfterSortBy>
+      sortByDescriptionDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'description', Sort.desc);
+    });
+  }
+
+  QueryBuilder<SkillEntities, SkillEntities, QAfterSortBy>
+      sortByGameClassType() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'gameClassType', Sort.asc);
+    });
+  }
+
+  QueryBuilder<SkillEntities, SkillEntities, QAfterSortBy>
+      sortByGameClassTypeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'gameClassType', Sort.desc);
     });
   }
 
@@ -9338,7 +10167,8 @@ extension SkillEntitiesQuerySortBy on QueryBuilder<SkillEntities, SkillEntities,
     });
   }
 
-  QueryBuilder<SkillEntities, SkillEntities, QAfterSortBy> sortByHashCodeDesc() {
+  QueryBuilder<SkillEntities, SkillEntities, QAfterSortBy>
+      sortByHashCodeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'hashCode', Sort.desc);
     });
@@ -9362,21 +10192,25 @@ extension SkillEntitiesQuerySortBy on QueryBuilder<SkillEntities, SkillEntities,
     });
   }
 
-  QueryBuilder<SkillEntities, SkillEntities, QAfterSortBy> sortByStringifyDesc() {
+  QueryBuilder<SkillEntities, SkillEntities, QAfterSortBy>
+      sortByStringifyDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'stringify', Sort.desc);
     });
   }
 }
 
-extension SkillEntitiesQuerySortThenBy on QueryBuilder<SkillEntities, SkillEntities, QSortThenBy> {
-  QueryBuilder<SkillEntities, SkillEntities, QAfterSortBy> thenByCharacterName() {
+extension SkillEntitiesQuerySortThenBy
+    on QueryBuilder<SkillEntities, SkillEntities, QSortThenBy> {
+  QueryBuilder<SkillEntities, SkillEntities, QAfterSortBy>
+      thenByCharacterName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'characterName', Sort.asc);
     });
   }
 
-  QueryBuilder<SkillEntities, SkillEntities, QAfterSortBy> thenByCharacterNameDesc() {
+  QueryBuilder<SkillEntities, SkillEntities, QAfterSortBy>
+      thenByCharacterNameDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'characterName', Sort.desc);
     });
@@ -9388,9 +10222,24 @@ extension SkillEntitiesQuerySortThenBy on QueryBuilder<SkillEntities, SkillEntit
     });
   }
 
-  QueryBuilder<SkillEntities, SkillEntities, QAfterSortBy> thenByDescriptionDesc() {
+  QueryBuilder<SkillEntities, SkillEntities, QAfterSortBy>
+      thenByDescriptionDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'description', Sort.desc);
+    });
+  }
+
+  QueryBuilder<SkillEntities, SkillEntities, QAfterSortBy>
+      thenByGameClassType() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'gameClassType', Sort.asc);
+    });
+  }
+
+  QueryBuilder<SkillEntities, SkillEntities, QAfterSortBy>
+      thenByGameClassTypeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'gameClassType', Sort.desc);
     });
   }
 
@@ -9400,7 +10249,8 @@ extension SkillEntitiesQuerySortThenBy on QueryBuilder<SkillEntities, SkillEntit
     });
   }
 
-  QueryBuilder<SkillEntities, SkillEntities, QAfterSortBy> thenByHashCodeDesc() {
+  QueryBuilder<SkillEntities, SkillEntities, QAfterSortBy>
+      thenByHashCodeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'hashCode', Sort.desc);
     });
@@ -9436,23 +10286,35 @@ extension SkillEntitiesQuerySortThenBy on QueryBuilder<SkillEntities, SkillEntit
     });
   }
 
-  QueryBuilder<SkillEntities, SkillEntities, QAfterSortBy> thenByStringifyDesc() {
+  QueryBuilder<SkillEntities, SkillEntities, QAfterSortBy>
+      thenByStringifyDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'stringify', Sort.desc);
     });
   }
 }
 
-extension SkillEntitiesQueryWhereDistinct on QueryBuilder<SkillEntities, SkillEntities, QDistinct> {
-  QueryBuilder<SkillEntities, SkillEntities, QDistinct> distinctByCharacterName({bool caseSensitive = true}) {
+extension SkillEntitiesQueryWhereDistinct
+    on QueryBuilder<SkillEntities, SkillEntities, QDistinct> {
+  QueryBuilder<SkillEntities, SkillEntities, QDistinct> distinctByCharacterName(
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'characterName', caseSensitive: caseSensitive);
+      return query.addDistinctBy(r'characterName',
+          caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<SkillEntities, SkillEntities, QDistinct> distinctByDescription({bool caseSensitive = true}) {
+  QueryBuilder<SkillEntities, SkillEntities, QDistinct> distinctByDescription(
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'description', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<SkillEntities, SkillEntities, QDistinct>
+      distinctByGameClassType() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'gameClassType');
     });
   }
 
@@ -9462,7 +10324,8 @@ extension SkillEntitiesQueryWhereDistinct on QueryBuilder<SkillEntities, SkillEn
     });
   }
 
-  QueryBuilder<SkillEntities, SkillEntities, QDistinct> distinctByName({bool caseSensitive = true}) {
+  QueryBuilder<SkillEntities, SkillEntities, QDistinct> distinctByName(
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'name', caseSensitive: caseSensitive);
     });
@@ -9475,14 +10338,16 @@ extension SkillEntitiesQueryWhereDistinct on QueryBuilder<SkillEntities, SkillEn
   }
 }
 
-extension SkillEntitiesQueryProperty on QueryBuilder<SkillEntities, SkillEntities, QQueryProperty> {
+extension SkillEntitiesQueryProperty
+    on QueryBuilder<SkillEntities, SkillEntities, QQueryProperty> {
   QueryBuilder<SkillEntities, int, QQueryOperations> idProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'id');
     });
   }
 
-  QueryBuilder<SkillEntities, String, QQueryOperations> characterNameProperty() {
+  QueryBuilder<SkillEntities, String, QQueryOperations>
+      characterNameProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'characterName');
     });
@@ -9491,6 +10356,13 @@ extension SkillEntitiesQueryProperty on QueryBuilder<SkillEntities, SkillEntitie
   QueryBuilder<SkillEntities, String, QQueryOperations> descriptionProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'description');
+    });
+  }
+
+  QueryBuilder<SkillEntities, GameClassType, QQueryOperations>
+      gameClassTypeProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'gameClassType');
     });
   }
 
@@ -9555,35 +10427,41 @@ const SpellEntitiesSchema = CollectionSchema(
       name: r'durationTime',
       type: IsarType.string,
     ),
-    r'hashCode': PropertySchema(
+    r'gameClassType': PropertySchema(
       id: 6,
+      name: r'gameClassType',
+      type: IsarType.byte,
+      enumMap: _SpellEntitiesgameClassTypeEnumValueMap,
+    ),
+    r'hashCode': PropertySchema(
+      id: 7,
       name: r'hashCode',
       type: IsarType.long,
     ),
     r'name': PropertySchema(
-      id: 7,
+      id: 8,
       name: r'name',
       type: IsarType.string,
     ),
     r'prepared': PropertySchema(
-      id: 8,
+      id: 9,
       name: r'prepared',
       type: IsarType.bool,
     ),
     r'schoolType': PropertySchema(
-      id: 9,
+      id: 10,
       name: r'schoolType',
       type: IsarType.byte,
       enumMap: _SpellEntitiesschoolTypeEnumValueMap,
     ),
     r'spellLevelType': PropertySchema(
-      id: 10,
+      id: 11,
       name: r'spellLevelType',
       type: IsarType.byte,
       enumMap: _SpellEntitiesspellLevelTypeEnumValueMap,
     ),
     r'stringify': PropertySchema(
-      id: 11,
+      id: 12,
       name: r'stringify',
       type: IsarType.bool,
     )
@@ -9625,16 +10503,18 @@ void _spellEntitiesSerialize(
 ) {
   writer.writeString(offsets[0], object.castTime);
   writer.writeString(offsets[1], object.characterName);
-  writer.writeByteList(offsets[2], object.components.map((e) => e.index).toList());
+  writer.writeByteList(
+      offsets[2], object.components.map((e) => e.index).toList());
   writer.writeString(offsets[3], object.description);
   writer.writeLong(offsets[4], object.distance);
   writer.writeString(offsets[5], object.durationTime);
-  writer.writeLong(offsets[6], object.hashCode);
-  writer.writeString(offsets[7], object.name);
-  writer.writeBool(offsets[8], object.prepared);
-  writer.writeByte(offsets[9], object.schoolType.index);
-  writer.writeByte(offsets[10], object.spellLevelType.index);
-  writer.writeBool(offsets[11], object.stringify);
+  writer.writeByte(offsets[6], object.gameClassType.index);
+  writer.writeLong(offsets[7], object.hashCode);
+  writer.writeString(offsets[8], object.name);
+  writer.writeBool(offsets[9], object.prepared);
+  writer.writeByte(offsets[10], object.schoolType.index);
+  writer.writeByte(offsets[11], object.spellLevelType.index);
+  writer.writeBool(offsets[12], object.stringify);
 }
 
 SpellEntities _spellEntitiesDeserialize(
@@ -9646,14 +10526,25 @@ SpellEntities _spellEntitiesDeserialize(
   final object = SpellEntities(
     castTime: reader.readString(offsets[0]),
     characterName: reader.readString(offsets[1]),
-    components: reader.readByteList(offsets[2])?.map((e) => _SpellEntitiescomponentsValueEnumMap[e] ?? Component.V).toList() ?? [],
+    components: reader
+            .readByteList(offsets[2])
+            ?.map((e) => _SpellEntitiescomponentsValueEnumMap[e] ?? Component.V)
+            .toList() ??
+        [],
     description: reader.readString(offsets[3]),
     distance: reader.readLong(offsets[4]),
     durationTime: reader.readString(offsets[5]),
-    name: reader.readString(offsets[7]),
-    prepared: reader.readBool(offsets[8]),
-    schoolType: _SpellEntitiesschoolTypeValueEnumMap[reader.readByteOrNull(offsets[9])] ?? SchoolType.ABJURATION,
-    spellLevelType: _SpellEntitiesspellLevelTypeValueEnumMap[reader.readByteOrNull(offsets[10])] ?? SpellLevelType.CHARM,
+    gameClassType: _SpellEntitiesgameClassTypeValueEnumMap[
+            reader.readByteOrNull(offsets[6])] ??
+        GameClassType.ARTIFICIER,
+    name: reader.readString(offsets[8]),
+    prepared: reader.readBool(offsets[9]),
+    schoolType: _SpellEntitiesschoolTypeValueEnumMap[
+            reader.readByteOrNull(offsets[10])] ??
+        SchoolType.ABJURATION,
+    spellLevelType: _SpellEntitiesspellLevelTypeValueEnumMap[
+            reader.readByteOrNull(offsets[11])] ??
+        SpellLevelType.CHARM,
   );
   return object;
 }
@@ -9670,7 +10561,12 @@ P _spellEntitiesDeserializeProp<P>(
     case 1:
       return (reader.readString(offset)) as P;
     case 2:
-      return (reader.readByteList(offset)?.map((e) => _SpellEntitiescomponentsValueEnumMap[e] ?? Component.V).toList() ?? []) as P;
+      return (reader
+              .readByteList(offset)
+              ?.map(
+                  (e) => _SpellEntitiescomponentsValueEnumMap[e] ?? Component.V)
+              .toList() ??
+          []) as P;
     case 3:
       return (reader.readString(offset)) as P;
     case 4:
@@ -9678,16 +10574,24 @@ P _spellEntitiesDeserializeProp<P>(
     case 5:
       return (reader.readString(offset)) as P;
     case 6:
-      return (reader.readLong(offset)) as P;
+      return (_SpellEntitiesgameClassTypeValueEnumMap[
+              reader.readByteOrNull(offset)] ??
+          GameClassType.ARTIFICIER) as P;
     case 7:
-      return (reader.readString(offset)) as P;
+      return (reader.readLong(offset)) as P;
     case 8:
-      return (reader.readBool(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 9:
-      return (_SpellEntitiesschoolTypeValueEnumMap[reader.readByteOrNull(offset)] ?? SchoolType.ABJURATION) as P;
+      return (reader.readBool(offset)) as P;
     case 10:
-      return (_SpellEntitiesspellLevelTypeValueEnumMap[reader.readByteOrNull(offset)] ?? SpellLevelType.CHARM) as P;
+      return (_SpellEntitiesschoolTypeValueEnumMap[
+              reader.readByteOrNull(offset)] ??
+          SchoolType.ABJURATION) as P;
     case 11:
+      return (_SpellEntitiesspellLevelTypeValueEnumMap[
+              reader.readByteOrNull(offset)] ??
+          SpellLevelType.CHARM) as P;
+    case 12:
       return (reader.readBoolOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -9703,6 +10607,36 @@ const _SpellEntitiescomponentsValueEnumMap = {
   0: Component.V,
   1: Component.S,
   2: Component.M,
+};
+const _SpellEntitiesgameClassTypeEnumValueMap = {
+  'ARTIFICIER': 0,
+  'BARBARIAN': 1,
+  'BARD': 2,
+  'CLERIC': 3,
+  'DRUID': 4,
+  'FIGHTER': 5,
+  'MONK': 6,
+  'PALADIN': 7,
+  'RANGER': 8,
+  'ROGUE': 9,
+  'SORCERER': 10,
+  'WARLOCK': 11,
+  'WIZARD': 12,
+};
+const _SpellEntitiesgameClassTypeValueEnumMap = {
+  0: GameClassType.ARTIFICIER,
+  1: GameClassType.BARBARIAN,
+  2: GameClassType.BARD,
+  3: GameClassType.CLERIC,
+  4: GameClassType.DRUID,
+  5: GameClassType.FIGHTER,
+  6: GameClassType.MONK,
+  7: GameClassType.PALADIN,
+  8: GameClassType.RANGER,
+  9: GameClassType.ROGUE,
+  10: GameClassType.SORCERER,
+  11: GameClassType.WARLOCK,
+  12: GameClassType.WIZARD,
 };
 const _SpellEntitiesschoolTypeEnumValueMap = {
   'ABJURATION': 0,
@@ -9759,9 +10693,11 @@ List<IsarLinkBase<dynamic>> _spellEntitiesGetLinks(SpellEntities object) {
   return [];
 }
 
-void _spellEntitiesAttach(IsarCollection<dynamic> col, Id id, SpellEntities object) {}
+void _spellEntitiesAttach(
+    IsarCollection<dynamic> col, Id id, SpellEntities object) {}
 
-extension SpellEntitiesQueryWhereSort on QueryBuilder<SpellEntities, SpellEntities, QWhere> {
+extension SpellEntitiesQueryWhereSort
+    on QueryBuilder<SpellEntities, SpellEntities, QWhere> {
   QueryBuilder<SpellEntities, SpellEntities, QAfterWhere> anyId() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(const IdWhereClause.any());
@@ -9769,8 +10705,10 @@ extension SpellEntitiesQueryWhereSort on QueryBuilder<SpellEntities, SpellEntiti
   }
 }
 
-extension SpellEntitiesQueryWhere on QueryBuilder<SpellEntities, SpellEntities, QWhereClause> {
-  QueryBuilder<SpellEntities, SpellEntities, QAfterWhereClause> idEqualTo(Id id) {
+extension SpellEntitiesQueryWhere
+    on QueryBuilder<SpellEntities, SpellEntities, QWhereClause> {
+  QueryBuilder<SpellEntities, SpellEntities, QAfterWhereClause> idEqualTo(
+      Id id) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(IdWhereClause.between(
         lower: id,
@@ -9779,7 +10717,8 @@ extension SpellEntitiesQueryWhere on QueryBuilder<SpellEntities, SpellEntities, 
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterWhereClause> idNotEqualTo(Id id) {
+  QueryBuilder<SpellEntities, SpellEntities, QAfterWhereClause> idNotEqualTo(
+      Id id) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
@@ -9801,7 +10740,9 @@ extension SpellEntitiesQueryWhere on QueryBuilder<SpellEntities, SpellEntities, 
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterWhereClause> idGreaterThan(Id id, {bool include = false}) {
+  QueryBuilder<SpellEntities, SpellEntities, QAfterWhereClause> idGreaterThan(
+      Id id,
+      {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         IdWhereClause.greaterThan(lower: id, includeLower: include),
@@ -9809,7 +10750,9 @@ extension SpellEntitiesQueryWhere on QueryBuilder<SpellEntities, SpellEntities, 
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterWhereClause> idLessThan(Id id, {bool include = false}) {
+  QueryBuilder<SpellEntities, SpellEntities, QAfterWhereClause> idLessThan(
+      Id id,
+      {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         IdWhereClause.lessThan(upper: id, includeUpper: include),
@@ -9834,8 +10777,10 @@ extension SpellEntitiesQueryWhere on QueryBuilder<SpellEntities, SpellEntities, 
   }
 }
 
-extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities, QFilterCondition> {
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> castTimeEqualTo(
+extension SpellEntitiesQueryFilter
+    on QueryBuilder<SpellEntities, SpellEntities, QFilterCondition> {
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      castTimeEqualTo(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -9848,7 +10793,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> castTimeGreaterThan(
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      castTimeGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -9863,7 +10809,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> castTimeLessThan(
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      castTimeLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -9878,7 +10825,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> castTimeBetween(
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      castTimeBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -9897,7 +10845,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> castTimeStartsWith(
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      castTimeStartsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -9910,7 +10859,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> castTimeEndsWith(
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      castTimeEndsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -9923,7 +10873,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> castTimeContains(String value, {bool caseSensitive = true}) {
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      castTimeContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
         property: r'castTime',
@@ -9933,7 +10884,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> castTimeMatches(String pattern, {bool caseSensitive = true}) {
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      castTimeMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.matches(
         property: r'castTime',
@@ -9943,7 +10895,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> castTimeIsEmpty() {
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      castTimeIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'castTime',
@@ -9952,7 +10905,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> castTimeIsNotEmpty() {
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      castTimeIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'castTime',
@@ -9961,7 +10915,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> characterNameEqualTo(
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      characterNameEqualTo(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -9974,7 +10929,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> characterNameGreaterThan(
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      characterNameGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -9989,7 +10945,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> characterNameLessThan(
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      characterNameLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -10004,7 +10961,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> characterNameBetween(
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      characterNameBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -10023,7 +10981,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> characterNameStartsWith(
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      characterNameStartsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -10036,7 +10995,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> characterNameEndsWith(
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      characterNameEndsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -10049,7 +11009,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> characterNameContains(String value, {bool caseSensitive = true}) {
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      characterNameContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
         property: r'characterName',
@@ -10059,7 +11020,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> characterNameMatches(String pattern, {bool caseSensitive = true}) {
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      characterNameMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.matches(
         property: r'characterName',
@@ -10069,7 +11031,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> characterNameIsEmpty() {
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      characterNameIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'characterName',
@@ -10078,7 +11041,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> characterNameIsNotEmpty() {
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      characterNameIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'characterName',
@@ -10087,7 +11051,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> componentsElementEqualTo(Component value) {
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      componentsElementEqualTo(Component value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'components',
@@ -10096,7 +11061,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> componentsElementGreaterThan(
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      componentsElementGreaterThan(
     Component value, {
     bool include = false,
   }) {
@@ -10109,7 +11075,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> componentsElementLessThan(
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      componentsElementLessThan(
     Component value, {
     bool include = false,
   }) {
@@ -10122,7 +11089,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> componentsElementBetween(
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      componentsElementBetween(
     Component lower,
     Component upper, {
     bool includeLower = true,
@@ -10139,7 +11107,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> componentsLengthEqualTo(int length) {
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      componentsLengthEqualTo(int length) {
     return QueryBuilder.apply(this, (query) {
       return query.listLength(
         r'components',
@@ -10151,7 +11120,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> componentsIsEmpty() {
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      componentsIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.listLength(
         r'components',
@@ -10163,7 +11133,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> componentsIsNotEmpty() {
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      componentsIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.listLength(
         r'components',
@@ -10175,7 +11146,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> componentsLengthLessThan(
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      componentsLengthLessThan(
     int length, {
     bool include = false,
   }) {
@@ -10190,7 +11162,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> componentsLengthGreaterThan(
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      componentsLengthGreaterThan(
     int length, {
     bool include = false,
   }) {
@@ -10205,7 +11178,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> componentsLengthBetween(
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      componentsLengthBetween(
     int lower,
     int upper, {
     bool includeLower = true,
@@ -10222,7 +11196,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> descriptionEqualTo(
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      descriptionEqualTo(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -10235,7 +11210,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> descriptionGreaterThan(
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      descriptionGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -10250,7 +11226,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> descriptionLessThan(
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      descriptionLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -10265,7 +11242,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> descriptionBetween(
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      descriptionBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -10284,7 +11262,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> descriptionStartsWith(
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      descriptionStartsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -10297,7 +11276,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> descriptionEndsWith(
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      descriptionEndsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -10310,7 +11290,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> descriptionContains(String value, {bool caseSensitive = true}) {
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      descriptionContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
         property: r'description',
@@ -10320,7 +11301,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> descriptionMatches(String pattern, {bool caseSensitive = true}) {
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      descriptionMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.matches(
         property: r'description',
@@ -10330,7 +11312,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> descriptionIsEmpty() {
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      descriptionIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'description',
@@ -10339,7 +11322,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> descriptionIsNotEmpty() {
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      descriptionIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'description',
@@ -10348,7 +11332,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> distanceEqualTo(int value) {
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      distanceEqualTo(int value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'distance',
@@ -10357,7 +11342,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> distanceGreaterThan(
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      distanceGreaterThan(
     int value, {
     bool include = false,
   }) {
@@ -10370,7 +11356,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> distanceLessThan(
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      distanceLessThan(
     int value, {
     bool include = false,
   }) {
@@ -10383,7 +11370,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> distanceBetween(
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      distanceBetween(
     int lower,
     int upper, {
     bool includeLower = true,
@@ -10400,7 +11388,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> durationTimeEqualTo(
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      durationTimeEqualTo(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -10413,7 +11402,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> durationTimeGreaterThan(
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      durationTimeGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -10428,7 +11418,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> durationTimeLessThan(
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      durationTimeLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -10443,7 +11434,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> durationTimeBetween(
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      durationTimeBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -10462,7 +11454,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> durationTimeStartsWith(
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      durationTimeStartsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -10475,7 +11468,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> durationTimeEndsWith(
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      durationTimeEndsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -10488,7 +11482,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> durationTimeContains(String value, {bool caseSensitive = true}) {
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      durationTimeContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
         property: r'durationTime',
@@ -10498,7 +11493,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> durationTimeMatches(String pattern, {bool caseSensitive = true}) {
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      durationTimeMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.matches(
         property: r'durationTime',
@@ -10508,7 +11504,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> durationTimeIsEmpty() {
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      durationTimeIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'durationTime',
@@ -10517,7 +11514,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> durationTimeIsNotEmpty() {
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      durationTimeIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'durationTime',
@@ -10526,7 +11524,64 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> hashCodeEqualTo(int value) {
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      gameClassTypeEqualTo(GameClassType value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'gameClassType',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      gameClassTypeGreaterThan(
+    GameClassType value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'gameClassType',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      gameClassTypeLessThan(
+    GameClassType value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'gameClassType',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      gameClassTypeBetween(
+    GameClassType lower,
+    GameClassType upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'gameClassType',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      hashCodeEqualTo(int value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'hashCode',
@@ -10535,7 +11590,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> hashCodeGreaterThan(
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      hashCodeGreaterThan(
     int value, {
     bool include = false,
   }) {
@@ -10548,7 +11604,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> hashCodeLessThan(
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      hashCodeLessThan(
     int value, {
     bool include = false,
   }) {
@@ -10561,7 +11618,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> hashCodeBetween(
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      hashCodeBetween(
     int lower,
     int upper, {
     bool includeLower = true,
@@ -10578,7 +11636,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> idEqualTo(Id value) {
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> idEqualTo(
+      Id value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'id',
@@ -10587,7 +11646,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> idGreaterThan(
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      idGreaterThan(
     Id value, {
     bool include = false,
   }) {
@@ -10643,7 +11703,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> nameGreaterThan(
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      nameGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -10658,7 +11719,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> nameLessThan(
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      nameLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
@@ -10692,7 +11754,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> nameStartsWith(
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      nameStartsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -10705,7 +11768,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> nameEndsWith(
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      nameEndsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -10718,7 +11782,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> nameContains(String value, {bool caseSensitive = true}) {
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      nameContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
         property: r'name',
@@ -10728,7 +11793,9 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> nameMatches(String pattern, {bool caseSensitive = true}) {
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> nameMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.matches(
         property: r'name',
@@ -10738,7 +11805,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> nameIsEmpty() {
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      nameIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'name',
@@ -10747,7 +11815,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> nameIsNotEmpty() {
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      nameIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'name',
@@ -10756,7 +11825,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> preparedEqualTo(bool value) {
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      preparedEqualTo(bool value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'prepared',
@@ -10765,7 +11835,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> schoolTypeEqualTo(SchoolType value) {
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      schoolTypeEqualTo(SchoolType value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'schoolType',
@@ -10774,7 +11845,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> schoolTypeGreaterThan(
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      schoolTypeGreaterThan(
     SchoolType value, {
     bool include = false,
   }) {
@@ -10787,7 +11859,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> schoolTypeLessThan(
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      schoolTypeLessThan(
     SchoolType value, {
     bool include = false,
   }) {
@@ -10800,7 +11873,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> schoolTypeBetween(
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      schoolTypeBetween(
     SchoolType lower,
     SchoolType upper, {
     bool includeLower = true,
@@ -10817,7 +11891,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> spellLevelTypeEqualTo(SpellLevelType value) {
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      spellLevelTypeEqualTo(SpellLevelType value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'spellLevelType',
@@ -10826,7 +11901,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> spellLevelTypeGreaterThan(
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      spellLevelTypeGreaterThan(
     SpellLevelType value, {
     bool include = false,
   }) {
@@ -10839,7 +11915,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> spellLevelTypeLessThan(
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      spellLevelTypeLessThan(
     SpellLevelType value, {
     bool include = false,
   }) {
@@ -10852,7 +11929,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> spellLevelTypeBetween(
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      spellLevelTypeBetween(
     SpellLevelType lower,
     SpellLevelType upper, {
     bool includeLower = true,
@@ -10869,7 +11947,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> stringifyIsNull() {
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      stringifyIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
         property: r'stringify',
@@ -10877,7 +11956,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> stringifyIsNotNull() {
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      stringifyIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNotNull(
         property: r'stringify',
@@ -10885,7 +11965,8 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition> stringifyEqualTo(bool? value) {
+  QueryBuilder<SpellEntities, SpellEntities, QAfterFilterCondition>
+      stringifyEqualTo(bool? value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'stringify',
@@ -10895,30 +11976,36 @@ extension SpellEntitiesQueryFilter on QueryBuilder<SpellEntities, SpellEntities,
   }
 }
 
-extension SpellEntitiesQueryObject on QueryBuilder<SpellEntities, SpellEntities, QFilterCondition> {}
+extension SpellEntitiesQueryObject
+    on QueryBuilder<SpellEntities, SpellEntities, QFilterCondition> {}
 
-extension SpellEntitiesQueryLinks on QueryBuilder<SpellEntities, SpellEntities, QFilterCondition> {}
+extension SpellEntitiesQueryLinks
+    on QueryBuilder<SpellEntities, SpellEntities, QFilterCondition> {}
 
-extension SpellEntitiesQuerySortBy on QueryBuilder<SpellEntities, SpellEntities, QSortBy> {
+extension SpellEntitiesQuerySortBy
+    on QueryBuilder<SpellEntities, SpellEntities, QSortBy> {
   QueryBuilder<SpellEntities, SpellEntities, QAfterSortBy> sortByCastTime() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'castTime', Sort.asc);
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterSortBy> sortByCastTimeDesc() {
+  QueryBuilder<SpellEntities, SpellEntities, QAfterSortBy>
+      sortByCastTimeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'castTime', Sort.desc);
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterSortBy> sortByCharacterName() {
+  QueryBuilder<SpellEntities, SpellEntities, QAfterSortBy>
+      sortByCharacterName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'characterName', Sort.asc);
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterSortBy> sortByCharacterNameDesc() {
+  QueryBuilder<SpellEntities, SpellEntities, QAfterSortBy>
+      sortByCharacterNameDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'characterName', Sort.desc);
     });
@@ -10930,7 +12017,8 @@ extension SpellEntitiesQuerySortBy on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterSortBy> sortByDescriptionDesc() {
+  QueryBuilder<SpellEntities, SpellEntities, QAfterSortBy>
+      sortByDescriptionDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'description', Sort.desc);
     });
@@ -10942,21 +12030,38 @@ extension SpellEntitiesQuerySortBy on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterSortBy> sortByDistanceDesc() {
+  QueryBuilder<SpellEntities, SpellEntities, QAfterSortBy>
+      sortByDistanceDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'distance', Sort.desc);
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterSortBy> sortByDurationTime() {
+  QueryBuilder<SpellEntities, SpellEntities, QAfterSortBy>
+      sortByDurationTime() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'durationTime', Sort.asc);
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterSortBy> sortByDurationTimeDesc() {
+  QueryBuilder<SpellEntities, SpellEntities, QAfterSortBy>
+      sortByDurationTimeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'durationTime', Sort.desc);
+    });
+  }
+
+  QueryBuilder<SpellEntities, SpellEntities, QAfterSortBy>
+      sortByGameClassType() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'gameClassType', Sort.asc);
+    });
+  }
+
+  QueryBuilder<SpellEntities, SpellEntities, QAfterSortBy>
+      sortByGameClassTypeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'gameClassType', Sort.desc);
     });
   }
 
@@ -10966,7 +12071,8 @@ extension SpellEntitiesQuerySortBy on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterSortBy> sortByHashCodeDesc() {
+  QueryBuilder<SpellEntities, SpellEntities, QAfterSortBy>
+      sortByHashCodeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'hashCode', Sort.desc);
     });
@@ -10990,7 +12096,8 @@ extension SpellEntitiesQuerySortBy on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterSortBy> sortByPreparedDesc() {
+  QueryBuilder<SpellEntities, SpellEntities, QAfterSortBy>
+      sortByPreparedDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'prepared', Sort.desc);
     });
@@ -11002,19 +12109,22 @@ extension SpellEntitiesQuerySortBy on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterSortBy> sortBySchoolTypeDesc() {
+  QueryBuilder<SpellEntities, SpellEntities, QAfterSortBy>
+      sortBySchoolTypeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'schoolType', Sort.desc);
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterSortBy> sortBySpellLevelType() {
+  QueryBuilder<SpellEntities, SpellEntities, QAfterSortBy>
+      sortBySpellLevelType() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'spellLevelType', Sort.asc);
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterSortBy> sortBySpellLevelTypeDesc() {
+  QueryBuilder<SpellEntities, SpellEntities, QAfterSortBy>
+      sortBySpellLevelTypeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'spellLevelType', Sort.desc);
     });
@@ -11026,33 +12136,38 @@ extension SpellEntitiesQuerySortBy on QueryBuilder<SpellEntities, SpellEntities,
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterSortBy> sortByStringifyDesc() {
+  QueryBuilder<SpellEntities, SpellEntities, QAfterSortBy>
+      sortByStringifyDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'stringify', Sort.desc);
     });
   }
 }
 
-extension SpellEntitiesQuerySortThenBy on QueryBuilder<SpellEntities, SpellEntities, QSortThenBy> {
+extension SpellEntitiesQuerySortThenBy
+    on QueryBuilder<SpellEntities, SpellEntities, QSortThenBy> {
   QueryBuilder<SpellEntities, SpellEntities, QAfterSortBy> thenByCastTime() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'castTime', Sort.asc);
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterSortBy> thenByCastTimeDesc() {
+  QueryBuilder<SpellEntities, SpellEntities, QAfterSortBy>
+      thenByCastTimeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'castTime', Sort.desc);
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterSortBy> thenByCharacterName() {
+  QueryBuilder<SpellEntities, SpellEntities, QAfterSortBy>
+      thenByCharacterName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'characterName', Sort.asc);
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterSortBy> thenByCharacterNameDesc() {
+  QueryBuilder<SpellEntities, SpellEntities, QAfterSortBy>
+      thenByCharacterNameDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'characterName', Sort.desc);
     });
@@ -11064,7 +12179,8 @@ extension SpellEntitiesQuerySortThenBy on QueryBuilder<SpellEntities, SpellEntit
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterSortBy> thenByDescriptionDesc() {
+  QueryBuilder<SpellEntities, SpellEntities, QAfterSortBy>
+      thenByDescriptionDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'description', Sort.desc);
     });
@@ -11076,21 +12192,38 @@ extension SpellEntitiesQuerySortThenBy on QueryBuilder<SpellEntities, SpellEntit
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterSortBy> thenByDistanceDesc() {
+  QueryBuilder<SpellEntities, SpellEntities, QAfterSortBy>
+      thenByDistanceDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'distance', Sort.desc);
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterSortBy> thenByDurationTime() {
+  QueryBuilder<SpellEntities, SpellEntities, QAfterSortBy>
+      thenByDurationTime() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'durationTime', Sort.asc);
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterSortBy> thenByDurationTimeDesc() {
+  QueryBuilder<SpellEntities, SpellEntities, QAfterSortBy>
+      thenByDurationTimeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'durationTime', Sort.desc);
+    });
+  }
+
+  QueryBuilder<SpellEntities, SpellEntities, QAfterSortBy>
+      thenByGameClassType() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'gameClassType', Sort.asc);
+    });
+  }
+
+  QueryBuilder<SpellEntities, SpellEntities, QAfterSortBy>
+      thenByGameClassTypeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'gameClassType', Sort.desc);
     });
   }
 
@@ -11100,7 +12233,8 @@ extension SpellEntitiesQuerySortThenBy on QueryBuilder<SpellEntities, SpellEntit
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterSortBy> thenByHashCodeDesc() {
+  QueryBuilder<SpellEntities, SpellEntities, QAfterSortBy>
+      thenByHashCodeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'hashCode', Sort.desc);
     });
@@ -11136,7 +12270,8 @@ extension SpellEntitiesQuerySortThenBy on QueryBuilder<SpellEntities, SpellEntit
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterSortBy> thenByPreparedDesc() {
+  QueryBuilder<SpellEntities, SpellEntities, QAfterSortBy>
+      thenByPreparedDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'prepared', Sort.desc);
     });
@@ -11148,19 +12283,22 @@ extension SpellEntitiesQuerySortThenBy on QueryBuilder<SpellEntities, SpellEntit
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterSortBy> thenBySchoolTypeDesc() {
+  QueryBuilder<SpellEntities, SpellEntities, QAfterSortBy>
+      thenBySchoolTypeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'schoolType', Sort.desc);
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterSortBy> thenBySpellLevelType() {
+  QueryBuilder<SpellEntities, SpellEntities, QAfterSortBy>
+      thenBySpellLevelType() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'spellLevelType', Sort.asc);
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterSortBy> thenBySpellLevelTypeDesc() {
+  QueryBuilder<SpellEntities, SpellEntities, QAfterSortBy>
+      thenBySpellLevelTypeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'spellLevelType', Sort.desc);
     });
@@ -11172,23 +12310,28 @@ extension SpellEntitiesQuerySortThenBy on QueryBuilder<SpellEntities, SpellEntit
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QAfterSortBy> thenByStringifyDesc() {
+  QueryBuilder<SpellEntities, SpellEntities, QAfterSortBy>
+      thenByStringifyDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'stringify', Sort.desc);
     });
   }
 }
 
-extension SpellEntitiesQueryWhereDistinct on QueryBuilder<SpellEntities, SpellEntities, QDistinct> {
-  QueryBuilder<SpellEntities, SpellEntities, QDistinct> distinctByCastTime({bool caseSensitive = true}) {
+extension SpellEntitiesQueryWhereDistinct
+    on QueryBuilder<SpellEntities, SpellEntities, QDistinct> {
+  QueryBuilder<SpellEntities, SpellEntities, QDistinct> distinctByCastTime(
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'castTime', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QDistinct> distinctByCharacterName({bool caseSensitive = true}) {
+  QueryBuilder<SpellEntities, SpellEntities, QDistinct> distinctByCharacterName(
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'characterName', caseSensitive: caseSensitive);
+      return query.addDistinctBy(r'characterName',
+          caseSensitive: caseSensitive);
     });
   }
 
@@ -11198,7 +12341,8 @@ extension SpellEntitiesQueryWhereDistinct on QueryBuilder<SpellEntities, SpellEn
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QDistinct> distinctByDescription({bool caseSensitive = true}) {
+  QueryBuilder<SpellEntities, SpellEntities, QDistinct> distinctByDescription(
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'description', caseSensitive: caseSensitive);
     });
@@ -11210,9 +12354,17 @@ extension SpellEntitiesQueryWhereDistinct on QueryBuilder<SpellEntities, SpellEn
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QDistinct> distinctByDurationTime({bool caseSensitive = true}) {
+  QueryBuilder<SpellEntities, SpellEntities, QDistinct> distinctByDurationTime(
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'durationTime', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<SpellEntities, SpellEntities, QDistinct>
+      distinctByGameClassType() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'gameClassType');
     });
   }
 
@@ -11222,7 +12374,8 @@ extension SpellEntitiesQueryWhereDistinct on QueryBuilder<SpellEntities, SpellEn
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QDistinct> distinctByName({bool caseSensitive = true}) {
+  QueryBuilder<SpellEntities, SpellEntities, QDistinct> distinctByName(
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'name', caseSensitive: caseSensitive);
     });
@@ -11240,7 +12393,8 @@ extension SpellEntitiesQueryWhereDistinct on QueryBuilder<SpellEntities, SpellEn
     });
   }
 
-  QueryBuilder<SpellEntities, SpellEntities, QDistinct> distinctBySpellLevelType() {
+  QueryBuilder<SpellEntities, SpellEntities, QDistinct>
+      distinctBySpellLevelType() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'spellLevelType');
     });
@@ -11253,7 +12407,8 @@ extension SpellEntitiesQueryWhereDistinct on QueryBuilder<SpellEntities, SpellEn
   }
 }
 
-extension SpellEntitiesQueryProperty on QueryBuilder<SpellEntities, SpellEntities, QQueryProperty> {
+extension SpellEntitiesQueryProperty
+    on QueryBuilder<SpellEntities, SpellEntities, QQueryProperty> {
   QueryBuilder<SpellEntities, int, QQueryOperations> idProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'id');
@@ -11266,13 +12421,15 @@ extension SpellEntitiesQueryProperty on QueryBuilder<SpellEntities, SpellEntitie
     });
   }
 
-  QueryBuilder<SpellEntities, String, QQueryOperations> characterNameProperty() {
+  QueryBuilder<SpellEntities, String, QQueryOperations>
+      characterNameProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'characterName');
     });
   }
 
-  QueryBuilder<SpellEntities, List<Component>, QQueryOperations> componentsProperty() {
+  QueryBuilder<SpellEntities, List<Component>, QQueryOperations>
+      componentsProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'components');
     });
@@ -11296,6 +12453,13 @@ extension SpellEntitiesQueryProperty on QueryBuilder<SpellEntities, SpellEntitie
     });
   }
 
+  QueryBuilder<SpellEntities, GameClassType, QQueryOperations>
+      gameClassTypeProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'gameClassType');
+    });
+  }
+
   QueryBuilder<SpellEntities, int, QQueryOperations> hashCodeProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'hashCode');
@@ -11314,13 +12478,15 @@ extension SpellEntitiesQueryProperty on QueryBuilder<SpellEntities, SpellEntitie
     });
   }
 
-  QueryBuilder<SpellEntities, SchoolType, QQueryOperations> schoolTypeProperty() {
+  QueryBuilder<SpellEntities, SchoolType, QQueryOperations>
+      schoolTypeProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'schoolType');
     });
   }
 
-  QueryBuilder<SpellEntities, SpellLevelType, QQueryOperations> spellLevelTypeProperty() {
+  QueryBuilder<SpellEntities, SpellLevelType, QQueryOperations>
+      spellLevelTypeProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'spellLevelType');
     });

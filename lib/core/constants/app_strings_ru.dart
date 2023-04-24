@@ -14,7 +14,6 @@ class RuStrings {
   static const String WIS = 'МДР';
   static const String CHR = 'ХАР';
 
-
   static String nameOfGameClass(GameClassType gameClassType) {
     switch (gameClassType) {
       case GameClassType.ARTIFICIER:
@@ -46,23 +45,35 @@ class RuStrings {
     }
   }
 
-  static String nameOfDiceType(DiceType diceType) {
-    switch (diceType) {
-      case DiceType.D4:
-        return 'Д4';
-      case DiceType.D6:
-        return 'Д6';
-      case DiceType.D8:
-        return 'Д8';
-      case DiceType.D10:
-        return 'Д10';
-      case DiceType.D12:
-        return 'Д12';
-      case DiceType.D20:
-        return 'Д20';
-      case DiceType.D100:
-        return 'Д100';
+  static String nameOfDiceType(List<DiceType> dices) {
+    String result = '';
+    for (int i = 0; i < dices.length; i++) {
+      switch (dices[i]) {
+        case DiceType.D4:
+          result += 'Д4';
+          break;
+        case DiceType.D6:
+          result += 'Д6';
+          break;
+        case DiceType.D8:
+          result += 'Д8';
+          break;
+        case DiceType.D10:
+          result += 'Д10';
+          break;
+        case DiceType.D12:
+          result += 'Д12';
+          break;
+        case DiceType.D20:
+          result += 'Д20';
+          break;
+        case DiceType.D100:
+          result += 'Д100';
+          break;
+      }
+      if (i != dices.length - 1) result += ' + ';
     }
+    return result;
   }
 
   static String nameOfCompetenceByType(CompetenceType competenceType) {

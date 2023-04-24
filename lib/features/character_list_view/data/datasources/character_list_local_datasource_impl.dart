@@ -23,7 +23,7 @@ class CharacterListLocalDatasourceImpl implements CharacterListLocalDatasource {
     const hpForNewCharacter = HP();
     final gameClassFromScreen = GameClass(
       gameClassType: paramsFromScreen.gameClassType,
-      hitDices: const [DiceType.D6],
+      hitDices: const [],
       spells: const [],
       skills: const [],
     );
@@ -51,7 +51,7 @@ class CharacterListLocalDatasourceImpl implements CharacterListLocalDatasource {
             typeDamage: 'typeDamage',
             distance: 5,
             master: false,
-            dices: const [DiceType.D6],
+            dices: const [DiceType.D6, DiceType.D4],
             weaponType: WeaponType.MELEE,
             bonusAttackChance: 0,
             bonusAttackDamage: 0,
@@ -120,18 +120,21 @@ class CharacterListLocalDatasourceImpl implements CharacterListLocalDatasource {
     List<CompetenceEntities> competences = await isar.collection<CompetenceEntities>().filter().characterNameEqualTo(characterName).findAll();
     List<WeaponEntities> weapons = await isar.collection<WeaponEntities>().filter().characterNameEqualTo(characterName).findAll();
     List<ItemEntities> items = await isar.collection<ItemEntities>().filter().characterNameEqualTo(characterName).findAll();
+
     List<GameClassEntities> gameClasses = await isar.collection<GameClassEntities>().filter().characterNameEqualTo(characterName).findAll();
     List<SkillEntities> skillsEntities = await isar.collection<SkillEntities>().filter().characterNameEqualTo(characterName).findAll();
     List<SpellEntities> spellsEntities = await isar.collection<SpellEntities>().filter().characterNameEqualTo(characterName).findAll();
     List<Skill> skills = skillsEntities
         .map((skillEntitie) => Skill(
               name: skillEntitie.name,
+              gameClassType: skillEntitie.gameClassType,
               description: skillEntitie.description,
             ))
         .toList();
     List<Spell> spells = spellsEntities
         .map((spellEntitie) => Spell(
               name: spellEntitie.name,
+              gameClassType: spellEntitie.gameClassType,
               description: spellEntitie.description,
               schoolType: spellEntitie.schoolType,
               components: spellEntitie.components,
@@ -185,11 +188,12 @@ class CharacterListLocalDatasourceImpl implements CharacterListLocalDatasource {
               ))
           .toList(),
       gameClasses: gameClasses
-          .map((gameClassEntitie) => GameClass(               //! Неправильно
+          .map((gameClassEntitie) => GameClass(
+                classLevel: gameClassEntitie.classLevel,
                 gameClassType: gameClassEntitie.gameClassType,
                 hitDices: gameClassEntitie.hitDices,
-                spells: spells,
-                skills: skills,
+                spells: spells.where((spell) => spell.gameClassType == gameClassEntitie.gameClassType).toList(),
+                skills: skills.where((skill) => skill.gameClassType == gameClassEntitie.gameClassType).toList(),
               ))
           .toList(),
     );
@@ -203,12 +207,15 @@ class CharacterListLocalDatasourceImpl implements CharacterListLocalDatasource {
 
     final updatedCharacter = character.copyWith(
       name: params.newName,
+      customNameOfMulticlass: params.customNameOfMulticlass,
       cd: params.cd,
       exp: params.exp,
       hp: params.hp,
       stats: params.stats,
       weapons: params.weapons,
       competences: params.competences,
+      items: params.items,
+      gameClasses: params.gameClasses,
     );
 
     await _writeCharacter(updatedCharacter);
@@ -271,6 +278,47 @@ class CharacterListLocalDatasourceImpl implements CharacterListLocalDatasource {
       ));
     }
 
+    final List<ItemEntities> items = [];
+    for (Item item in character.items) {
+      items.add(ItemEntities(
+        characterName: character.name,
+        name: item.name,
+        description: item.description,
+        itemType: item.itemType,
+      ));
+    }
+
+    final List<GameClassEntities> gameClasses = [];
+    final List<SkillEntities> skills = [];
+    final List<SpellEntities> spells = [];
+    for (GameClass gameClass in character.gameClasses) {
+      gameClasses.add(GameClassEntities(
+        characterName: character.name,
+        gameClassType: gameClass.gameClassType,
+        classLevel: gameClass.classLevel,
+        hitDices: gameClass.hitDices,
+      ));
+      gameClass.skills.forEach((skill) => skills.add(SkillEntities(
+            characterName: character.name,
+            name: skill.name,
+            gameClassType: skill.gameClassType,
+            description: skill.description,
+          )));
+      gameClass.spells.forEach((spell) => spells.add(SpellEntities(
+            characterName: character.name,
+            gameClassType: spell.gameClassType,
+            name: spell.name,
+            description: spell.description,
+            schoolType: spell.schoolType,
+            spellLevelType: spell.spellLevelType,
+            components: spell.components,
+            prepared: spell.prepared,
+            distance: spell.distance,
+            castTime: spell.castTime,
+            durationTime: spell.durationTime,
+          )));
+    }
+
     await isar.writeTxn(() async {
       await isar.collection<CharacterEntities>().put(characterEntities);
       await isar.collection<ExpEntities>().put(exp);
@@ -278,6 +326,10 @@ class CharacterListLocalDatasourceImpl implements CharacterListLocalDatasource {
       await isar.collection<StatEntities>().putAll(stats);
       await isar.collection<WeaponEntities>().putAll(weapons);
       await isar.collection<CompetenceEntities>().putAll(competences);
+      await isar.collection<ItemEntities>().putAll(items);
+      await isar.collection<GameClassEntities>().putAll(gameClasses);
+      await isar.collection<SkillEntities>().putAll(skills);
+      await isar.collection<SpellEntities>().putAll(spells);
     });
   }
 }

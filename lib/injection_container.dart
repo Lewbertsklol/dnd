@@ -1,9 +1,7 @@
-
 import 'package:dnd/core/db/isar_db.dart';
 import 'package:dnd/features/character_list_view/domain/repositories/character_list_repository.dart';
 import 'package:get_it/get_it.dart';
 import 'package:isar/isar.dart';
-
 
 import 'features/character_gamelist/data/repositories/character_repository_impl.dart';
 import 'features/character_gamelist/domain/repositories/character_repository.dart';
@@ -36,11 +34,8 @@ void init() async {
   sl.registerLazySingleton(() => CreateCharacter(sl()));
   sl.registerLazySingleton(() => DeleteCharacter(sl()));
 
-
   sl.registerLazySingleton(() => GetCharacter(sl()));
   sl.registerLazySingleton(() => UpdateCharacter(sl()));
-
-
 
   //Repository
   sl.registerLazySingleton<CharacterListRepository>(() => CharacterListRepositoryImpl(localDatasource: sl()));
@@ -50,5 +45,16 @@ void init() async {
   sl.registerLazySingleton<CharacterListLocalDatasource>(() => CharacterListLocalDatasourceImpl());
 
   //Open database
-  await Isar.open([CharacterEntitiesSchema, ExpEntitiesSchema, HpEntitiesSchema, StatEntitiesSchema, WeaponEntitiesSchema, CompetenceEntitiesSchema]);
+  await Isar.open([
+    CharacterEntitiesSchema,
+    ExpEntitiesSchema,
+    HpEntitiesSchema,
+    StatEntitiesSchema,
+    WeaponEntitiesSchema,
+    CompetenceEntitiesSchema,
+    ItemEntitiesSchema,
+    GameClassEntitiesSchema,
+    SkillEntitiesSchema,
+    SpellEntitiesSchema
+  ]);
 }

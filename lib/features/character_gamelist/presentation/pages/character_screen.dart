@@ -239,52 +239,44 @@ class WeaponCard extends StatelessWidget {
                 textColor: Colors.lightBlue,
                 collapsedTextColor: Colors.black,
                 expandedAlignment: Alignment.topLeft,
-                title: Row(
-                  children: [
-                    SizedBox(
-                      width: 140,
-                      child: Text(
-                        weapon.name,
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    state.character.getAttackChanceWithWeapon(weapon) > 0
-                        ? Text(
-                            'Атк +${state.character.getAttackChanceWithWeapon(weapon)}',
-                            style: const TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          )
-                        : Text(
-                            'Атк ${state.character.getAttackChanceWithWeapon(weapon)}',
-                            style: const TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                    const Expanded(child: SizedBox()),
-                    state.character.getAttackDamageWithWeapon(weapon) > 0
-                        ? Text(
-                            '   Урн ${weapon.dices} +${state.character.getAttackDamageWithWeapon(weapon)}',
-                            style: const TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          )
-                        : Text(
-                            '   Урн ${weapon.dices}  ${state.character.getAttackDamageWithWeapon(weapon)}',
-                            style: const TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                  ],
+                title: Text(
+                  weapon.name,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 children: [
+                  state.character.getAttackChanceWithWeapon(weapon) > 0
+                      ? Text(
+                          'Атк  +${state.character.getAttackChanceWithWeapon(weapon)}',
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        )
+                      : Text(
+                          'Атк  ${state.character.getAttackChanceWithWeapon(weapon)}',
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                  state.character.getAttackDamageWithWeapon(weapon) >= 0
+                      ? Text(
+                          'Урн  ${RuStrings.nameOfDiceType(weapon.dices)} + ${state.character.getAttackDamageWithWeapon(weapon)}',
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        )
+                      : Text(
+                          'Урн  ${RuStrings.nameOfDiceType(weapon.dices)} ${(state.character.getAttackDamageWithWeapon(weapon)).toString().split('').join(' ')}',
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                   Text(
                     'Тип оружия: ${weapon.weaponType}',
                     style: const TextStyle(fontSize: 18),

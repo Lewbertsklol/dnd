@@ -165,10 +165,13 @@ class SkillEntities extends Equatable {
   final Id id = Isar.autoIncrement;
   final String characterName;
   final String name;
+  @enumerated
+  final GameClassType gameClassType;
   final String description;
   const SkillEntities({
     required this.characterName,
     required this.name,
+    required this.gameClassType,
     required this.description,
   });
   @override
@@ -180,6 +183,8 @@ class SpellEntities extends Equatable {
   final Id id = Isar.autoIncrement;
   final String characterName;
   final String name;
+  @enumerated
+  final GameClassType gameClassType;
   @enumerated
   final SchoolType schoolType;
   @enumerated
@@ -193,6 +198,7 @@ class SpellEntities extends Equatable {
   final String description;
   const SpellEntities({
     required this.characterName,
+    required this.gameClassType,
     required this.name,
     required this.description,
     required this.schoolType,

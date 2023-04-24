@@ -1,5 +1,6 @@
 // ignore_for_file: constant_identifier_names
 
+import 'package:dnd/features/character_list_view/domain/entities/game_class.dart';
 import 'package:equatable/equatable.dart';
 
 enum SchoolType { ABJURATION, ALTERATION, CONJURATION, DIVINATION, ENCHANTMENT, ILLUSION, INVOCATION, NECROMANCY }
@@ -10,6 +11,7 @@ enum Component { V, S, M }
 
 class Spell extends Equatable {
   final String name;
+  final GameClassType gameClassType;
   final SchoolType schoolType;
   final SpellLevelType spellLevelType;
   final List<Component> components;
@@ -20,14 +22,15 @@ class Spell extends Equatable {
   final String description;
   const Spell({
     required this.name,
-    required this.description,
-    this.prepared = false,
+    required this.gameClassType,
     required this.schoolType,
     required this.spellLevelType,
+    required this.components,
+    this.prepared = false,
+    required this.description,
     required this.distance,
     required this.castTime,
     required this.durationTime,
-    required this.components,
   });
 
   @override

@@ -24,6 +24,7 @@ dependencies:
 
 dev_dependencies:
   build_runner: ^2.3.3
+  flutter_launcher_icons: ^0.13.1
   flutter_lints: ^2.0.0
   flutter_test:
     sdk: flutter
@@ -40,3 +41,7 @@ flutter:
     - assets/main_screen_assets/icons/dice/
     - assets/main_screen_assets/icons/spells/
     - assets/menu_screen_assets/background/
+
+flutter_launcher_icons:
+  android: true
+  image_path: "assets/icon.png"
